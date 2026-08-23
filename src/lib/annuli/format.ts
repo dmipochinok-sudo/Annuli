@@ -31,7 +31,7 @@ export function initials(p: Person): string {
 export function genOf(idx: string): string {
   if (!idx) return "";
   const parts = idx.split(".");
-  return parts.length >= 2 ? parts[1] : "";
+  return parts.length >= 2 ? (parts[1] ?? "") : "";
 }
 
 export function romanToInt(s: string): number {
