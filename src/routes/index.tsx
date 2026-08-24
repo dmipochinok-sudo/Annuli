@@ -4,10 +4,13 @@ import { toast } from "sonner";
 
 import { PersonBirth } from "@/components/annuli/PersonBirth";
 import { PersonMain } from "@/components/annuli/PersonMain";
+import { PersonEducation } from "@/components/annuli/PersonEducation";
+import { PersonCareer } from "@/components/annuli/PersonCareer";
+import { PersonService } from "@/components/annuli/PersonService";
+import { PersonDeath } from "@/components/annuli/PersonDeath";
 import { PersonDocs } from "@/components/annuli/PersonDocs";
 import { PersonFamily } from "@/components/annuli/PersonFamily";
 import { PersonMemories } from "@/components/annuli/PersonMemories";
-import { PersonMilitary } from "@/components/annuli/PersonMilitary";
 import { PersonTree } from "@/components/annuli/PersonTree";
 import { TreeOverlay } from "@/components/annuli/TreeOverlay";
 
