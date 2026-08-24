@@ -18,7 +18,6 @@ export function PersonSidebar({
   persons,
   selectedId,
   onSelect,
-  onNew,
   className,
   query: queryProp,
   onQueryChange,
@@ -108,12 +107,6 @@ export function PersonSidebar({
             className="h-8 rounded-lg border border-border bg-surface-dark px-2.5 text-[14px] outline-none focus:border-stroke-bright"
           />
         )}
-        <button
-          onClick={onNew}
-          className="h-8 rounded-lg bg-primary px-3 text-[14px] font-medium text-primary-foreground transition hover:brightness-110"
-        >
-          + Новая персона
-        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-1.5">
