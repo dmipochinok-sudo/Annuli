@@ -6,7 +6,9 @@ interface Props {
   person: Person;
   persons: Person[];
   onSelect: (id: string) => void;
+  onOpenFull?: () => void;
 }
+
 
 function Node({
   title,
