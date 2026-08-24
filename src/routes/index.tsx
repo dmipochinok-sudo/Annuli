@@ -584,9 +584,6 @@ function Index() {
                   onOpenScans={openScans}
                 />
               )}
-              {tab === "t2" && (
-                <PersonFamily person={current} editMode={editMode} onChange={patchDraft} />
-              )}
               {tab === "t3" && (
                 <PersonDocs
                   person={current}
@@ -630,15 +627,15 @@ function Index() {
               {tab === "t5" && (
                 <PersonMemories person={current} editMode={editMode} onChange={patchDraft} />
               )}
-              {tab === "t6" && (
-                <PersonTree
+              {tab === "t7" && (
+                <PersonAlbums
                   person={current}
-                  persons={persons}
-                  onSelect={selectPerson}
-                  onOpenFull={() => setTreeOpen(true)}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenPhotos={openPhotos}
                 />
-
               )}
+
             </>
           )}
         </main>
