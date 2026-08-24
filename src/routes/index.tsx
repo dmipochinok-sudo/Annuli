@@ -133,7 +133,6 @@ function Index() {
         >
           ☰
         </button>
-        <div className="hidden md:block" />
         <div className="flex min-w-0 items-center gap-2">
           <svg viewBox="0 0 100 100" className="size-6 text-primary" aria-hidden>
             <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
