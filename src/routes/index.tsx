@@ -36,7 +36,7 @@ import {
   buildPersonTxt,
   personArchiveName,
 } from "@/lib/annuli/person-export";
-import { mkPerson, uid, type Page, type Person } from "@/lib/annuli/types";
+import { mkPerson, uid, type Page, type Person, type Photo } from "@/lib/annuli/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
