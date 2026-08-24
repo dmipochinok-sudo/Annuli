@@ -391,22 +391,19 @@ function Index() {
             onClick={newPerson}
             className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <span aria-hidden>👤</span>
-            <span className="hidden sm:inline"> Добавить</span>
+            <span className="whitespace-nowrap">＋ Добавить</span>
           </button>
           <button
             onClick={() => setTreeOpen(true)}
             className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <span aria-hidden>🌳</span>
-            <span className="hidden sm:inline"> Древо</span>
+            <span className="whitespace-nowrap">Древо</span>
           </button>
           <button
             onClick={() => setDbOpen(true)}
             className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <span aria-hidden>💾</span>
-            <span className="hidden sm:inline"> Импорт / Экспорт базы</span>
+            <span className="whitespace-nowrap">Импорт / Экспорт базы</span>
           </button>
         </div>
       </header>
@@ -514,27 +511,27 @@ function Index() {
                       onClick={startEdit}
                       className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
                     >
-                      ✎ Редактировать
+                      Редактировать
                     </button>
                     <button
                       onClick={exportTxt}
                       disabled={isNew}
                       className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
                     >
-                      ⇪ Экспорт в .TXT
+                      Экспорт в .TXT
                     </button>
                     <button
                       onClick={() => void exportDocsArchive()}
                       disabled={exporting || isNew}
                       className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
                     >
-                      🗄 {exporting ? "Готовим архив…" : "Создать архивный раздел"}
+                      {exporting ? "Готовим архив…" : "Создать архивный раздел"}
                     </button>
                     <button
                       onClick={remove}
                       className="h-8 rounded-lg bg-destructive px-3 text-[14px] font-medium text-destructive-foreground transition hover:brightness-110"
                     >
-                      🗑 Удалить
+                      Удалить
                     </button>
                   </>
                 )}
