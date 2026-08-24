@@ -26,6 +26,13 @@ import { makeThumbnail } from "@/lib/annuli/media";
 import { Toaster } from "@/components/ui/sonner";
 import { useAnnuli } from "@/hooks/use-annuli";
 import { fullName, lifeDates } from "@/lib/annuli/format";
+import { downloadBlob } from "@/lib/annuli/archive";
+import { personFolderName } from "@/lib/annuli/media";
+import {
+  buildPersonDocsArchive,
+  buildPersonTxt,
+  personArchiveName,
+} from "@/lib/annuli/person-export";
 import { mkPerson, uid, type Page, type Person } from "@/lib/annuli/types";
 
 export const Route = createFileRoute("/")({
@@ -260,6 +267,31 @@ function Index() {
     patchDraft({ avatarImageId: imageId, avatarImageName: file.name, avatarThumb: thumb });
   };
 
+  const exportTxt = () => {
+    if (!selected) return;
+    const blob = new Blob([buildPersonTxt(selected)], { type: "text/plain;charset=utf-8" });
+    downloadBlob(blob, `${personFolderName(selected)}.txt`);
+    toast.success("Текстовое досье сохранено");
+  };
+
+  const exportDocsArchive = async () => {
+    if (!selected) return;
+    setExporting(true);
+    try {
+      const { blob, files } = await buildPersonDocsArchive(selected);
+      if (!files) {
+        toast.error("У персоны нет прикреплённых сканов документов");
+        return;
+      }
+      downloadBlob(blob, personArchiveName(selected));
+      toast.success(`Архивный раздел готов: ${files} документов со сканами`);
+    } catch (e) {
+      toast.error("Ошибка экспорта: " + (e instanceof Error ? e.message : String(e)));
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const remove = async () => {
     if (!selected) return;
     if (!confirm(`Удалить персону «${fullName(selected) || "Без имени"}»?`)) return;
@@ -480,15 +512,29 @@ function Index() {
                   <>
                     <button
                       onClick={startEdit}
-                      className="rounded-md bg-primary px-3 py-2 text-[13px] font-semibold text-primary-foreground hover:brightness-110"
+                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
                     >
-                      Редактировать
+                      ✎ Редактировать
+                    </button>
+                    <button
+                      onClick={exportTxt}
+                      disabled={isNew}
+                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
+                    >
+                      ⇪ Экспорт в .TXT
+                    </button>
+                    <button
+                      onClick={() => void exportDocsArchive()}
+                      disabled={exporting || isNew}
+                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
+                    >
+                      🗄 {exporting ? "Готовим архив…" : "Создать архивный раздел"}
                     </button>
                     <button
                       onClick={remove}
-                      className="rounded-md bg-destructive px-3 py-2 text-[13px] font-semibold text-destructive-foreground hover:brightness-110"
+                      className="h-8 rounded-lg bg-destructive px-3 text-[14px] font-medium text-destructive-foreground transition hover:brightness-110"
                     >
-                      Удалить
+                      🗑 Удалить
                     </button>
                   </>
                 )}
