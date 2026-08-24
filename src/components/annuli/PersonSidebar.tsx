@@ -9,9 +9,10 @@ interface Props {
   selectedId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
+  className?: string;
 }
 
-export function PersonSidebar({ persons, selectedId, onSelect, onNew }: Props) {
+export function PersonSidebar({ persons, selectedId, onSelect, onNew, className }: Props) {
   const [query, setQuery] = useState("");
   const [gen, setGen] = useState("");
   const [gender, setGender] = useState("");
@@ -42,7 +43,12 @@ export function PersonSidebar({ persons, selectedId, onSelect, onNew }: Props) {
   }, [persons, query, gen, gender, showLateral]);
 
   return (
-    <aside className="flex w-[280px] shrink-0 flex-col border-r border-border bg-sidebar">
+    <aside
+      className={cn(
+        "flex w-full min-w-0 shrink-0 flex-col border-border bg-sidebar md:w-[280px] md:border-r",
+        className,
+      )}
+    >
       <div className="flex flex-col gap-2 border-b border-border p-2.5">
         <input
           value={query}
