@@ -349,6 +349,43 @@ function Index() {
           ) : (
             <>
               <div className="mb-4 grid grid-cols-[minmax(0,1fr)] items-center gap-2 sm:flex sm:flex-wrap">
+                <input
+                  ref={avatarInput}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(ev) => void onAvatarFile(ev.target.files?.[0])}
+                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editMode) {
+                        if (avatarInput.current) {
+                          avatarInput.current.value = "";
+                          avatarInput.current.click();
+                        }
+                      } else if (currentAvatarId) {
+                        setLbItems([
+                          { imageId: currentAvatarId, title: current.avatarImageName || "Портрет" },
+                        ]);
+                        setLbIndex(0);
+                      }
+                    }}
+                    title={editMode ? "Загрузить портрет" : "Открыть портрет"}
+                    className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-muted text-[13px] font-bold text-muted-foreground"
+                  >
+                    {avatarUrl || current.avatarThumb ? (
+                      <img
+                        src={avatarUrl || current.avatarThumb}
+                        alt={`Портрет: ${fullName(current) || "персона"}`}
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <span>{editMode ? "＋" : "?"}</span>
+                    )}
+                  </button>
+                </div>
                 <div className="min-w-0 flex-1">
                   <h2 className="truncate text-[18px] font-bold tracking-tight sm:text-[22px]">
                     {fullName(current) || "Новая персона"}
