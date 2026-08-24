@@ -66,6 +66,106 @@ export function TextField({
   );
 }
 
+export function TextArea({
+  label,
+  value,
+  onChange,
+  readOnly,
+  rows = 4,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  readOnly?: boolean;
+  rows?: number;
+  placeholder?: string;
+}) {
+  return (
+    <label className="flex flex-col gap-1">
+      <Label>{label}</Label>
+      {readOnly ? (
+        <span className="whitespace-pre-wrap py-1.5 text-[13px] text-foreground">
+          {value || "—"}
+        </span>
+      ) : (
+        <textarea
+          className={inputCls + " resize-y"}
+          rows={rows}
+          value={value}
+          placeholder={placeholder}
+          onChange={(ev) => onChange(ev.target.value)}
+        />
+      )}
+    </label>
+  );
+}
+
+export function CheckField({
+  label,
+  checked,
+  onChange,
+  readOnly,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  readOnly?: boolean;
+}) {
+  return (
+    <label className="flex items-center gap-2 text-[13px]">
+      <input
+        type="checkbox"
+        disabled={readOnly}
+        checked={checked}
+        onChange={(ev) => onChange(ev.target.checked)}
+        className="accent-primary"
+      />
+      {label}
+    </label>
+  );
+}
+
+export function CardItem({
+  title,
+  onRemove,
+  readOnly,
+  children,
+}: {
+  title: string;
+  onRemove: () => void;
+  readOnly?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className="mb-2.5 rounded-lg border border-border bg-background/40 p-3">
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <span className="truncate text-[12px] font-bold text-foreground">{title}</span>
+        {!readOnly && (
+          <button
+            onClick={onRemove}
+            className="shrink-0 rounded-md border border-border px-2 py-1 text-[11px] text-destructive hover:bg-destructive/10"
+          >
+            Удалить
+          </button>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+export function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="rounded-md border border-dashed border-primary px-3 py-2 text-[12px] font-semibold text-primary hover:bg-primary/10"
+    >
+      {label}
+    </button>
+  );
+}
+
 interface Props {
   person: Person;
   editMode: boolean;
