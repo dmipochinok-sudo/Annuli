@@ -325,16 +325,16 @@ function Index() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-auto shrink-0 flex-wrap items-center gap-2 border-b border-border bg-header px-3 py-2.5 text-header-foreground sm:px-4">
+      <header className="flex h-auto shrink-0 flex-wrap items-center gap-3 border-b border-border bg-header px-4 py-3 text-header-foreground sm:px-6">
         <button
           onClick={() => setSidebarOpen((v) => !v)}
           aria-label="Список персон"
-          className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] transition hover:border-stroke-bright md:hidden"
+          className="h-8 rounded-sm border border-border px-2.5 font-ui text-[14px] transition hover:border-stroke-bright md:hidden"
         >
           ☰
         </button>
         <div className="flex min-w-0 items-center gap-2">
-          <svg viewBox="0 0 100 100" className="size-7 text-foreground" aria-hidden>
+          <svg viewBox="0 0 100 100" className="size-6 text-primary" aria-hidden>
             <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
             <circle
               cx="50"
@@ -355,26 +355,26 @@ function Index() {
               opacity=".45"
             />
           </svg>
-          <h1 className="text-[20px] font-semibold tracking-tight">Annuli</h1>
+          <h1 className="font-display text-[24px] tracking-tight text-foreground">Annuli</h1>
         </div>
 
         <div className="order-last flex min-w-0 flex-1 basis-full items-center gap-2 sm:order-none sm:basis-auto">
           <div className="relative min-w-0 flex-1">
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-muted-foreground">
+            <span className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 font-ui text-[12px] text-muted-foreground">
               ⌕
             </span>
             <input
               value={query}
               onChange={(ev) => setQuery(ev.target.value)}
-              placeholder="Поиск по имени или индексу…"
+              placeholder="ПОИСК ПО АРХИВУ…"
               aria-label="Поиск персоны"
-              className="h-8 w-full rounded-lg border border-border bg-surface-dark pl-8 pr-8 text-[14px] text-foreground outline-none transition focus:border-stroke-bright"
+              className="h-8 w-full border-b border-border bg-transparent pl-6 pr-6 font-ui text-[10px] uppercase tracking-[0.22em] text-foreground outline-none transition placeholder:text-dim focus:border-primary"
             />
             {query && (
               <button
                 onClick={() => setQuery("")}
                 aria-label="Очистить поиск"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-foreground"
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-foreground"
               >
                 ✕
               </button>
@@ -382,52 +382,41 @@ function Index() {
           </div>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="h-8 shrink-0 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="h-8 shrink-0 border-b border-border px-2 font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
           >
             Найти
           </button>
         </div>
 
-        <div className="flex items-center gap-2 sm:ml-auto">
-          <button
-            onClick={toggleTheme}
-            className="hidden h-8 items-center gap-2 rounded-lg px-2 text-[14px] text-foreground sm:flex"
-          >
-            <span>{dark ? "☾ Тёмная тема" : "☀︎ Светлая тема"}</span>
-            <span
-              className={
-                "relative h-5 w-9 rounded-full transition " +
-                (dark ? "bg-primary" : "bg-surface-light")
-              }
-            >
-              <span
-                className={
-                  "absolute top-0.5 size-4 rounded-full bg-foreground transition-all " +
-                  (dark ? "left-[18px]" : "left-0.5")
-                }
-              />
-            </span>
-          </button>
-          <button
-            onClick={newPerson}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-          >
-            <span className="whitespace-nowrap">＋ Добавить</span>
-          </button>
+        <div className="flex items-center gap-5 sm:ml-auto">
           <button
             onClick={() => setTreeOpen(true)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
           >
-            <span className="whitespace-nowrap">Древо</span>
+            Древо
           </button>
           <button
             onClick={() => setDbOpen(true)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
           >
-            <span className="whitespace-nowrap">Импорт / Экспорт базы</span>
+            База
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="hidden font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground sm:block"
+          >
+            {dark ? "Светлая тема" : "Тёмная тема"}
+          </button>
+          <span className="hidden h-5 w-px bg-border sm:block" />
+          <button
+            onClick={newPerson}
+            className="rounded-sm border border-primary px-4 py-1.5 font-ui text-[10px] uppercase tracking-[0.2em] text-primary transition hover:bg-primary hover:text-primary-foreground"
+          >
+            ＋ Новая персона
           </button>
         </div>
       </header>
+
 
 
       <div className="relative flex flex-1 overflow-hidden">
