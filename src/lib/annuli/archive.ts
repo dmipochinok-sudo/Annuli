@@ -240,21 +240,38 @@ async function restoreImage(zip: JSZip, imageId: string, filePath: string) {
 
 async function restorePersonMedia(p: Person, zip: JSZip | null) {
   if (!zip) return;
-  const withFile = p as Person & { _avatarFile?: string };
+  const withFile = p as Person & {
+    _avatarFile?: string;
+    _avatarFiles?: Record<string, string>;
+  };
   if (p.avatarImageId && withFile._avatarFile)
     await restoreImage(zip, p.avatarImageId, withFile._avatarFile);
+  for (const [imgId, path] of Object.entries(withFile._avatarFiles || {})) {
+    await restoreImage(zip, imgId, path);
+  }
   for (const g of pageGroups(p)) {
     for (const pg of g.pages) {
       if (pg?.imageId && pg._file) await restoreImage(zip, pg.imageId, pg._file);
     }
   }
+  for (const al of p.albums || []) {
+    for (const ph of al.photos || []) {
+      if (ph.imageId && ph._file) await restoreImage(zip, ph.imageId, ph._file);
+    }
+  }
 }
 
 function stripHelpers(p: Person): Person {
-  const withFile = p as Person & { _avatarFile?: string; _imgs?: unknown };
+  const withFile = p as Person & {
+    _avatarFile?: string;
+    _avatarFiles?: Record<string, string>;
+    _imgs?: unknown;
+  };
   delete withFile._avatarFile;
+  delete withFile._avatarFiles;
   delete withFile._imgs;
   for (const g of pageGroups(p)) for (const pg of g.pages) delete pg._file;
+  for (const al of p.albums || []) for (const ph of al.photos || []) delete ph._file;
   return p;
 }
 
