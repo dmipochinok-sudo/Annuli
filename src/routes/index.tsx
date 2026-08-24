@@ -9,9 +9,8 @@ import { PersonCareer } from "@/components/annuli/PersonCareer";
 import { PersonService } from "@/components/annuli/PersonService";
 import { PersonDeath } from "@/components/annuli/PersonDeath";
 import { PersonDocs } from "@/components/annuli/PersonDocs";
-import { PersonFamily } from "@/components/annuli/PersonFamily";
+import { PersonAlbums } from "@/components/annuli/PersonAlbums";
 import { PersonMemories } from "@/components/annuli/PersonMemories";
-import { PersonTree } from "@/components/annuli/PersonTree";
 import { TreeOverlay } from "@/components/annuli/TreeOverlay";
 
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
