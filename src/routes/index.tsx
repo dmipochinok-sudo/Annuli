@@ -410,10 +410,12 @@ function Index() {
           </button>
           <button
             onClick={newPerson}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <span className="whitespace-nowrap">＋ Добавить персону</span>
+            <UserRoundPlus className="size-4" strokeWidth={1.75} />
+            <span className="whitespace-nowrap">Добавить персону</span>
           </button>
+
           <button
             onClick={() => setTreeOpen(true)}
             className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
