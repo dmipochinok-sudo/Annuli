@@ -8,7 +8,7 @@ interface Props {
   persons: Person[];
   selectedId: string | null;
   onSelect: (id: string) => void;
-  onNew: () => void;
+  
   className?: string;
   query?: string;
   onQueryChange?: (v: string) => void;
