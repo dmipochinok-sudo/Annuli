@@ -4,10 +4,13 @@ import { toast } from "sonner";
 
 import { PersonBirth } from "@/components/annuli/PersonBirth";
 import { PersonMain } from "@/components/annuli/PersonMain";
+import { PersonEducation } from "@/components/annuli/PersonEducation";
+import { PersonCareer } from "@/components/annuli/PersonCareer";
+import { PersonService } from "@/components/annuli/PersonService";
+import { PersonDeath } from "@/components/annuli/PersonDeath";
 import { PersonDocs } from "@/components/annuli/PersonDocs";
 import { PersonFamily } from "@/components/annuli/PersonFamily";
 import { PersonMemories } from "@/components/annuli/PersonMemories";
-import { PersonMilitary } from "@/components/annuli/PersonMilitary";
 import { PersonTree } from "@/components/annuli/PersonTree";
 import { TreeOverlay } from "@/components/annuli/TreeOverlay";
 
@@ -58,9 +61,12 @@ export const Route = createFileRoute("/")({
 const TABS = [
   { id: "t1", label: "Основное", ready: true },
   { id: "tb", label: "Рождение", ready: true },
+  { id: "te", label: "Учеба", ready: true },
+  { id: "tc", label: "Карьера", ready: true },
+  { id: "t4", label: "Военная служба", ready: true },
+  { id: "td", label: "Смерть", ready: true },
   { id: "t2", label: "Семья", ready: true },
-  { id: "t3", label: "Документы", ready: true },
-  { id: "t4", label: "Служба", ready: true },
+  { id: "t3", label: "Архив", ready: true },
   { id: "t5", label: "Воспоминания", ready: true },
   { id: "t6", label: "Дерево", ready: true },
 ];
@@ -589,8 +595,32 @@ function Index() {
                   onOpenScans={openScans}
                 />
               )}
+              {tab === "te" && (
+                <PersonEducation
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
+              )}
+              {tab === "tc" && (
+                <PersonCareer
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
+              )}
               {tab === "t4" && (
-                <PersonMilitary
+                <PersonService
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
+              )}
+              {tab === "td" && (
+                <PersonDeath
                   person={current}
                   editMode={editMode}
                   onChange={patchDraft}
