@@ -412,7 +412,7 @@ function Index() {
             onClick={newPerson}
             className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <span className="whitespace-nowrap">＋ Добавить</span>
+            <span className="whitespace-nowrap">＋ Добавить персону</span>
           </button>
           <button
             onClick={() => setTreeOpen(true)}
