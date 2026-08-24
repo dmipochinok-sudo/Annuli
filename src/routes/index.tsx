@@ -494,7 +494,19 @@ function Index() {
           )}
         </main>
       </div>
+      {treeOpen && (
+        <TreeOverlay
+          persons={persons}
+          currentId={selectedId}
+          onSelect={(id) => {
+            selectPerson(id);
+            setTreeOpen(false);
+          }}
+          onClose={() => setTreeOpen(false)}
+        />
+      )}
       {dbOpen && (
+
         <DbModal
           persons={persons}
           onClose={() => setDbOpen(false)}
