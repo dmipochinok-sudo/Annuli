@@ -231,3 +231,20 @@ export function makeThumbnail(blob: Blob, maxW = 160, maxH = 160): Promise<strin
     img.src = url;
   });
 }
+
+/** Имя папки персоны в архиве: «N_5_3 Вениамин Романович Поберский». */
+export function personFolderName(p: {
+  personIndex?: string;
+  id?: string;
+  firstName?: string;
+  patronymic?: string;
+  lastName?: string;
+}): string {
+  const idx = (p.personIndex || "").trim().replace(/\./g, "_");
+  const name = [p.firstName, p.patronymic, p.lastName]
+    .map((s) => (s || "").trim())
+    .filter(Boolean)
+    .join(" ");
+  const base = [idx, name].filter(Boolean).join(" ");
+  return sanitizeFileBase(base || p.id || "person");
+}
