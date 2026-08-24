@@ -246,19 +246,27 @@ export interface Person {
   fatherPatronymic: string;
   fatherEstate: string;
   fatherLinkedId: string;
+  fatherIndex?: string;
+  fatherAvatarImageId?: string;
   motherLastName: string;
   motherFirstName: string;
   motherPatronymic: string;
   motherEstate: string;
   motherLinkedId: string;
+  motherIndex?: string;
+  motherAvatarImageId?: string;
   godfatherLastName: string;
   godfatherFirstName: string;
   godfatherPatronymic: string;
   godfatherPlace: string;
+  godfatherIndex?: string;
+  godfatherAvatarImageId?: string;
   godmotherLastName: string;
   godmotherFirstName: string;
   godmotherPatronymic: string;
   godmotherPlace: string;
+  godmotherIndex?: string;
+  godmotherAvatarImageId?: string;
   avatarThumb: string;
   avatarImageId: string;
   avatarImageName: string;
@@ -269,6 +277,19 @@ export interface Person {
   documents: Doc[];
   memories: Memory[];
   military: Military;
+  /** Учёба. */
+  educations: Education[];
+  educationDocs: Doc[];
+  /** Карьера. */
+  jobs: Job[];
+  jobDocs: Doc[];
+  /** Военная служба (новая структура). */
+  militaryPlaces: MilitaryPlace[];
+  militaryConflicts: MilitaryConflict[];
+  militaryAwards: Award[];
+  militaryDocs: Doc[];
+  /** Фотоальбомы. */
+  albums: Album[];
   deathDateApprox: boolean;
   deathDate: string;
   deathYearFrom: string;
