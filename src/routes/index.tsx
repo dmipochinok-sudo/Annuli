@@ -540,16 +540,16 @@ function Index() {
                 )}
               </div>
 
-              <div className="mb-4 -mx-3 flex gap-1 overflow-x-auto rounded-t-xl bg-card px-3 shadow-sm sm:mx-0 sm:flex-wrap sm:px-1">
+              <div className="mb-4 -mx-3 flex gap-1 overflow-x-auto rounded-xl border border-border bg-surface-light px-3 sm:mx-0 sm:flex-wrap sm:px-2">
                 {TABS.map((t) => (
                   <button
                     key={t.id}
                     disabled={!t.ready}
                     onClick={() => setTab(t.id)}
                     className={
-                      "-mb-px shrink-0 border-b-2 px-3 py-2.5 text-[12px] font-medium transition " +
+                      "-mb-px shrink-0 border-b-2 px-3 py-3 text-[14px] font-medium uppercase tracking-[0.03em] transition " +
                       (tab === t.id
-                        ? "border-primary font-bold text-primary"
+                        ? "border-link text-foreground"
                         : "border-transparent text-muted-foreground hover:text-foreground") +
                       (t.ready ? "" : " cursor-not-allowed opacity-40")
                     }
@@ -652,6 +652,11 @@ function Index() {
           loadImage={loadImage}
         />
       )}
+
+      <footer className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-border bg-header px-4 py-2 text-[12px] text-muted-foreground">
+        <span>Annuli 2026 — Genealogical data management system</span>
+        <span>Developer: Dmitry Pochinok. All rights reserved. © 2026</span>
+      </footer>
 
       <Toaster />
     </div>
