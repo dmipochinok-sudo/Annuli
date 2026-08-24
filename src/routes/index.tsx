@@ -9,9 +9,8 @@ import { PersonCareer } from "@/components/annuli/PersonCareer";
 import { PersonService } from "@/components/annuli/PersonService";
 import { PersonDeath } from "@/components/annuli/PersonDeath";
 import { PersonDocs } from "@/components/annuli/PersonDocs";
-import { PersonFamily } from "@/components/annuli/PersonFamily";
+import { PersonAlbums } from "@/components/annuli/PersonAlbums";
 import { PersonMemories } from "@/components/annuli/PersonMemories";
-import { PersonTree } from "@/components/annuli/PersonTree";
 import { TreeOverlay } from "@/components/annuli/TreeOverlay";
 
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
@@ -37,7 +36,7 @@ import {
   buildPersonTxt,
   personArchiveName,
 } from "@/lib/annuli/person-export";
-import { mkPerson, uid, type Page, type Person } from "@/lib/annuli/types";
+import { mkPerson, uid, type Page, type Person, type Photo } from "@/lib/annuli/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -65,11 +64,11 @@ const TABS = [
   { id: "tc", label: "Карьера", ready: true },
   { id: "t4", label: "Военная служба", ready: true },
   { id: "td", label: "Смерть", ready: true },
-  { id: "t2", label: "Семья", ready: true },
-  { id: "t3", label: "Архив", ready: true },
   { id: "t5", label: "Воспоминания", ready: true },
-  { id: "t6", label: "Дерево", ready: true },
+  { id: "t3", label: "Архив", ready: true },
+  { id: "t7", label: "Фотоальбом", ready: true },
 ];
+
 
 function Index() {
   const { persons, loading, error, savePerson, deletePerson, reload } = useAnnuli();
@@ -249,6 +248,20 @@ function Index() {
       toast.error("Не удалось сохранить: " + (e instanceof Error ? e.message : String(e)));
     }
   };
+
+  const openPhotos = useCallback((photos: Photo[], index: number) => {
+    const items = photos
+      .filter((ph) => ph.imageId)
+      .map((ph) => ({ imageId: ph.imageId, title: ph.title || ph.imageName || "Фото" }));
+    if (!items.length) return;
+    const target = photos[index]?.imageId;
+    const i = Math.max(
+      0,
+      items.findIndex((it) => it.imageId === target),
+    );
+    setLbItems(items);
+    setLbIndex(i);
+  }, []);
 
   const openScans = useCallback((pages: Page[], index: number) => {
     const items = pages
@@ -584,9 +597,6 @@ function Index() {
                   onOpenScans={openScans}
                 />
               )}
-              {tab === "t2" && (
-                <PersonFamily person={current} editMode={editMode} onChange={patchDraft} />
-              )}
               {tab === "t3" && (
                 <PersonDocs
                   person={current}
@@ -630,15 +640,15 @@ function Index() {
               {tab === "t5" && (
                 <PersonMemories person={current} editMode={editMode} onChange={patchDraft} />
               )}
-              {tab === "t6" && (
-                <PersonTree
+              {tab === "t7" && (
+                <PersonAlbums
                   person={current}
-                  persons={persons}
-                  onSelect={selectPerson}
-                  onOpenFull={() => setTreeOpen(true)}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenPhotos={openPhotos}
                 />
-
               )}
+
             </>
           )}
         </main>
