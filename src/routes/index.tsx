@@ -72,6 +72,7 @@ function Index() {
     setEditMode(false);
     setIsNew(false);
     setTab("t1");
+    setSidebarOpen(false);
   };
 
   const newPerson = () => {
@@ -81,6 +82,7 @@ function Index() {
     setEditMode(true);
     setIsNew(true);
     setTab("t1");
+    setSidebarOpen(false);
   };
 
   const startEdit = () => {
@@ -167,15 +169,26 @@ function Index() {
         </button>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="relative flex flex-1 overflow-hidden">
+        {sidebarOpen && (
+          <button
+            aria-label="Закрыть список"
+            onClick={() => setSidebarOpen(false)}
+            className="absolute inset-0 z-10 bg-black/40 md:hidden"
+          />
+        )}
         <PersonSidebar
           persons={persons}
           selectedId={selectedId}
           onSelect={selectPerson}
           onNew={newPerson}
+          className={
+            "absolute inset-y-0 left-0 z-20 max-w-[85%] border-r shadow-xl transition-transform md:static md:z-auto md:max-w-none md:translate-x-0 md:shadow-none " +
+            (sidebarOpen ? "translate-x-0" : "-translate-x-full")
+          }
         />
 
-        <main className="flex-1 overflow-y-auto p-5">
+        <main className="min-w-0 flex-1 overflow-y-auto p-3 sm:p-5">
           {loading ? (
             <p className="text-[13px] text-muted-foreground">Загрузка базы…</p>
           ) : error ? (
@@ -189,9 +202,9 @@ function Index() {
             </div>
           ) : (
             <>
-              <div className="mb-4 flex flex-wrap items-center gap-2">
+              <div className="mb-4 grid grid-cols-[minmax(0,1fr)] items-center gap-2 sm:flex sm:flex-wrap">
                 <div className="min-w-0 flex-1">
-                  <h2 className="truncate text-[22px] font-bold tracking-tight">
+                  <h2 className="truncate text-[18px] font-bold tracking-tight sm:text-[22px]">
                     {fullName(current) || "Новая персона"}
                   </h2>
                   <p className="text-[12px] text-muted-foreground">
@@ -231,14 +244,14 @@ function Index() {
                 )}
               </div>
 
-              <div className="mb-4 flex flex-wrap gap-1 rounded-t-xl bg-card px-1 shadow-sm">
+              <div className="mb-4 -mx-3 flex gap-1 overflow-x-auto rounded-t-xl bg-card px-3 shadow-sm sm:mx-0 sm:flex-wrap sm:px-1">
                 {TABS.map((t) => (
                   <button
                     key={t.id}
                     disabled={!t.ready}
                     onClick={() => setTab(t.id)}
                     className={
-                      "-mb-px border-b-2 px-3 py-2.5 text-[12px] font-medium transition " +
+                      "-mb-px shrink-0 border-b-2 px-3 py-2.5 text-[12px] font-medium transition " +
                       (tab === t.id
                         ? "border-primary font-bold text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground") +
