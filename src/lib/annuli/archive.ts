@@ -27,6 +27,21 @@ function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
+/** Идентификаторы аватаров родственников и авторов воспоминаний. */
+function relativeAvatarIds(p: Person): string[] {
+  const ids = [
+    p.fatherAvatarImageId,
+    p.motherAvatarImageId,
+    p.godfatherAvatarImageId,
+    p.godmotherAvatarImageId,
+    ...(p.siblings || []).map((s) => s.avatarImageId),
+    ...(p.children || []).map((c) => c.avatarImageId),
+    ...(p.marriages || []).map((m) => m.spouseAvatarImageId),
+    ...(p.memories || []).map((m) => m.avatarImageId),
+  ].filter((x): x is string => !!x);
+  return [...new Set(ids)];
+}
+
 /** Собирает ZIP-архив со всеми персонами, сканами и GEDCOM. */
 export async function buildArchive(
   persons: Person[],
