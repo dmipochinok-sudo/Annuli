@@ -125,8 +125,16 @@ function Index() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-13 shrink-0 items-center justify-between bg-header px-4 py-3 text-header-foreground">
-        <div className="flex items-center gap-2">
+      <header className="grid h-13 shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 bg-header px-3 py-3 text-header-foreground sm:px-4">
+        <button
+          onClick={() => setSidebarOpen((v) => !v)}
+          aria-label="Список персон"
+          className="rounded-md border border-white/15 px-2 py-1 text-[13px] transition hover:bg-white/10 md:hidden"
+        >
+          ☰
+        </button>
+        <div className="hidden md:block" />
+        <div className="flex min-w-0 items-center gap-2">
           <svg viewBox="0 0 100 100" className="size-6 text-primary" aria-hidden>
             <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
             <circle
