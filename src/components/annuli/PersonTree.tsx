@@ -42,7 +42,7 @@ function nameOf(first: string, patr: string, last: string) {
   return [first, patr, last].filter(Boolean).join(" ");
 }
 
-export function PersonTree({ person: p, persons, onSelect }: Props) {
+export function PersonTree({ person: p, persons, onSelect, onOpenFull }: Props) {
   const byId = (id: string) => persons.find((x) => x.id === id) ?? null;
 
   const father = p.fatherLinkedId ? byId(p.fatherLinkedId) : null;
