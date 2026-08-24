@@ -1,13 +1,15 @@
 import { Row, Section, TextArea, TextField } from "@/components/annuli/PersonBasic";
-import type { Military, Person } from "@/lib/annuli/types";
+import { PagesEditor } from "@/components/annuli/PagesEditor";
+import type { Military, Page, Person } from "@/lib/annuli/types";
 
 interface Props {
   person: Person;
   editMode: boolean;
   onChange: (patch: Partial<Person>) => void;
+  onOpenScans: (pages: Page[], index: number) => void;
 }
 
-export function PersonMilitary({ person: p, editMode, onChange }: Props) {
+export function PersonMilitary({ person: p, editMode, onChange, onOpenScans }: Props) {
   const ro = !editMode;
   const m = p.military;
   const set = (patch: Partial<Military>) => onChange({ military: { ...m, ...patch } });
@@ -90,6 +92,13 @@ export function PersonMilitary({ person: p, editMode, onChange }: Props) {
           <TextField label="Дело" value={m.delo} readOnly={ro} onChange={(v) => set({ delo: v })} />
           <TextField label="Лист" value={m.list} readOnly={ro} onChange={(v) => set({ list: v })} />
         </Row>
+        <PagesEditor
+          label="Сканы документов службы"
+          pages={m.pages}
+          editMode={editMode}
+          onChange={(pages) => set({ pages })}
+          onOpen={onOpenScans}
+        />
       </Section>
     </div>
   );

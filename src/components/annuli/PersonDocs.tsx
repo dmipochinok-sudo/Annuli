@@ -6,15 +6,17 @@ import {
   TextArea,
   TextField,
 } from "@/components/annuli/PersonBasic";
-import { mkDoc, type Doc, type Person } from "@/lib/annuli/types";
+import { PagesEditor } from "@/components/annuli/PagesEditor";
+import { mkDoc, type Doc, type Page, type Person } from "@/lib/annuli/types";
 
 interface Props {
   person: Person;
   editMode: boolean;
   onChange: (patch: Partial<Person>) => void;
+  onOpenScans: (pages: Page[], index: number) => void;
 }
 
-export function PersonDocs({ person: p, editMode, onChange }: Props) {
+export function PersonDocs({ person: p, editMode, onChange, onOpenScans }: Props) {
   const ro = !editMode;
   const patchDoc = (id: string, patch: Partial<Doc>) =>
     onChange({ documents: p.documents.map((d) => (d.id === id ? { ...d, ...patch } : d)) });
@@ -60,6 +62,13 @@ export function PersonDocs({ person: p, editMode, onChange }: Props) {
             onChange={(v) => onChange({ birthDocList: v })}
           />
         </Row>
+        <PagesEditor
+          label="Сканы метрики о рождении"
+          pages={p.birthDocPages}
+          editMode={editMode}
+          onChange={(pages) => onChange({ birthDocPages: pages })}
+          onOpen={onOpenScans}
+        />
       </Section>
 
       <Section title="Документ о смерти">
@@ -101,6 +110,13 @@ export function PersonDocs({ person: p, editMode, onChange }: Props) {
             onChange={(v) => onChange({ deathDocList: v })}
           />
         </Row>
+        <PagesEditor
+          label="Сканы метрики о смерти"
+          pages={p.deathDocPages}
+          editMode={editMode}
+          onChange={(pages) => onChange({ deathDocPages: pages })}
+          onOpen={onOpenScans}
+        />
       </Section>
 
       <Section title={`Прочие документы (${p.documents.length})`}>
@@ -167,6 +183,13 @@ export function PersonDocs({ person: p, editMode, onChange }: Props) {
                 onChange={(v) => patchDoc(d.id, { comment: v })}
               />
             </div>
+            <PagesEditor
+              label="Сканы документа"
+              pages={d.pages}
+              editMode={editMode}
+              onChange={(pages) => patchDoc(d.id, { pages })}
+              onOpen={onOpenScans}
+            />
           </CardItem>
         ))}
         {!ro && (
