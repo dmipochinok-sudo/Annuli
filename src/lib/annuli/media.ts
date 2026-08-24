@@ -2,6 +2,21 @@
 // сбор идентификаторов изображений, миниатюры.
 import type { Page, Person } from "./types";
 
+export interface DocMeta {
+  /** Название документа. */
+  name: string;
+  archive: string;
+  fund: string;
+  opis: string;
+  delo: string;
+  list: string;
+  /** Онлайн-ссылка на документ. */
+  link: string;
+  /** Расшифровка на уровне документа. */
+  transcription: string;
+  comment: string;
+}
+
 export interface PageGroup {
   /** Стабильный ключ набора (используется для имён файлов в архиве). */
   key: string;
@@ -9,6 +24,22 @@ export interface PageGroup {
   /** Базовое имя документа для файлов архива. */
   docId: string;
   pages: Page[];
+  meta: DocMeta;
+}
+
+function meta(m: Partial<DocMeta>): DocMeta {
+  return {
+    name: "",
+    archive: "",
+    fund: "",
+    opis: "",
+    delo: "",
+    list: "",
+    link: "",
+    transcription: "",
+    comment: "",
+    ...m,
+  };
 }
 
 /** Все наборы страниц персоны в фиксированном порядке. */
@@ -20,18 +51,44 @@ export function pageGroups(p: Person): PageGroup[] {
       label: "Документ о рождении",
       docId: p.birthDocId || `${idx}.birth`,
       pages: p.birthDocPages || [],
+      meta: meta({
+        name: p.birthDocName || "Документ о рождении",
+        archive: p.birthDocArchive,
+        fund: p.birthDocFund,
+        opis: p.birthDocOpis,
+        delo: p.birthDocDelo,
+        list: p.birthDocList,
+        link: p.birthDocPath,
+      }),
     },
     {
       key: "death",
       label: "Документ о смерти",
       docId: p.deathDocId || `${idx}.death`,
       pages: p.deathDocPages || [],
+      meta: meta({
+        name: p.deathDocName || "Документ о смерти",
+        archive: p.deathDocArchive,
+        fund: p.deathDocFund,
+        opis: p.deathDocOpis,
+        delo: p.deathDocDelo,
+        list: p.deathDocList,
+        link: p.deathDocPath,
+      }),
     },
     {
       key: "military",
       label: "Военная служба",
       docId: p.military?.docId || `${idx}.mil`,
       pages: p.military?.pages || [],
+      meta: meta({
+        name: "Документ о военной службе",
+        archive: p.military?.archive ?? "",
+        fund: p.military?.fund ?? "",
+        opis: p.military?.opis ?? "",
+        delo: p.military?.delo ?? "",
+        list: p.military?.list ?? "",
+      }),
     },
   ];
   (p.marriages || []).forEach((m, i) => {
@@ -40,6 +97,15 @@ export function pageGroups(p: Person): PageGroup[] {
       label: `Брак ${i + 1}`,
       docId: m.marriageDocId || `${idx}.marriage${i + 1}`,
       pages: m.marriageDocPages || [],
+      meta: meta({
+        name: m.marriageDocName || `Документ о браке ${i + 1}`,
+        archive: m.marriageDocArchive,
+        fund: m.marriageDocFund,
+        opis: m.marriageDocOpis,
+        delo: m.marriageDocDelo,
+        list: m.marriageDocList,
+        link: m.marriageDocPath,
+      }),
     });
   });
   (p.children || []).forEach((c, i) => {
@@ -48,6 +114,14 @@ export function pageGroups(p: Person): PageGroup[] {
       label: `Ребёнок ${i + 1}`,
       docId: c.birthDocId || `${idx}.child${i + 1}`,
       pages: c.birthDocPages || [],
+      meta: meta({
+        name: c.birthDocName || `Документ о рождении ребёнка ${i + 1}`,
+        archive: c.birthDocArchive,
+        fund: c.birthDocFund,
+        opis: c.birthDocOpis,
+        delo: c.birthDocDelo,
+        list: c.birthDocList,
+      }),
     });
   });
   (p.documents || []).forEach((d, i) => {
@@ -56,10 +130,22 @@ export function pageGroups(p: Person): PageGroup[] {
       label: d.name || `Документ ${i + 1}`,
       docId: d.docId || `${idx}.doc${i + 1}`,
       pages: d.pages || [],
+      meta: meta({
+        name: d.name || `Документ ${i + 1}`,
+        archive: d.archive,
+        fund: d.fund,
+        opis: d.opis,
+        delo: d.delo,
+        list: d.list,
+        link: d.path,
+        transcription: d.transcription,
+        comment: d.comment,
+      }),
     });
   });
   return groups;
 }
+
 
 /** Все imageId, на которые ссылается персона. */
 export function collectImageIds(p: Person): Set<string> {
