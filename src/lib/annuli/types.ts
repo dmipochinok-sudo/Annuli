@@ -62,6 +62,8 @@ export interface Marriage {
   marriageDocOpis: string;
   marriageDocDelo: string;
   marriageDocList: string;
+  spouseIndex?: string;
+  spouseAvatarImageId?: string;
 }
 
 export interface Child {
@@ -70,6 +72,8 @@ export interface Child {
   firstName: string;
   lastName: string;
   patronymic: string;
+  personIndex?: string;
+  avatarImageId?: string;
   gender: string;
   estate: string;
   birthDateApprox: boolean;
@@ -91,8 +95,11 @@ export interface Doc {
   id: string;
   docId: string;
   name: string;
+  /** Дата документа. */
+  date?: string;
   transcription: string;
   comment: string;
+  /** Онлайн-ссылка на документ (совместимо со старым `path`). */
   path: string;
   archive: string;
   fund: string;
@@ -110,6 +117,94 @@ export interface Memory {
   patronymic: string;
   date: string;
   text: string;
+  /** Связь автора воспоминаний с персоной базы. */
+  linkedId?: string;
+  personIndex?: string;
+  /** Кто записал воспоминание. */
+  recordedBy?: string;
+  /** Обстоятельства записи. */
+  circumstances?: string;
+  comment?: string;
+  avatarImageId?: string;
+  avatarThumb?: string;
+}
+
+/** Место учёбы. */
+export interface Education {
+  id: string;
+  school: string;
+  speciality: string;
+  dateFrom: string;
+  dateTo: string;
+  place: string;
+  fund: string;
+  opis: string;
+  delo: string;
+  list: string;
+}
+
+/** Место работы. */
+export interface Job {
+  id: string;
+  employer: string;
+  division: string;
+  position: string;
+  dateFrom: string;
+  dateTo: string;
+  endReason: string;
+  place: string;
+}
+
+/** Место военной службы. */
+export interface MilitaryPlace {
+  id: string;
+  unit: string;
+  rank: string;
+  position: string;
+  dateFrom: string;
+  dateTo: string;
+  endReason: string;
+  place: string;
+}
+
+export interface MilitaryConflict {
+  id: string;
+  name: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface Award {
+  id: string;
+  name: string;
+  date: string;
+  rank: string;
+  docNumber: string;
+  storage: string;
+}
+
+/** Фотография в альбоме. */
+export interface Photo {
+  id: string;
+  imageId: string;
+  imageName?: string;
+  thumb?: string;
+  date: string;
+  title: string;
+  photoId: string;
+  backText: string;
+  place: string;
+  comment: string;
+  /** Служебное поле экспорта/импорта: путь файла внутри ZIP. */
+  _file?: string;
+}
+
+export interface Album {
+  id: string;
+  albumId: string;
+  name: string;
+  storage: string;
+  photos: Photo[];
 }
 
 export interface Sibling {
@@ -118,7 +213,14 @@ export interface Sibling {
   firstName?: string;
   lastName?: string;
   patronymic?: string;
+  personIndex?: string;
+  gender?: string;
+  avatarImageId?: string;
   [key: string]: unknown;
+}
+
+export function mkSibling(): Sibling {
+  return { id: uid(), linkedId: "", firstName: "", patronymic: "", lastName: "", personIndex: "" };
 }
 
 export interface Residence {
@@ -155,19 +257,27 @@ export interface Person {
   fatherPatronymic: string;
   fatherEstate: string;
   fatherLinkedId: string;
+  fatherIndex?: string;
+  fatherAvatarImageId?: string;
   motherLastName: string;
   motherFirstName: string;
   motherPatronymic: string;
   motherEstate: string;
   motherLinkedId: string;
+  motherIndex?: string;
+  motherAvatarImageId?: string;
   godfatherLastName: string;
   godfatherFirstName: string;
   godfatherPatronymic: string;
   godfatherPlace: string;
+  godfatherIndex?: string;
+  godfatherAvatarImageId?: string;
   godmotherLastName: string;
   godmotherFirstName: string;
   godmotherPatronymic: string;
   godmotherPlace: string;
+  godmotherIndex?: string;
+  godmotherAvatarImageId?: string;
   avatarThumb: string;
   avatarImageId: string;
   avatarImageName: string;
@@ -178,6 +288,19 @@ export interface Person {
   documents: Doc[];
   memories: Memory[];
   military: Military;
+  /** Учёба. */
+  educations: Education[];
+  educationDocs: Doc[];
+  /** Карьера. */
+  jobs: Job[];
+  jobDocs: Doc[];
+  /** Военная служба (новая структура). */
+  militaryPlaces: MilitaryPlace[];
+  militaryConflicts: MilitaryConflict[];
+  militaryAwards: Award[];
+  militaryDocs: Doc[];
+  /** Фотоальбомы. */
+  albums: Album[];
   deathDateApprox: boolean;
   deathDate: string;
   deathYearFrom: string;
@@ -344,6 +467,15 @@ export function mkPerson(): Person {
     documents: [],
     memories: [],
     military: mkMilitary(),
+    educations: [],
+    educationDocs: [],
+    jobs: [],
+    jobDocs: [],
+    militaryPlaces: [],
+    militaryConflicts: [],
+    militaryAwards: [],
+    militaryDocs: [],
+    albums: [],
     deathDateApprox: false,
     deathDate: "",
     deathYearFrom: "",
@@ -365,7 +497,140 @@ export function mkPerson(): Person {
   };
 }
 
+export function mkEducation(): Education {
+  return {
+    id: uid(),
+    school: "",
+    speciality: "",
+    dateFrom: "",
+    dateTo: "",
+    place: "",
+    fund: "",
+    opis: "",
+    delo: "",
+    list: "",
+  };
+}
+
+export function mkJob(): Job {
+  return {
+    id: uid(),
+    employer: "",
+    division: "",
+    position: "",
+    dateFrom: "",
+    dateTo: "",
+    endReason: "",
+    place: "",
+  };
+}
+
+export function mkMilitaryPlace(): MilitaryPlace {
+  return {
+    id: uid(),
+    unit: "",
+    rank: "",
+    position: "",
+    dateFrom: "",
+    dateTo: "",
+    endReason: "",
+    place: "",
+  };
+}
+
+export function mkConflict(): MilitaryConflict {
+  return { id: uid(), name: "", dateFrom: "", dateTo: "" };
+}
+
+export function mkAward(): Award {
+  return { id: uid(), name: "", date: "", rank: "", docNumber: "", storage: "" };
+}
+
+export function mkPhoto(): Photo {
+  return {
+    id: uid(),
+    imageId: "",
+    imageName: "",
+    date: "",
+    title: "",
+    photoId: "",
+    backText: "",
+    place: "",
+    comment: "",
+  };
+}
+
+export function mkAlbum(): Album {
+  return { id: uid(), albumId: "", name: "", storage: "", photos: [] };
+}
+
+/**
+ * Переносит одиночную запись `military` старой схемы в новые массивы
+ * (место службы, конфликт, документ). Исходное поле сохраняется как есть.
+ */
+function migrateMilitary(p: Person): Person {
+  const m = p.military;
+  if (!m) return p;
+  const hasNew =
+    p.militaryPlaces.length ||
+    p.militaryConflicts.length ||
+    p.militaryAwards.length ||
+    p.militaryDocs.length;
+  if (hasNew) return p;
+  const out = { ...p };
+  if (m.unit || m.rank || m.position || m.serviceFrom || m.serviceTo || m.death) {
+    out.militaryPlaces = [
+      {
+        ...mkMilitaryPlace(),
+        unit: m.unit || "",
+        rank: m.rank || "",
+        position: m.position || "",
+        dateFrom: m.serviceFrom || "",
+        dateTo: m.serviceTo || "",
+        endReason: m.death || "",
+      },
+    ];
+  }
+  if (m.conflict) {
+    out.militaryConflicts = [{ ...mkConflict(), name: m.conflict }];
+  }
+  if (m.awards) {
+    out.militaryAwards = [{ ...mkAward(), name: m.awards }];
+  }
+  if ((m.pages || []).length || m.archive || m.fund || m.opis || m.delo || m.list) {
+    out.militaryDocs = [
+      {
+        ...mkDoc(),
+        docId: m.docId || "",
+        name: "Документ о военной службе",
+        archive: m.archive || "",
+        fund: m.fund || "",
+        opis: m.opis || "",
+        delo: m.delo || "",
+        list: m.list || "",
+        transcription: m.wounds || "",
+        pages: m.pages || [],
+      },
+    ];
+  }
+  return out;
+}
+
 /** Дополняет запись из старой базы недостающими полями. */
 export function normalizePerson(raw: Partial<Person>): Person {
-  return { ...mkPerson(), ...raw, military: { ...mkMilitary(), ...(raw.military ?? {}) } };
+  const base: Person = {
+    ...mkPerson(),
+    ...raw,
+    military: { ...mkMilitary(), ...(raw.military ?? {}) },
+    educations: raw.educations ?? [],
+    educationDocs: raw.educationDocs ?? [],
+    jobs: raw.jobs ?? [],
+    jobDocs: raw.jobDocs ?? [],
+    militaryPlaces: raw.militaryPlaces ?? [],
+    militaryConflicts: raw.militaryConflicts ?? [],
+    militaryAwards: raw.militaryAwards ?? [],
+    militaryDocs: raw.militaryDocs ?? [],
+    albums: (raw.albums ?? []).map((a) => ({ ...mkAlbum(), ...a, photos: a.photos ?? [] })),
+  };
+  return migrateMilitary(base);
 }
