@@ -249,6 +249,20 @@ function Index() {
     }
   };
 
+  const openPhotos = useCallback((photos: Photo[], index: number) => {
+    const items = photos
+      .filter((ph) => ph.imageId)
+      .map((ph) => ({ imageId: ph.imageId, title: ph.title || ph.imageName || "Фото" }));
+    if (!items.length) return;
+    const target = photos[index]?.imageId;
+    const i = Math.max(
+      0,
+      items.findIndex((it) => it.imageId === target),
+    );
+    setLbItems(items);
+    setLbIndex(i);
+  }, []);
+
   const openScans = useCallback((pages: Page[], index: number) => {
     const items = pages
       .filter((pg) => pg.imageId)
