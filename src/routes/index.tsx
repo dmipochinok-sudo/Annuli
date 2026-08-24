@@ -444,7 +444,7 @@ function Index() {
           onQueryChange={setQuery}
           selectedId={selectedId}
           onSelect={selectPerson}
-          onNew={newPerson}
+          
           className={
             "absolute inset-y-0 left-0 z-20 max-w-[85%] border-r shadow-xl transition-transform md:static md:z-auto md:max-w-none md:translate-x-0 md:shadow-none " +
             (sidebarOpen ? "translate-x-0" : "-translate-x-full")
