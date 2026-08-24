@@ -124,25 +124,30 @@ export function pageGroups(p: Person): PageGroup[] {
       }),
     });
   });
-  (p.documents || []).forEach((d, i) => {
-    groups.push({
-      key: `doc:${i}`,
-      label: d.name || `Документ ${i + 1}`,
-      docId: d.docId || `${idx}.doc${i + 1}`,
-      pages: d.pages || [],
-      meta: meta({
-        name: d.name || `Документ ${i + 1}`,
-        archive: d.archive,
-        fund: d.fund,
-        opis: d.opis,
-        delo: d.delo,
-        list: d.list,
-        link: d.path,
-        transcription: d.transcription,
-        comment: d.comment,
-      }),
+  const docList = (list: typeof p.documents, prefix: string, label: string) =>
+    (list || []).forEach((d, i) => {
+      groups.push({
+        key: `${prefix}:${i}`,
+        label: d.name || `${label} ${i + 1}`,
+        docId: d.docId || `${idx}.${prefix}${i + 1}`,
+        pages: d.pages || [],
+        meta: meta({
+          name: d.name || `${label} ${i + 1}`,
+          archive: d.archive,
+          fund: d.fund,
+          opis: d.opis,
+          delo: d.delo,
+          list: d.list,
+          link: d.path,
+          transcription: d.transcription,
+          comment: d.comment,
+        }),
+      });
     });
-  });
+  docList(p.documents, "doc", "Документ");
+  docList(p.educationDocs, "edu", "Документ об учёбе");
+  docList(p.jobDocs, "job", "Документ о работе");
+  docList(p.militaryDocs, "mildoc", "Документ о службе");
   return groups;
 }
 
@@ -151,6 +156,16 @@ export function pageGroups(p: Person): PageGroup[] {
 export function collectImageIds(p: Person): Set<string> {
   const ids = new Set<string>();
   if (p.avatarImageId) ids.add(p.avatarImageId);
+  if (p.fatherAvatarImageId) ids.add(p.fatherAvatarImageId);
+  if (p.motherAvatarImageId) ids.add(p.motherAvatarImageId);
+  if (p.godfatherAvatarImageId) ids.add(p.godfatherAvatarImageId);
+  if (p.godmotherAvatarImageId) ids.add(p.godmotherAvatarImageId);
+  for (const s of p.siblings || []) if (s.avatarImageId) ids.add(s.avatarImageId);
+  for (const c of p.children || []) if (c.avatarImageId) ids.add(c.avatarImageId);
+  for (const m of p.marriages || []) if (m.spouseAvatarImageId) ids.add(m.spouseAvatarImageId);
+  for (const m of p.memories || []) if (m.avatarImageId) ids.add(m.avatarImageId);
+  for (const a of p.albums || [])
+    for (const ph of a.photos || []) if (ph.imageId) ids.add(ph.imageId);
   for (const g of pageGroups(p)) {
     for (const pg of g.pages) if (pg?.imageId) ids.add(pg.imageId);
   }
