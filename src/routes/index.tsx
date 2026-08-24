@@ -558,16 +558,16 @@ function Index() {
                 )}
               </div>
 
-              <div className="mb-4 -mx-3 flex gap-1 overflow-x-auto rounded-xl border border-border bg-surface-light px-3 sm:mx-0 sm:flex-wrap sm:px-2">
+              <div className="mb-5 -mx-3 flex gap-6 overflow-x-auto border-b border-border px-3 sm:mx-0 sm:px-1">
                 {TABS.map((t) => (
                   <button
                     key={t.id}
                     disabled={!t.ready}
                     onClick={() => setTab(t.id)}
                     className={
-                      "-mb-px shrink-0 border-b-2 px-3 py-3 text-[14px] font-medium uppercase tracking-[0.03em] transition " +
+                      "-mb-px shrink-0 border-b-2 pb-3 pt-2 text-[11px] font-extrabold uppercase tracking-[0.16em] transition " +
                       (tab === t.id
-                        ? "border-link text-foreground"
+                        ? "border-primary text-foreground"
                         : "border-transparent text-muted-foreground hover:text-foreground") +
                       (t.ready ? "" : " cursor-not-allowed opacity-40")
                     }
@@ -577,6 +577,7 @@ function Index() {
                   </button>
                 ))}
               </div>
+
 
               {tab === "t1" && (
                 <PersonMain
