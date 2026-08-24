@@ -559,7 +559,23 @@ function Index() {
               </div>
 
               {tab === "t1" && (
-                <PersonBasic person={current} editMode={editMode} onChange={patchDraft} />
+                <PersonMain
+                  person={current}
+                  persons={persons}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenPerson={selectPerson}
+                />
+              )}
+              {tab === "tb" && (
+                <PersonBirth
+                  person={current}
+                  persons={persons}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenPerson={selectPerson}
+                  onOpenScans={openScans}
+                />
               )}
               {tab === "t2" && (
                 <PersonFamily person={current} editMode={editMode} onChange={patchDraft} />
