@@ -135,7 +135,7 @@ function Index() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <header className="grid h-13 shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 bg-header px-3 py-3 text-header-foreground sm:px-4">
+      <header className="grid h-13 shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 bg-header md:grid-cols-[minmax(0,1fr)_auto] px-3 py-3 text-header-foreground sm:px-4">
         <button
           onClick={() => setSidebarOpen((v) => !v)}
           aria-label="Список персон"
@@ -170,7 +170,7 @@ function Index() {
         </div>
         <button
           onClick={toggleTheme}
-          className="rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
+          className="justify-self-end rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
         >
           {dark ? "☀︎ Светлая" : "☾ Тёмная"}
         </button>
