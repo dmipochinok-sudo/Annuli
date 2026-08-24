@@ -8,6 +8,8 @@ import { PersonFamily } from "@/components/annuli/PersonFamily";
 import { PersonMemories } from "@/components/annuli/PersonMemories";
 import { PersonMilitary } from "@/components/annuli/PersonMilitary";
 import { PersonTree } from "@/components/annuli/PersonTree";
+import { TreeOverlay } from "@/components/annuli/TreeOverlay";
+
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
 import { DbModal } from "@/components/annuli/DbModal";
 import { DupeModal } from "@/components/annuli/DupeModal";
@@ -64,6 +66,8 @@ function Index() {
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dbOpen, setDbOpen] = useState(false);
+  const [treeOpen, setTreeOpen] = useState(false);
+
   const [dupeSlots, setDupeSlots] = useState<DupeSlot[]>([]);
   const [dupeRes, setDupeRes] = useState<Map<string, DupeResolution>>(new Map());
   const [pendingSave, setPendingSave] = useState<Person | null>(null);
@@ -301,11 +305,18 @@ function Index() {
         </div>
         <div className="flex items-center gap-2 justify-self-end">
         <button
+          onClick={() => setTreeOpen(true)}
+          className="rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
+        >
+          🌳<span className="hidden sm:inline"> Дерево</span>
+        </button>
+        <button
           onClick={() => setDbOpen(true)}
           className="rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
         >
           💾 База
         </button>
+
         <button
           onClick={toggleTheme}
           className="justify-self-end rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
@@ -473,13 +484,31 @@ function Index() {
                 <PersonMemories person={current} editMode={editMode} onChange={patchDraft} />
               )}
               {tab === "t6" && (
-                <PersonTree person={current} persons={persons} onSelect={selectPerson} />
+                <PersonTree
+                  person={current}
+                  persons={persons}
+                  onSelect={selectPerson}
+                  onOpenFull={() => setTreeOpen(true)}
+                />
+
               )}
             </>
           )}
         </main>
       </div>
+      {treeOpen && (
+        <TreeOverlay
+          persons={persons}
+          currentId={selectedId}
+          onSelect={(id) => {
+            selectPerson(id);
+            setTreeOpen(false);
+          }}
+          onClose={() => setTreeOpen(false)}
+        />
+      )}
       {dbOpen && (
+
         <DbModal
           persons={persons}
           onClose={() => setDbOpen(false)}

@@ -6,7 +6,9 @@ interface Props {
   person: Person;
   persons: Person[];
   onSelect: (id: string) => void;
+  onOpenFull?: () => void;
 }
+
 
 function Node({
   title,
@@ -40,7 +42,7 @@ function nameOf(first: string, patr: string, last: string) {
   return [first, patr, last].filter(Boolean).join(" ");
 }
 
-export function PersonTree({ person: p, persons, onSelect }: Props) {
+export function PersonTree({ person: p, persons, onSelect, onOpenFull }: Props) {
   const byId = (id: string) => persons.find((x) => x.id === id) ?? null;
 
   const father = p.fatherLinkedId ? byId(p.fatherLinkedId) : null;
@@ -54,6 +56,17 @@ export function PersonTree({ person: p, persons, onSelect }: Props) {
 
   return (
     <Section title="Дерево">
+      {onOpenFull && (
+        <div className="mb-2 flex justify-end">
+          <button
+            onClick={onOpenFull}
+            className="rounded-md border border-border px-2.5 py-1 text-[12px] transition hover:bg-muted"
+          >
+            🌳 Показать всё дерево
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col items-center gap-3 overflow-x-auto py-2">
         <div className="flex flex-wrap justify-center gap-2">
           {fatherName && (
