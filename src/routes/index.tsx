@@ -3,6 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { PersonBasic } from "@/components/annuli/PersonBasic";
+import { PersonDocs } from "@/components/annuli/PersonDocs";
+import { PersonFamily } from "@/components/annuli/PersonFamily";
+import { PersonMemories } from "@/components/annuli/PersonMemories";
+import { PersonMilitary } from "@/components/annuli/PersonMilitary";
+import { PersonTree } from "@/components/annuli/PersonTree";
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { useAnnuli } from "@/hooks/use-annuli";
@@ -30,11 +35,11 @@ export const Route = createFileRoute("/")({
 
 const TABS = [
   { id: "t1", label: "Основное", ready: true },
-  { id: "t2", label: "Семья", ready: false },
-  { id: "t3", label: "Документы", ready: false },
-  { id: "t4", label: "Служба", ready: false },
-  { id: "t5", label: "Воспоминания", ready: false },
-  { id: "t6", label: "Дерево", ready: false },
+  { id: "t2", label: "Семья", ready: true },
+  { id: "t3", label: "Документы", ready: true },
+  { id: "t4", label: "Служба", ready: true },
+  { id: "t5", label: "Воспоминания", ready: true },
+  { id: "t6", label: "Дерево", ready: true },
 ];
 
 function Index() {
@@ -84,6 +89,8 @@ function Index() {
     setTab("t1");
     setSidebarOpen(false);
   };
+
+  const patchDraft = (patch: Partial<Person>) => setDraft((d) => (d ? { ...d, ...patch } : d));
 
   const startEdit = () => {
     if (!selected) return;
@@ -265,11 +272,22 @@ function Index() {
               </div>
 
               {tab === "t1" && (
-                <PersonBasic
-                  person={current}
-                  editMode={editMode}
-                  onChange={(patch) => setDraft((d) => (d ? { ...d, ...patch } : d))}
-                />
+                <PersonBasic person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t2" && (
+                <PersonFamily person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t3" && (
+                <PersonDocs person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t4" && (
+                <PersonMilitary person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t5" && (
+                <PersonMemories person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t6" && (
+                <PersonTree person={current} persons={persons} onSelect={selectPerson} />
               )}
             </>
           )}
