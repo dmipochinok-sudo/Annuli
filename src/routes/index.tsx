@@ -64,11 +64,11 @@ const TABS = [
   { id: "tc", label: "Карьера", ready: true },
   { id: "t4", label: "Военная служба", ready: true },
   { id: "td", label: "Смерть", ready: true },
-  { id: "t2", label: "Семья", ready: true },
-  { id: "t3", label: "Архив", ready: true },
   { id: "t5", label: "Воспоминания", ready: true },
-  { id: "t6", label: "Дерево", ready: true },
+  { id: "t3", label: "Архив", ready: true },
+  { id: "t7", label: "Фотоальбом", ready: true },
 ];
+
 
 function Index() {
   const { persons, loading, error, savePerson, deletePerson, reload } = useAnnuli();
