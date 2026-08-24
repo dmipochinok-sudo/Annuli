@@ -595,8 +595,32 @@ function Index() {
                   onOpenScans={openScans}
                 />
               )}
+              {tab === "te" && (
+                <PersonEducation
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
+              )}
+              {tab === "tc" && (
+                <PersonCareer
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
+              )}
               {tab === "t4" && (
-                <PersonMilitary
+                <PersonService
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
+              )}
+              {tab === "td" && (
+                <PersonDeath
                   person={current}
                   editMode={editMode}
                   onChange={patchDraft}
