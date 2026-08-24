@@ -8,6 +8,8 @@ import { PersonFamily } from "@/components/annuli/PersonFamily";
 import { PersonMemories } from "@/components/annuli/PersonMemories";
 import { PersonMilitary } from "@/components/annuli/PersonMilitary";
 import { PersonTree } from "@/components/annuli/PersonTree";
+import { TreeOverlay } from "@/components/annuli/TreeOverlay";
+
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
 import { DbModal } from "@/components/annuli/DbModal";
 import { DupeModal } from "@/components/annuli/DupeModal";
