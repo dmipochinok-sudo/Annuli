@@ -16,8 +16,8 @@ function Node({
 }: {
   title: string;
   subtitle?: string;
-  onClick?: () => void;
-  accent?: boolean;
+  onClick?: (() => void) | undefined;
+  accent?: boolean | undefined;
 }) {
   return (
     <button
