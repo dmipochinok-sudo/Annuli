@@ -9,6 +9,7 @@ import {
   extFromName,
   mimeFromExt,
   pageGroups,
+  personFolderName,
   sanitizeFileBase,
 } from "./media";
 import { normalizePerson, type Page, type Person } from "./types";
