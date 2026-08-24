@@ -10,10 +10,22 @@ interface Props {
   onSelect: (id: string) => void;
   onNew: () => void;
   className?: string;
+  query?: string;
+  onQueryChange?: (v: string) => void;
 }
 
-export function PersonSidebar({ persons, selectedId, onSelect, onNew, className }: Props) {
-  const [query, setQuery] = useState("");
+export function PersonSidebar({
+  persons,
+  selectedId,
+  onSelect,
+  onNew,
+  className,
+  query: queryProp,
+  onQueryChange,
+}: Props) {
+  const [ownQuery, setOwnQuery] = useState("");
+  const query = queryProp ?? ownQuery;
+  const setQuery = onQueryChange ?? setOwnQuery;
   const [gen, setGen] = useState("");
   const [gender, setGender] = useState("");
   const [showLateral, setShowLateral] = useState(true);
@@ -49,48 +61,56 @@ export function PersonSidebar({ persons, selectedId, onSelect, onNew, className 
         className,
       )}
     >
-      <div className="flex flex-col gap-2 border-b border-border p-2.5">
-        <input
-          value={query}
-          onChange={(ev) => setQuery(ev.target.value)}
-          placeholder="Поиск по имени или индексу…"
-          className="rounded-md border border-border bg-card px-2.5 py-2 text-[13px] outline-none focus:border-primary focus:ring-3 focus:ring-primary/15"
-        />
-        <div className="flex gap-2">
+      <div className="flex flex-col gap-3 border-b border-border p-3">
+        <label className="flex flex-col gap-1">
+          <span className="pl-2 text-[11px] text-muted-foreground">Поколение</span>
           <select
             value={gen}
             onChange={(ev) => setGen(ev.target.value)}
-            className="min-w-0 flex-1 rounded-md border border-border bg-card px-2 py-1.5 text-[12px] outline-none focus:border-primary"
+            className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] text-foreground outline-none focus:border-stroke-bright"
           >
-            <option value="">Все поколения</option>
+            <option value="">Все</option>
             {generations.map((g) => (
               <option key={g} value={g}>
                 {g}-е поколение
               </option>
             ))}
           </select>
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="pl-2 text-[11px] text-muted-foreground">Пол</span>
           <select
             value={gender}
             onChange={(ev) => setGender(ev.target.value)}
-            className="min-w-0 flex-1 rounded-md border border-border bg-card px-2 py-1.5 text-[12px] outline-none focus:border-primary"
+            className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] text-foreground outline-none focus:border-stroke-bright"
           >
-            <option value="">Любой пол</option>
+            <option value="">Любой</option>
             <option value="М">Мужской</option>
             <option value="Ж">Женский</option>
           </select>
-        </div>
-        <label className="flex cursor-pointer items-center gap-2 text-[12px] text-muted-foreground">
-          <input
-            type="checkbox"
-            checked={showLateral}
-            onChange={(ev) => setShowLateral(ev.target.checked)}
-            className="accent-primary"
-          />
-          Показывать боковые ветви
         </label>
+        <label className="flex flex-col gap-1">
+          <span className="pl-2 text-[11px] text-muted-foreground">Ветви</span>
+          <select
+            value={showLateral ? "all" : "direct"}
+            onChange={(ev) => setShowLateral(ev.target.value === "all")}
+            className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] text-foreground outline-none focus:border-stroke-bright"
+          >
+            <option value="all">Все ветви</option>
+            <option value="direct">Только прямые ветви</option>
+          </select>
+        </label>
+        {queryProp === undefined && (
+          <input
+            value={query}
+            onChange={(ev) => setQuery(ev.target.value)}
+            placeholder="Поиск по имени или индексу…"
+            className="h-8 rounded-lg border border-border bg-surface-dark px-2.5 text-[14px] outline-none focus:border-stroke-bright"
+          />
+        )}
         <button
           onClick={onNew}
-          className="rounded-md bg-primary px-3 py-2 text-[13px] font-semibold text-primary-foreground transition hover:brightness-110"
+          className="h-8 rounded-lg bg-primary px-3 text-[14px] font-medium text-primary-foreground transition hover:brightness-110"
         >
           + Новая персона
         </button>
