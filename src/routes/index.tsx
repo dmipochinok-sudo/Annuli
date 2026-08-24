@@ -85,15 +85,21 @@ function Index() {
     localStorage.setItem("annuli-theme", next ? "dark" : "light");
   };
 
+  const selected = useMemo(
+    () => persons.find((p) => p.id === selectedId) ?? null,
+    [persons, selectedId],
+  );
+  const current = draft ?? selected;
+  const currentAvatarId = current?.avatarImageId || "";
+
   useEffect(() => {
     let alive = true;
     let objUrl = "";
-    const id = current?.avatarImageId;
-    if (!id) {
+    if (!currentAvatarId) {
       setAvatarUrl("");
       return;
     }
-    imgGet(id)
+    imgGet(currentAvatarId)
       .then((blob) => {
         if (!alive || !blob) return;
         objUrl = URL.createObjectURL(blob);
@@ -104,14 +110,8 @@ function Index() {
       alive = false;
       if (objUrl) URL.revokeObjectURL(objUrl);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAvatarId]);
 
-  const selected = useMemo(
-    () => persons.find((p) => p.id === selectedId) ?? null,
-    [persons, selectedId],
-  );
-  const current = draft ?? selected;
 
   const selectPerson = (id: string) => {
     setSelectedId(id);
