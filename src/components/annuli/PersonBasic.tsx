@@ -5,19 +5,21 @@ import type { Person } from "@/lib/annuli/types";
 
 export function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mb-8">
-      <h3 className="mb-4 flex items-center gap-3 border-b border-border pb-2 font-ui text-[10px] font-bold uppercase tracking-[0.22em] text-foreground">
-        <span aria-hidden className="inline-block h-px w-6 shrink-0 bg-primary" />
+    <section className="mb-4 overflow-hidden rounded-xl border border-border bg-card">
+      <h3 className="flex items-center gap-3 border-b border-border bg-surface-light px-3 py-3 text-[14px] font-semibold uppercase tracking-[0.04em] text-foreground">
+        <span aria-hidden className="text-muted-foreground">
+          👁
+        </span>
         {title}
       </h3>
-      <div className="border border-border bg-card p-4 sm:p-6">{children}</div>
+      <div className="p-4 sm:p-6">{children}</div>
     </section>
   );
 }
 
 export function Row({ children }: { children: ReactNode }) {
   return (
-    <div className="mb-4 grid gap-4 last:mb-0 sm:grid-cols-[repeat(auto-fit,minmax(170px,1fr))]">
+    <div className="mb-2.5 grid gap-2.5 last:mb-0 sm:grid-cols-[repeat(auto-fit,minmax(150px,1fr))]">
       {children}
     </div>
   );
@@ -25,17 +27,12 @@ export function Row({ children }: { children: ReactNode }) {
 
 function Label({ children }: { children: ReactNode }) {
   return (
-    <span className="font-ui text-[9px] font-normal uppercase tracking-[0.2em] text-dim">
-      {children}
-    </span>
+    <span className="pl-2 text-[11px] text-muted-foreground">{children}</span>
   );
 }
 
 const inputCls =
-  "h-8 rounded-sm border-0 border-b border-border bg-transparent px-0 text-[14px] text-foreground outline-none transition placeholder:text-dim focus:border-primary";
-
-
-
+  "h-8 rounded-lg border border-border bg-surface-dark px-3 text-[14px] text-foreground outline-none transition focus:border-stroke-bright";
 
 export function TextField({
   label,
