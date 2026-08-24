@@ -9,9 +9,10 @@ interface Props {
   selectedId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
+  className?: string;
 }
 
-export function PersonSidebar({ persons, selectedId, onSelect, onNew }: Props) {
+export function PersonSidebar({ persons, selectedId, onSelect, onNew, className }: Props) {
   const [query, setQuery] = useState("");
   const [gen, setGen] = useState("");
   const [gender, setGender] = useState("");
