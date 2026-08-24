@@ -76,6 +76,15 @@ export async function buildArchive(
       const f = await embed(folder, used, ep.avatarImageId, ep.avatarImageName, `${pIdx}.avatar`);
       if (f) (ep as Person & { _avatarFile?: string })._avatarFile = f;
     }
+    // Аватары родственников и авторов воспоминаний (не отдельные персоны базы).
+    const extra: Record<string, string> = {};
+    let ai = 0;
+    for (const imgId of relativeAvatarIds(ep)) {
+      const f = await embed(folder, used, imgId, "", `${pIdx}.rel${++ai}`);
+      if (f) extra[imgId] = f;
+    }
+    if (Object.keys(extra).length)
+      (ep as Person & { _avatarFiles?: Record<string, string> })._avatarFiles = extra;
     for (const g of pageGroups(ep)) {
       const pages = g.pages as Page[];
       for (let i = 0; i < pages.length; i++) {
@@ -90,6 +99,18 @@ export async function buildArchive(
           sanitizeFileBase(g.docId) + suffix,
         );
         if (f) pg._file = f;
+      }
+    }
+    // Фотоальбомы.
+    for (let k = 0; k < (ep.albums || []).length; k++) {
+      const al = ep.albums[k]!;
+      const photos = al.photos || [];
+      for (let i = 0; i < photos.length; i++) {
+        const ph = photos[i]!;
+        if (!ph.imageId) continue;
+        const base = sanitizeFileBase(ph.photoId || al.albumId || `${pIdx}.album${k + 1}`);
+        const f = await embed(folder, used, ph.imageId, ph.imageName, `${base}_${i + 1}`);
+        if (f) ph._file = f;
       }
     }
     done++;
