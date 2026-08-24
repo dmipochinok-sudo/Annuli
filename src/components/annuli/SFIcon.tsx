@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
  * Использование: <SFIcon glyph={SF.personBadgePlus} />
  */
 export const SF = {
-  personBadgePlus: "\u{1007D6}", // 􀜖
+  personBadgePlus: "\u{100716}", // 􀜖
 } as const;
 
 interface Props {
