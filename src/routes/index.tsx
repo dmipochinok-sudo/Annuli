@@ -303,11 +303,18 @@ function Index() {
         </div>
         <div className="flex items-center gap-2 justify-self-end">
         <button
+          onClick={() => setTreeOpen(true)}
+          className="rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
+        >
+          🌳<span className="hidden sm:inline"> Дерево</span>
+        </button>
+        <button
           onClick={() => setDbOpen(true)}
           className="rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
         >
           💾 База
         </button>
+
         <button
           onClick={toggleTheme}
           className="justify-self-end rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
