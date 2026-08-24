@@ -473,7 +473,13 @@ function Index() {
                 <PersonMemories person={current} editMode={editMode} onChange={patchDraft} />
               )}
               {tab === "t6" && (
-                <PersonTree person={current} persons={persons} onSelect={selectPerson} />
+                <PersonTree
+                  person={current}
+                  persons={persons}
+                  onSelect={selectPerson}
+                  onOpenFull={() => setTreeOpen(true)}
+                />
+
               )}
             </>
           )}
