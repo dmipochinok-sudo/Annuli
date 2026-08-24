@@ -3,6 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { PersonBasic } from "@/components/annuli/PersonBasic";
+import { PersonDocs } from "@/components/annuli/PersonDocs";
+import { PersonFamily } from "@/components/annuli/PersonFamily";
+import { PersonMemories } from "@/components/annuli/PersonMemories";
+import { PersonMilitary } from "@/components/annuli/PersonMilitary";
+import { PersonTree } from "@/components/annuli/PersonTree";
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { useAnnuli } from "@/hooks/use-annuli";
@@ -30,11 +35,11 @@ export const Route = createFileRoute("/")({
 
 const TABS = [
   { id: "t1", label: "Основное", ready: true },
-  { id: "t2", label: "Семья", ready: false },
-  { id: "t3", label: "Документы", ready: false },
-  { id: "t4", label: "Служба", ready: false },
-  { id: "t5", label: "Воспоминания", ready: false },
-  { id: "t6", label: "Дерево", ready: false },
+  { id: "t2", label: "Семья", ready: true },
+  { id: "t3", label: "Документы", ready: true },
+  { id: "t4", label: "Служба", ready: true },
+  { id: "t5", label: "Воспоминания", ready: true },
+  { id: "t6", label: "Дерево", ready: true },
 ];
 
 function Index() {
@@ -85,6 +90,8 @@ function Index() {
     setSidebarOpen(false);
   };
 
+  const patchDraft = (patch: Partial<Person>) => setDraft((d) => (d ? { ...d, ...patch } : d));
+
   const startEdit = () => {
     if (!selected) return;
     setDraft({ ...selected });
@@ -128,7 +135,7 @@ function Index() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <header className="grid h-13 shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 bg-header px-3 py-3 text-header-foreground sm:px-4">
+      <header className="grid h-13 shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 bg-header md:grid-cols-[minmax(0,1fr)_auto] px-3 py-3 text-header-foreground sm:px-4">
         <button
           onClick={() => setSidebarOpen((v) => !v)}
           aria-label="Список персон"
@@ -163,7 +170,7 @@ function Index() {
         </div>
         <button
           onClick={toggleTheme}
-          className="rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
+          className="justify-self-end rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
         >
           {dark ? "☀︎ Светлая" : "☾ Тёмная"}
         </button>
@@ -265,11 +272,22 @@ function Index() {
               </div>
 
               {tab === "t1" && (
-                <PersonBasic
-                  person={current}
-                  editMode={editMode}
-                  onChange={(patch) => setDraft((d) => (d ? { ...d, ...patch } : d))}
-                />
+                <PersonBasic person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t2" && (
+                <PersonFamily person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t3" && (
+                <PersonDocs person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t4" && (
+                <PersonMilitary person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t5" && (
+                <PersonMemories person={current} editMode={editMode} onChange={patchDraft} />
+              )}
+              {tab === "t6" && (
+                <PersonTree person={current} persons={persons} onSelect={selectPerson} />
               )}
             </>
           )}
