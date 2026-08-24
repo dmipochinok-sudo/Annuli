@@ -64,6 +64,8 @@ function Index() {
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dbOpen, setDbOpen] = useState(false);
+  const [treeOpen, setTreeOpen] = useState(false);
+
   const [dupeSlots, setDupeSlots] = useState<DupeSlot[]>([]);
   const [dupeRes, setDupeRes] = useState<Map<string, DupeResolution>>(new Map());
   const [pendingSave, setPendingSave] = useState<Person | null>(null);
