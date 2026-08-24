@@ -237,7 +237,7 @@ export function PersonMain({ person: p, persons, editMode, onChange, onOpenPerso
               linkedId: s.linkedId,
               avatarImageId: s.avatarImageId,
             }}
-            onChange={(v) => patchSibling(i, v)}
+            onChange={(v) => patchSibling(i, v as Partial<Sibling>)}
             onRemove={() => onChange({ siblings: p.siblings.filter((_, k) => k !== i) })}
             onOpenPerson={onOpenPerson}
           />

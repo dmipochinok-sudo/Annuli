@@ -7,12 +7,12 @@ import { fullName } from "@/lib/annuli/format";
 import { uid, type Person } from "@/lib/annuli/types";
 
 export interface LinkCardValue {
-  personIndex?: string;
-  firstName?: string;
-  patronymic?: string;
-  lastName?: string;
-  linkedId?: string;
-  avatarImageId?: string;
+  personIndex?: string | undefined;
+  firstName?: string | undefined;
+  patronymic?: string | undefined;
+  lastName?: string | undefined;
+  linkedId?: string | undefined;
+  avatarImageId?: string | undefined;
 }
 
 interface Props {
