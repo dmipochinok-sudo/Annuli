@@ -43,7 +43,12 @@ export function PersonSidebar({ persons, selectedId, onSelect, onNew, className 
   }, [persons, query, gen, gender, showLateral]);
 
   return (
-    <aside className="flex w-[280px] shrink-0 flex-col border-r border-border bg-sidebar">
+    <aside
+      className={cn(
+        "flex w-full min-w-0 shrink-0 flex-col border-border bg-sidebar md:w-[280px] md:border-r",
+        className,
+      )}
+    >
       <div className="flex flex-col gap-2 border-b border-border p-2.5">
         <input
           value={query}
