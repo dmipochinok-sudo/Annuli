@@ -325,16 +325,16 @@ function Index() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-auto shrink-0 flex-wrap items-center gap-2 border-b border-border bg-header px-3 py-2.5 text-header-foreground sm:px-4">
+      <header className="flex h-auto shrink-0 flex-wrap items-center gap-3 border-b border-border bg-header px-4 py-3 text-header-foreground sm:px-6">
         <button
           onClick={() => setSidebarOpen((v) => !v)}
           aria-label="Список персон"
-          className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] transition hover:border-stroke-bright md:hidden"
+          className="h-8 rounded-sm border border-border px-2.5 font-ui text-[14px] transition hover:border-stroke-bright md:hidden"
         >
           ☰
         </button>
         <div className="flex min-w-0 items-center gap-2">
-          <svg viewBox="0 0 100 100" className="size-7 text-foreground" aria-hidden>
+          <svg viewBox="0 0 100 100" className="size-6 text-primary" aria-hidden>
             <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
             <circle
               cx="50"
@@ -355,26 +355,26 @@ function Index() {
               opacity=".45"
             />
           </svg>
-          <h1 className="text-[20px] font-semibold tracking-tight">Annuli</h1>
+          <h1 className="font-display text-[24px] tracking-tight text-foreground">Annuli</h1>
         </div>
 
         <div className="order-last flex min-w-0 flex-1 basis-full items-center gap-2 sm:order-none sm:basis-auto">
           <div className="relative min-w-0 flex-1">
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-muted-foreground">
+            <span className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 font-ui text-[12px] text-muted-foreground">
               ⌕
             </span>
             <input
               value={query}
               onChange={(ev) => setQuery(ev.target.value)}
-              placeholder="Поиск по имени или индексу…"
+              placeholder="ПОИСК ПО АРХИВУ…"
               aria-label="Поиск персоны"
-              className="h-8 w-full rounded-lg border border-border bg-surface-dark pl-8 pr-8 text-[14px] text-foreground outline-none transition focus:border-stroke-bright"
+              className="h-8 w-full border-b border-border bg-transparent pl-6 pr-6 font-ui text-[10px] uppercase tracking-[0.22em] text-foreground outline-none transition placeholder:text-dim focus:border-primary"
             />
             {query && (
               <button
                 onClick={() => setQuery("")}
                 aria-label="Очистить поиск"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-foreground"
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-foreground"
               >
                 ✕
               </button>
@@ -382,52 +382,41 @@ function Index() {
           </div>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="h-8 shrink-0 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="h-8 shrink-0 border-b border-border px-2 font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
           >
             Найти
           </button>
         </div>
 
-        <div className="flex items-center gap-2 sm:ml-auto">
-          <button
-            onClick={toggleTheme}
-            className="hidden h-8 items-center gap-2 rounded-lg px-2 text-[14px] text-foreground sm:flex"
-          >
-            <span>{dark ? "☾ Тёмная тема" : "☀︎ Светлая тема"}</span>
-            <span
-              className={
-                "relative h-5 w-9 rounded-full transition " +
-                (dark ? "bg-primary" : "bg-surface-light")
-              }
-            >
-              <span
-                className={
-                  "absolute top-0.5 size-4 rounded-full bg-foreground transition-all " +
-                  (dark ? "left-[18px]" : "left-0.5")
-                }
-              />
-            </span>
-          </button>
-          <button
-            onClick={newPerson}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-          >
-            <span className="whitespace-nowrap">＋ Добавить</span>
-          </button>
+        <div className="flex items-center gap-5 sm:ml-auto">
           <button
             onClick={() => setTreeOpen(true)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
           >
-            <span className="whitespace-nowrap">Древо</span>
+            Древо
           </button>
           <button
             onClick={() => setDbOpen(true)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
           >
-            <span className="whitespace-nowrap">Импорт / Экспорт базы</span>
+            База
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="hidden font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground sm:block"
+          >
+            {dark ? "Светлая тема" : "Тёмная тема"}
+          </button>
+          <span className="hidden h-5 w-px bg-border sm:block" />
+          <button
+            onClick={newPerson}
+            className="rounded-sm border border-primary px-4 py-1.5 font-ui text-[10px] uppercase tracking-[0.2em] text-primary transition hover:bg-primary hover:text-primary-foreground"
+          >
+            ＋ Новая персона
           </button>
         </div>
       </header>
+
 
 
       <div className="relative flex flex-1 overflow-hidden">
@@ -451,21 +440,25 @@ function Index() {
           }
         />
 
-        <main className="min-w-0 flex-1 overflow-y-auto p-3 sm:p-5">
+        <main className="min-w-0 flex-1 overflow-y-auto p-4 sm:p-8">
           {loading ? (
-            <p className="text-[13px] text-muted-foreground">Загрузка базы…</p>
+            <p className="font-ui text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+              Загрузка базы…
+            </p>
           ) : error ? (
-            <p className="text-[13px] text-destructive">Ошибка доступа к базе: {error}</p>
+            <p className="font-ui text-[11px] uppercase tracking-[0.2em] text-destructive">
+              Ошибка доступа к базе: {error}
+            </p>
           ) : !current ? (
             <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
-              <h2 className="text-2xl font-bold text-foreground">Annuli</h2>
-              <p className="text-[13px]">
+              <h2 className="font-display text-5xl italic text-foreground">Annuli</h2>
+              <p className="max-w-md text-[14px] italic">
                 Выберите персону слева или создайте новую. Данные хранятся локально в браузере.
               </p>
             </div>
           ) : (
             <>
-              <div className="mb-4 grid grid-cols-[minmax(0,1fr)] items-center gap-2 sm:flex sm:flex-wrap">
+              <div className="mb-8 flex flex-col gap-6 border-b border-border pb-8 md:flex-row md:items-start md:gap-10">
                 <input
                   ref={avatarInput}
                   type="file"
@@ -473,7 +466,8 @@ function Index() {
                   className="hidden"
                   onChange={(ev) => void onAvatarFile(ev.target.files?.[0])}
                 />
-                <div className="flex items-center gap-3">
+                <div className="relative shrink-0">
+                  <span className="pointer-events-none absolute -inset-2 border border-border" />
                   <button
                     type="button"
                     onClick={() => {
@@ -490,84 +484,93 @@ function Index() {
                       }
                     }}
                     title={editMode ? "Загрузить портрет" : "Открыть портрет"}
-                    className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-muted text-[13px] font-bold text-muted-foreground"
+                    className="relative grid h-[168px] w-[132px] place-items-center overflow-hidden border border-border bg-muted font-ui text-[13px] font-bold text-muted-foreground"
                   >
                     {avatarUrl || current.avatarThumb ? (
                       <img
                         src={avatarUrl || current.avatarThumb}
                         alt={`Портрет: ${fullName(current) || "персона"}`}
-                        className="size-full object-cover"
+                        className="size-full object-cover grayscale contrast-[1.05]"
                       />
                     ) : (
                       <span>{editMode ? "＋" : "?"}</span>
                     )}
                   </button>
+                  {current.personIndex && (
+                    <span className="absolute -bottom-3 -left-3 border border-border bg-background px-2 py-1 font-ui text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+                      {current.personIndex}
+                    </span>
+                  )}
                 </div>
+
                 <div className="min-w-0 flex-1">
-                  <h2 className="truncate text-[18px] font-bold tracking-tight sm:text-[22px]">
+                  <h2 className="font-display text-[34px] italic leading-[1.05] text-foreground sm:text-[46px]">
                     {fullName(current) || "Новая персона"}
                   </h2>
-                  <p className="text-[12px] text-muted-foreground">
-                    {[current.personIndex, lifeDates(current)].filter(Boolean).join(" · ") || "—"}
+                  <p className="mt-3 font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                    {lifeDates(current) || "Даты не указаны"}
                   </p>
+
+                  <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
+                    {editMode ? (
+                      <>
+                        <button
+                          onClick={save}
+                          className="rounded-sm border border-primary bg-primary px-4 py-1.5 font-ui text-[10px] uppercase tracking-[0.2em] text-primary-foreground transition hover:brightness-110"
+                        >
+                          Сохранить
+                        </button>
+                        <button
+                          onClick={cancelEdit}
+                          className="font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground"
+                        >
+                          Отмена
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={startEdit}
+                          className="rounded-sm border border-primary px-4 py-1.5 font-ui text-[10px] uppercase tracking-[0.2em] text-primary transition hover:bg-primary hover:text-primary-foreground"
+                        >
+                          Редактировать
+                        </button>
+                        <button
+                          onClick={exportTxt}
+                          disabled={isNew}
+                          className="font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground disabled:opacity-40"
+                        >
+                          Экспорт в .TXT
+                        </button>
+                        <button
+                          onClick={() => void exportDocsArchive()}
+                          disabled={exporting || isNew}
+                          className="font-ui text-[10px] uppercase tracking-[0.2em] text-muted-foreground transition hover:text-foreground disabled:opacity-40"
+                        >
+                          {exporting ? "Готовим архив…" : "Создать архивный раздел"}
+                        </button>
+                        <button
+                          onClick={remove}
+                          className="font-ui text-[10px] uppercase tracking-[0.2em] text-destructive transition hover:brightness-125"
+                        >
+                          Удалить
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
-                {editMode ? (
-                  <>
-                    <button
-                      onClick={save}
-                      className="rounded-md bg-primary px-3 py-2 text-[13px] font-semibold text-primary-foreground hover:brightness-110"
-                    >
-                      Сохранить
-                    </button>
-                    <button
-                      onClick={cancelEdit}
-                      className="rounded-md border border-border bg-secondary px-3 py-2 text-[13px] font-semibold hover:bg-muted"
-                    >
-                      Отмена
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={startEdit}
-                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-                    >
-                      Редактировать
-                    </button>
-                    <button
-                      onClick={exportTxt}
-                      disabled={isNew}
-                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
-                    >
-                      Экспорт в .TXT
-                    </button>
-                    <button
-                      onClick={() => void exportDocsArchive()}
-                      disabled={exporting || isNew}
-                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
-                    >
-                      {exporting ? "Готовим архив…" : "Создать архивный раздел"}
-                    </button>
-                    <button
-                      onClick={remove}
-                      className="h-8 rounded-lg bg-destructive px-3 text-[14px] font-medium text-destructive-foreground transition hover:brightness-110"
-                    >
-                      Удалить
-                    </button>
-                  </>
-                )}
               </div>
 
-              <div className="mb-5 -mx-3 flex gap-6 overflow-x-auto border-b border-border px-3 sm:mx-0 sm:px-1">
+              <div className="mb-8 -mx-4 flex gap-8 overflow-x-auto border-b border-border px-4 sm:mx-0 sm:px-0">
                 {TABS.map((t) => (
                   <button
                     key={t.id}
                     disabled={!t.ready}
                     onClick={() => setTab(t.id)}
                     className={
-                      "-mb-px shrink-0 border-b-2 pb-3 pt-2 text-[11px] font-extrabold uppercase tracking-[0.16em] transition " +
+                      "-mb-px shrink-0 border-b-2 pb-4 pt-1 font-ui text-[10px] font-bold uppercase tracking-[0.2em] transition " +
                       (tab === t.id
-                        ? "border-primary text-foreground"
+                        ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground") +
                       (t.ready ? "" : " cursor-not-allowed opacity-40")
                     }
@@ -577,6 +580,7 @@ function Index() {
                   </button>
                 ))}
               </div>
+
 
 
               {tab === "t1" && (

@@ -5,33 +5,19 @@ import type { Person } from "@/lib/annuli/types";
 
 export function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mb-5">
-      <h3 className="mb-3 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-        <svg
-          aria-hidden
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          className="size-4"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-          />
-        </svg>
+    <section className="mb-8">
+      <h3 className="mb-4 flex items-center gap-3 border-b border-border pb-2 font-ui text-[10px] font-bold uppercase tracking-[0.22em] text-foreground">
+        <span aria-hidden className="inline-block h-px w-6 shrink-0 bg-primary" />
         {title}
       </h3>
-      <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">{children}</div>
+      <div className="border border-border bg-card p-4 sm:p-6">{children}</div>
     </section>
   );
 }
 
 export function Row({ children }: { children: ReactNode }) {
   return (
-    <div className="mb-3 grid gap-3 last:mb-0 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+    <div className="mb-4 grid gap-4 last:mb-0 sm:grid-cols-[repeat(auto-fit,minmax(170px,1fr))]">
       {children}
     </div>
   );
@@ -39,14 +25,16 @@ export function Row({ children }: { children: ReactNode }) {
 
 function Label({ children }: { children: ReactNode }) {
   return (
-    <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+    <span className="font-ui text-[9px] font-normal uppercase tracking-[0.2em] text-dim">
       {children}
     </span>
   );
 }
 
 const inputCls =
-  "h-8 rounded-lg border border-border bg-surface-dark px-3 text-[14px] text-foreground outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary/30";
+  "h-8 rounded-sm border-0 border-b border-border bg-transparent px-0 text-[14px] text-foreground outline-none transition placeholder:text-dim focus:border-primary";
+
+
 
 
 export function TextField({
