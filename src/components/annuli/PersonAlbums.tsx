@@ -143,7 +143,7 @@ export function PersonAlbums({ person: p, editMode, onChange, onOpenPhotos }: Pr
     }
     if (!added.length) return;
     patchAlbum(albumId, { photos: [...a.photos, ...added] });
-    setSel((s) => ({ ...s, [albumId]: added[0].id }));
+    setSel((s) => ({ ...s, [albumId]: added[0]?.id ?? "" }));
     toast.success(`Добавлено фото: ${added.length}`);
   };
 
