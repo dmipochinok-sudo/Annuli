@@ -21,9 +21,14 @@ export function PagesEditor({ label = "Сканы", pages, editMode, onChange, o
   const targetIdx = useRef<number>(-1);
   const [thumbs, setThumbs] = useState<Record<string, string>>({});
 
+  // Ключ зависимости — только идентификаторы сканов, иначе эффект перезапускается
+  // на каждый рендер и отзывает только что созданные blob-ссылки (картинки «ломаются»).
+  const pagesKey = pages.map((pg) => `${pg.imageId || ""}|${pg.thumb ? 1 : 0}`).join(",");
+  const urlsRef = useRef<string[]>([]);
+
   useEffect(() => {
     let alive = true;
-    const urls: string[] = [];
+    const created: string[] = [];
     (async () => {
       const next: Record<string, string> = {};
       for (const pg of pages) {
@@ -35,17 +40,30 @@ export function PagesEditor({ label = "Сканы", pages, editMode, onChange, o
         const blob = await imgGet(pg.imageId).catch(() => null);
         if (!blob) continue;
         const u = URL.createObjectURL(blob);
-        urls.push(u);
+        created.push(u);
         next[pg.imageId] = u;
       }
-      if (alive) setThumbs(next);
-      else urls.forEach((u) => URL.revokeObjectURL(u));
+      if (!alive) {
+        created.forEach((u) => URL.revokeObjectURL(u));
+        return;
+      }
+      urlsRef.current.forEach((u) => URL.revokeObjectURL(u));
+      urlsRef.current = created;
+      setThumbs(next);
     })();
     return () => {
       alive = false;
-      urls.forEach((u) => URL.revokeObjectURL(u));
     };
-  }, [pages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagesKey]);
+
+  useEffect(
+    () => () => {
+      urlsRef.current.forEach((u) => URL.revokeObjectURL(u));
+      urlsRef.current = [];
+    },
+    [],
+  );
 
   const patchPage = (i: number, patch: Partial<Page>) =>
     onChange(pages.map((pg, k) => (k === i ? { ...pg, ...patch } : pg)));
