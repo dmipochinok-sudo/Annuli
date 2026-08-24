@@ -65,6 +65,8 @@ function Index() {
   const [tab, setTab] = useState("t1");
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [exporting, setExporting] = useState(false);
   const [dbOpen, setDbOpen] = useState(false);
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -77,7 +79,7 @@ function Index() {
   const avatarInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("annuli-theme") === "dark";
+    const saved = localStorage.getItem("annuli-theme") !== "light";
     setDark(saved);
     document.documentElement.classList.toggle("dark", saved);
   }, []);
@@ -388,6 +390,8 @@ function Index() {
         )}
         <PersonSidebar
           persons={persons}
+          query={query}
+          onQueryChange={setQuery}
           selectedId={selectedId}
           onSelect={selectPerson}
           onNew={newPerson}
