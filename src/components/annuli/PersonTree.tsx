@@ -56,6 +56,17 @@ export function PersonTree({ person: p, persons, onSelect, onOpenFull }: Props) 
 
   return (
     <Section title="Дерево">
+      {onOpenFull && (
+        <div className="mb-2 flex justify-end">
+          <button
+            onClick={onOpenFull}
+            className="rounded-md border border-border px-2.5 py-1 text-[12px] transition hover:bg-muted"
+          >
+            🌳 Показать всё дерево
+          </button>
+        </div>
+      )}
+
       <div className="flex flex-col items-center gap-3 overflow-x-auto py-2">
         <div className="flex flex-wrap justify-center gap-2">
           {fatherName && (
