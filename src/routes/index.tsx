@@ -56,6 +56,7 @@ export const Route = createFileRoute("/")({
 
 const TABS = [
   { id: "t1", label: "Основное", ready: true },
+  { id: "tb", label: "Рождение", ready: true },
   { id: "t2", label: "Семья", ready: true },
   { id: "t3", label: "Документы", ready: true },
   { id: "t4", label: "Служба", ready: true },
