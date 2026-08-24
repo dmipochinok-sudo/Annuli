@@ -412,7 +412,7 @@ function Index() {
             onClick={newPerson}
             className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <span className="whitespace-nowrap">＋ Добавить</span>
+            <span className="whitespace-nowrap">＋ Добавить персону</span>
           </button>
           <button
             onClick={() => setTreeOpen(true)}
@@ -444,7 +444,7 @@ function Index() {
           onQueryChange={setQuery}
           selectedId={selectedId}
           onSelect={selectPerson}
-          onNew={newPerson}
+          
           className={
             "absolute inset-y-0 left-0 z-20 max-w-[85%] border-r shadow-xl transition-transform md:static md:z-auto md:max-w-none md:translate-x-0 md:shadow-none " +
             (sidebarOpen ? "translate-x-0" : "-translate-x-full")
