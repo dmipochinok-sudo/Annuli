@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { UserRoundPlus } from "lucide-react";
+import { SF, SFIcon } from "@/components/annuli/SFIcon";
 
 import { toast } from "sonner";
 
@@ -414,7 +414,7 @@ function Index() {
             onClick={newPerson}
             className="flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <UserRoundPlus className="size-4" strokeWidth={1.75} />
+            <SFIcon glyph={SF.personBadgePlus} size={16} />
             <span className="whitespace-nowrap">Добавить персону</span>
           </button>
 
