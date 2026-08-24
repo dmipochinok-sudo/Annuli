@@ -45,6 +45,7 @@ function Index() {
   const [isNew, setIsNew] = useState(false);
   const [tab, setTab] = useState("t1");
   const [dark, setDark] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("annuli-theme") === "dark";
