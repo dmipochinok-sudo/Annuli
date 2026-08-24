@@ -91,8 +91,11 @@ export interface Doc {
   id: string;
   docId: string;
   name: string;
+  /** Дата документа. */
+  date?: string;
   transcription: string;
   comment: string;
+  /** Онлайн-ссылка на документ (совместимо со старым `path`). */
   path: string;
   archive: string;
   fund: string;
@@ -110,6 +113,94 @@ export interface Memory {
   patronymic: string;
   date: string;
   text: string;
+  /** Связь автора воспоминаний с персоной базы. */
+  linkedId?: string;
+  personIndex?: string;
+  /** Кто записал воспоминание. */
+  recordedBy?: string;
+  /** Обстоятельства записи. */
+  circumstances?: string;
+  comment?: string;
+  avatarImageId?: string;
+  avatarThumb?: string;
+}
+
+/** Место учёбы. */
+export interface Education {
+  id: string;
+  school: string;
+  speciality: string;
+  dateFrom: string;
+  dateTo: string;
+  place: string;
+  fund: string;
+  opis: string;
+  delo: string;
+  list: string;
+}
+
+/** Место работы. */
+export interface Job {
+  id: string;
+  employer: string;
+  division: string;
+  position: string;
+  dateFrom: string;
+  dateTo: string;
+  endReason: string;
+  place: string;
+}
+
+/** Место военной службы. */
+export interface MilitaryPlace {
+  id: string;
+  unit: string;
+  rank: string;
+  position: string;
+  dateFrom: string;
+  dateTo: string;
+  endReason: string;
+  place: string;
+}
+
+export interface MilitaryConflict {
+  id: string;
+  name: string;
+  dateFrom: string;
+  dateTo: string;
+}
+
+export interface Award {
+  id: string;
+  name: string;
+  date: string;
+  rank: string;
+  docNumber: string;
+  storage: string;
+}
+
+/** Фотография в альбоме. */
+export interface Photo {
+  id: string;
+  imageId: string;
+  imageName?: string;
+  thumb?: string;
+  date: string;
+  title: string;
+  photoId: string;
+  backText: string;
+  place: string;
+  comment: string;
+  /** Служебное поле экспорта/импорта: путь файла внутри ZIP. */
+  _file?: string;
+}
+
+export interface Album {
+  id: string;
+  albumId: string;
+  name: string;
+  storage: string;
+  photos: Photo[];
 }
 
 export interface Sibling {
