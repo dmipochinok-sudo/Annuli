@@ -356,7 +356,7 @@ export function PersonMain({ person: p, persons, editMode, onChange, onOpenPerso
               linkedId: c.linkedId,
               avatarImageId: c.avatarImageId,
             }}
-            onChange={(v) => patchChild(i, v)}
+            onChange={(v) => patchChild(i, v as Partial<Child>)}
             onRemove={() => onChange({ children: p.children.filter((_, k) => k !== i) })}
             onOpenPerson={onOpenPerson}
           />
