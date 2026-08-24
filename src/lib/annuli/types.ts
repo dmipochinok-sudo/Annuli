@@ -62,6 +62,8 @@ export interface Marriage {
   marriageDocOpis: string;
   marriageDocDelo: string;
   marriageDocList: string;
+  spouseIndex?: string;
+  spouseAvatarImageId?: string;
 }
 
 export interface Child {
@@ -70,6 +72,8 @@ export interface Child {
   firstName: string;
   lastName: string;
   patronymic: string;
+  personIndex?: string;
+  avatarImageId?: string;
   gender: string;
   estate: string;
   birthDateApprox: boolean;
