@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
-import { PersonBasic } from "@/components/annuli/PersonBasic";
+import { PersonBirth } from "@/components/annuli/PersonBirth";
+import { PersonMain } from "@/components/annuli/PersonMain";
 import { PersonDocs } from "@/components/annuli/PersonDocs";
 import { PersonFamily } from "@/components/annuli/PersonFamily";
 import { PersonMemories } from "@/components/annuli/PersonMemories";
