@@ -9,6 +9,7 @@ import {
   extFromName,
   mimeFromExt,
   pageGroups,
+  personFolderName,
   sanitizeFileBase,
 } from "./media";
 import { normalizePerson, type Page, type Person } from "./types";
@@ -32,16 +33,21 @@ export async function buildArchive(
   onProgress?: (msg: string) => void,
 ): Promise<Blob> {
   const zip = new JSZip();
-  const imgFolder = zip.folder("images")!;
-  const used = new Set<string>();
-  const uniqueName = (base: string, ext: string) => {
-    let name = base + ext;
+  const usedFolders = new Set<string>();
+  const uniqueFolder = (base: string) => {
+    let name = base;
     let n = 1;
-    while (used.has(name.toLowerCase())) name = `${base}_${++n}${ext}`;
-    used.add(name.toLowerCase());
+    while (usedFolders.has(name.toLowerCase())) name = `${base}_${++n}`;
+    usedFolders.add(name.toLowerCase());
     return name;
   };
-  const embed = async (imageId: string, imageName: string | undefined, baseId: string) => {
+  const embed = async (
+    folder: string,
+    used: Set<string>,
+    imageId: string,
+    imageName: string | undefined,
+    baseId: string,
+  ) => {
     if (!imageId) return null;
     let blob: Blob | null = null;
     try {
@@ -51,17 +57,23 @@ export async function buildArchive(
     }
     if (!blob) return null;
     const ext = extFromName(imageName) || extFromMime(blob.type);
-    const name = uniqueName(sanitizeFileBase(baseId), ext);
-    imgFolder.file(name, blob, { compression: "STORE" });
-    return `images/${name}`;
+    let name = sanitizeFileBase(baseId) + ext;
+    let n = 1;
+    while (used.has(name.toLowerCase())) name = `${sanitizeFileBase(baseId)}_${++n}${ext}`;
+    used.add(name.toLowerCase());
+    const path = `images/${folder}/${name}`;
+    zip.file(path, blob, { compression: "STORE" });
+    return path;
   };
 
   const exportPersons = clone(persons);
   let done = 0;
   for (const ep of exportPersons) {
     const pIdx = sanitizeFileBase(ep.personIndex || ep.id);
+    const folder = uniqueFolder(personFolderName(ep));
+    const used = new Set<string>();
     if (ep.avatarImageId) {
-      const f = await embed(ep.avatarImageId, ep.avatarImageName, `${pIdx}.avatar`);
+      const f = await embed(folder, used, ep.avatarImageId, ep.avatarImageName, `${pIdx}.avatar`);
       if (f) (ep as Person & { _avatarFile?: string })._avatarFile = f;
     }
     for (const g of pageGroups(ep)) {
@@ -70,13 +82,20 @@ export async function buildArchive(
         const pg = pages[i];
         if (!pg?.imageId) continue;
         const suffix = pages.length > 1 ? `_${i + 1}` : "";
-        const f = await embed(pg.imageId, pg.imageName, sanitizeFileBase(g.docId) + suffix);
+        const f = await embed(
+          folder,
+          used,
+          pg.imageId,
+          pg.imageName,
+          sanitizeFileBase(g.docId) + suffix,
+        );
         if (f) pg._file = f;
       }
     }
     done++;
     if (done % 5 === 0) onProgress?.(`Подготовка архива… ${done}/${exportPersons.length}`);
   }
+
 
   zip.file(
     "data.json",

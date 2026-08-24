@@ -5,11 +5,14 @@ import type { Person } from "@/lib/annuli/types";
 
 export function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="mb-2.5 overflow-hidden rounded-xl bg-card shadow-sm">
-      <h3 className="border-b border-border bg-foreground/[0.02] px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+    <section className="mb-4 overflow-hidden rounded-xl border border-border bg-card">
+      <h3 className="flex items-center gap-3 border-b border-border bg-surface-light px-3 py-3 text-[14px] font-semibold uppercase tracking-[0.04em] text-foreground">
+        <span aria-hidden className="text-muted-foreground">
+          👁
+        </span>
         {title}
       </h3>
-      <div className="px-4 py-3">{children}</div>
+      <div className="p-4 sm:p-6">{children}</div>
     </section>
   );
 }
@@ -24,14 +27,12 @@ export function Row({ children }: { children: ReactNode }) {
 
 function Label({ children }: { children: ReactNode }) {
   return (
-    <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
-      {children}
-    </span>
+    <span className="pl-2 text-[11px] text-muted-foreground">{children}</span>
   );
 }
 
 const inputCls =
-  "rounded-md border border-border bg-card px-2.5 py-2 text-[13px] text-foreground outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/15";
+  "h-8 rounded-lg border border-border bg-surface-dark px-3 text-[14px] text-foreground outline-none transition focus:border-stroke-bright";
 
 export function TextField({
   label,
