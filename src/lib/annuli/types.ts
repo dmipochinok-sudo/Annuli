@@ -6,13 +6,22 @@ export function uid(): string {
 }
 
 export interface Page {
-  id: string;
+  id?: string;
   imageId: string;
-  thumb: string;
-  name: string;
-  transcription: string;
-  comment: string;
+  /** Исходное имя файла скана (используется при экспорте в ZIP). */
+  imageName?: string;
+  thumb?: string;
+  name?: string;
+  transcription?: string;
+  comment?: string;
+  /** Служебное поле экспорта/импорта: путь файла внутри ZIP. */
+  _file?: string;
 }
+
+export function mkPage(): Page {
+  return { id: uid(), imageId: "", imageName: "", transcription: "", comment: "" };
+}
+
 
 export interface Military {
   unit: string;

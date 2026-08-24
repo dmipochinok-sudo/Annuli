@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { PersonBasic } from "@/components/annuli/PersonBasic";
@@ -9,10 +9,22 @@ import { PersonMemories } from "@/components/annuli/PersonMemories";
 import { PersonMilitary } from "@/components/annuli/PersonMilitary";
 import { PersonTree } from "@/components/annuli/PersonTree";
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
+import { DbModal } from "@/components/annuli/DbModal";
+import { DupeModal } from "@/components/annuli/DupeModal";
+import { Lightbox, type LightboxItem } from "@/components/annuli/Lightbox";
+import {
+  applyResolutions,
+  dedupePersonLists,
+  findDuplicates,
+  type DupeResolution,
+  type DupeSlot,
+} from "@/lib/annuli/dedupe";
+import { imgGet, imgPut, imgDel } from "@/lib/annuli/db";
+import { makeThumbnail } from "@/lib/annuli/media";
 import { Toaster } from "@/components/ui/sonner";
 import { useAnnuli } from "@/hooks/use-annuli";
 import { fullName, lifeDates } from "@/lib/annuli/format";
-import { mkPerson, type Person } from "@/lib/annuli/types";
+import { mkPerson, uid, type Page, type Person } from "@/lib/annuli/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,7 +55,7 @@ const TABS = [
 ];
 
 function Index() {
-  const { persons, loading, error, savePerson, deletePerson } = useAnnuli();
+  const { persons, loading, error, savePerson, deletePerson, reload } = useAnnuli();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Person | null>(null);
   const [editMode, setEditMode] = useState(false);
@@ -51,6 +63,14 @@ function Index() {
   const [tab, setTab] = useState("t1");
   const [dark, setDark] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dbOpen, setDbOpen] = useState(false);
+  const [dupeSlots, setDupeSlots] = useState<DupeSlot[]>([]);
+  const [dupeRes, setDupeRes] = useState<Map<string, DupeResolution>>(new Map());
+  const [pendingSave, setPendingSave] = useState<Person | null>(null);
+  const [lbItems, setLbItems] = useState<LightboxItem[]>([]);
+  const [lbIndex, setLbIndex] = useState(0);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const avatarInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("annuli-theme") === "dark";
@@ -70,6 +90,28 @@ function Index() {
     [persons, selectedId],
   );
   const current = draft ?? selected;
+  const currentAvatarId = current?.avatarImageId || "";
+
+  useEffect(() => {
+    let alive = true;
+    let objUrl = "";
+    if (!currentAvatarId) {
+      setAvatarUrl("");
+      return;
+    }
+    imgGet(currentAvatarId)
+      .then((blob) => {
+        if (!alive || !blob) return;
+        objUrl = URL.createObjectURL(blob);
+        setAvatarUrl(objUrl);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+      if (objUrl) URL.revokeObjectURL(objUrl);
+    };
+  }, [currentAvatarId]);
+
 
   const selectPerson = (id: string) => {
     setSelectedId(id);
@@ -105,22 +147,111 @@ function Index() {
     setIsNew(false);
   };
 
+  /** Записывает персону и синхронизирует встречные связи у супругов. */
+  const persist = async (p: Person) => {
+    const saved = await savePerson(p);
+    for (const m of saved.marriages || []) {
+      if (!m.spouseLinkedId) continue;
+      const sp = persons.find((x) => x.id === m.spouseLinkedId);
+      if (!sp) continue;
+      if ((sp.marriages || []).some((sm) => sm.spouseLinkedId === saved.id)) continue;
+      await savePerson({
+        ...sp,
+        marriages: [
+          ...(sp.marriages || []),
+          {
+            id: uid(),
+            marriageDate: m.marriageDate,
+            marriagePlace: m.marriagePlace,
+            marriageEnded: false,
+            marriageEndDate: "",
+            marriageEndReason: "",
+            spouseLastName: saved.lastName,
+            spouseFirstName: saved.firstName,
+            spousePatronymic: saved.patronymic,
+            spouseLinkedId: saved.id,
+            marriageDocName: "",
+            marriageDocId: "",
+            marriageDocPath: "",
+            marriageDocPages: [],
+            marriageDocArchive: "",
+            marriageDocFund: "",
+            marriageDocOpis: "",
+            marriageDocDelo: "",
+            marriageDocList: "",
+          },
+        ],
+      });
+    }
+    setSelectedId(saved.id);
+    setDraft(null);
+    setEditMode(false);
+    setIsNew(false);
+    toast.success("Персона сохранена");
+  };
+
   const save = async () => {
     if (!draft) return;
     if (!draft.personIndex.trim()) {
       toast.error("Укажите индекс персоны (например N.5.3)");
       return;
     }
+    const clean = dedupePersonLists(draft);
+    const slots = findDuplicates(clean, persons);
+    if (slots.length) {
+      const preset = new Map<string, DupeResolution>();
+      for (const sl of slots) {
+        if (sl.auto && sl.candidates[0])
+          preset.set(sl.key, { type: "link", id: sl.candidates[0].person.id });
+      }
+      setDupeSlots(slots);
+      setDupeRes(preset);
+      setPendingSave(clean);
+      return;
+    }
     try {
-      const saved = await savePerson(draft);
-      setSelectedId(saved.id);
-      setDraft(null);
-      setEditMode(false);
-      setIsNew(false);
-      toast.success("Персона сохранена");
+      await persist(clean);
     } catch (e) {
       toast.error("Не удалось сохранить: " + (e instanceof Error ? e.message : String(e)));
     }
+  };
+
+  const confirmDupes = async () => {
+    if (!pendingSave) return;
+    const linked = applyResolutions(pendingSave, dupeSlots, dupeRes, persons);
+    setDupeSlots([]);
+    setDupeRes(new Map());
+    setPendingSave(null);
+    try {
+      await persist(linked);
+    } catch (e) {
+      toast.error("Не удалось сохранить: " + (e instanceof Error ? e.message : String(e)));
+    }
+  };
+
+  const openScans = useCallback((pages: Page[], index: number) => {
+    const items = pages
+      .filter((pg) => pg.imageId)
+      .map((pg) => ({ imageId: pg.imageId, title: pg.imageName || "Скан" }));
+    if (!items.length) return;
+    const target = pages[index]?.imageId;
+    const i = Math.max(
+      0,
+      items.findIndex((it) => it.imageId === target),
+    );
+    setLbItems(items);
+    setLbIndex(i);
+  }, []);
+
+  const loadImage = useCallback((id: string) => imgGet(id).catch(() => null), []);
+
+  const onAvatarFile = async (file: File | undefined) => {
+    if (!file || !draft) return;
+    if (draft.avatarImageId) await imgDel(draft.avatarImageId).catch(() => {});
+    const imageId = `img_${uid()}`;
+    await imgPut(imageId, file);
+    const thumb = await makeThumbnail(file, 240, 240);
+    patchDraft({ avatarImageId: imageId, avatarImageName: file.name, avatarThumb: thumb });
   };
 
   const remove = async () => {
@@ -168,12 +299,20 @@ function Index() {
           <h1 className="text-[15px] font-bold tracking-tight">Annuli</h1>
           <span className="text-[11px] opacity-60">генеалогическая база</span>
         </div>
+        <div className="flex items-center gap-2 justify-self-end">
+        <button
+          onClick={() => setDbOpen(true)}
+          className="rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
+        >
+          💾 База
+        </button>
         <button
           onClick={toggleTheme}
           className="justify-self-end rounded-md border border-white/15 px-2.5 py-1 text-[12px] transition hover:bg-white/10"
         >
           {dark ? "☀︎ Светлая" : "☾ Тёмная"}
         </button>
+        </div>
       </header>
 
       <div className="relative flex flex-1 overflow-hidden">
@@ -210,6 +349,43 @@ function Index() {
           ) : (
             <>
               <div className="mb-4 grid grid-cols-[minmax(0,1fr)] items-center gap-2 sm:flex sm:flex-wrap">
+                <input
+                  ref={avatarInput}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(ev) => void onAvatarFile(ev.target.files?.[0])}
+                />
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (editMode) {
+                        if (avatarInput.current) {
+                          avatarInput.current.value = "";
+                          avatarInput.current.click();
+                        }
+                      } else if (currentAvatarId) {
+                        setLbItems([
+                          { imageId: currentAvatarId, title: current.avatarImageName || "Портрет" },
+                        ]);
+                        setLbIndex(0);
+                      }
+                    }}
+                    title={editMode ? "Загрузить портрет" : "Открыть портрет"}
+                    className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-muted text-[13px] font-bold text-muted-foreground"
+                  >
+                    {avatarUrl || current.avatarThumb ? (
+                      <img
+                        src={avatarUrl || current.avatarThumb}
+                        alt={`Портрет: ${fullName(current) || "персона"}`}
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <span>{editMode ? "＋" : "?"}</span>
+                    )}
+                  </button>
+                </div>
                 <div className="min-w-0 flex-1">
                   <h2 className="truncate text-[18px] font-bold tracking-tight sm:text-[22px]">
                     {fullName(current) || "Новая персона"}
@@ -278,10 +454,20 @@ function Index() {
                 <PersonFamily person={current} editMode={editMode} onChange={patchDraft} />
               )}
               {tab === "t3" && (
-                <PersonDocs person={current} editMode={editMode} onChange={patchDraft} />
+                <PersonDocs
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
               )}
               {tab === "t4" && (
-                <PersonMilitary person={current} editMode={editMode} onChange={patchDraft} />
+                <PersonMilitary
+                  person={current}
+                  editMode={editMode}
+                  onChange={patchDraft}
+                  onOpenScans={openScans}
+                />
               )}
               {tab === "t5" && (
                 <PersonMemories person={current} editMode={editMode} onChange={patchDraft} />
@@ -293,6 +479,49 @@ function Index() {
           )}
         </main>
       </div>
+      {dbOpen && (
+        <DbModal
+          persons={persons}
+          onClose={() => setDbOpen(false)}
+          onImported={async () => {
+            await reload();
+            setSelectedId(null);
+            setDraft(null);
+            setEditMode(false);
+          }}
+        />
+      )}
+
+      {dupeSlots.length > 0 && (
+        <DupeModal
+          slots={dupeSlots}
+          resolutions={dupeRes}
+          onResolve={(key, res) =>
+            setDupeRes((prev) => {
+              const next = new Map(prev);
+              next.set(key, res);
+              return next;
+            })
+          }
+          onConfirm={() => void confirmDupes()}
+          onCancel={() => {
+            setDupeSlots([]);
+            setDupeRes(new Map());
+            setPendingSave(null);
+          }}
+        />
+      )}
+
+      {lbItems.length > 0 && (
+        <Lightbox
+          items={lbItems}
+          index={lbIndex}
+          onIndexChange={setLbIndex}
+          onClose={() => setLbItems([])}
+          loadImage={loadImage}
+        />
+      )}
+
       <Toaster />
     </div>
   );

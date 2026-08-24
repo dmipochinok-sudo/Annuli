@@ -25,6 +25,12 @@ export function useAnnuli() {
     };
   }, []);
 
+  const reload = useCallback(async () => {
+    const rows = await dbAllPersons();
+    setPersons(rows);
+    return rows;
+  }, []);
+
   const savePerson = useCallback(async (p: Person) => {
     const rec: Person = { ...p, updatedAt: new Date().toISOString() };
     await dbPutPerson(rec);
@@ -43,5 +49,5 @@ export function useAnnuli() {
     setPersons((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
-  return { persons, loading, error, savePerson, deletePerson };
+  return { persons, loading, error, savePerson, deletePerson, reload };
 }
