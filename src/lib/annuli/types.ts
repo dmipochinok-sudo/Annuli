@@ -213,7 +213,14 @@ export interface Sibling {
   firstName?: string;
   lastName?: string;
   patronymic?: string;
+  personIndex?: string;
+  gender?: string;
+  avatarImageId?: string;
   [key: string]: unknown;
+}
+
+export function mkSibling(): Sibling {
+  return { id: uid(), linkedId: "", firstName: "", patronymic: "", lastName: "", personIndex: "" };
 }
 
 export interface Residence {
