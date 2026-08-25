@@ -1,5 +1,5 @@
+import { BirthDocSection } from "@/components/annuli/BirthDocSection";
 import { CheckField, Row, Section, TextField } from "@/components/annuli/PersonBasic";
-import { PagesEditor } from "@/components/annuli/PagesEditor";
 import { PersonLinkCard } from "@/components/annuli/PersonLinkCard";
 import type { Page, Person } from "@/lib/annuli/types";
 
@@ -155,53 +155,12 @@ export function PersonBirth({
         </Row>
       </Section>
 
-      <Section title="Документ о рождении">
-        <Row>
-          <TextField
-            label="Название"
-            value={p.birthDocName}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocName: v })}
-          />
-          <TextField
-            label="Архив"
-            value={p.birthDocArchive}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocArchive: v })}
-          />
-          <TextField
-            label="Фонд"
-            value={p.birthDocFund}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocFund: v })}
-          />
-          <TextField
-            label="Опись"
-            value={p.birthDocOpis}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocOpis: v })}
-          />
-          <TextField
-            label="Дело"
-            value={p.birthDocDelo}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocDelo: v })}
-          />
-          <TextField
-            label="Лист"
-            value={p.birthDocList}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocList: v })}
-          />
-        </Row>
-        <PagesEditor
-          label="Сканы метрики о рождении"
-          pages={p.birthDocPages}
-          editMode={editMode}
-          onChange={(pages) => onChange({ birthDocPages: pages })}
-          onOpen={onOpenScans}
-        />
-      </Section>
+      <BirthDocSection
+        person={p}
+        editMode={editMode}
+        onChange={onChange}
+        onOpenScans={onOpenScans}
+      />
     </div>
   );
 }

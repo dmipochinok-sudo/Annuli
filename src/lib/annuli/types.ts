@@ -245,6 +245,7 @@ export interface Person {
   birthPlace: string;
   birthDocName: string;
   birthDocId: string;
+  birthDocDate?: string;
   birthDocPath: string;
   birthDocPages: Page[];
   birthDocArchive: string;
