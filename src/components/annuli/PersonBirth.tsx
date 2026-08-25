@@ -1,5 +1,5 @@
+import { BirthDocSection } from "@/components/annuli/BirthDocSection";
 import { CheckField, Row, Section, TextField } from "@/components/annuli/PersonBasic";
-import { PagesEditor } from "@/components/annuli/PagesEditor";
 import { PersonLinkCard } from "@/components/annuli/PersonLinkCard";
 import type { Page, Person } from "@/lib/annuli/types";
 
