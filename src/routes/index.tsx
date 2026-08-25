@@ -1,7 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { SF, SFIcon } from "@/components/annuli/SFIcon";
-
 import { toast } from "sonner";
 
 import { PersonBirth } from "@/components/annuli/PersonBirth";
@@ -412,12 +410,10 @@ function Index() {
           </button>
           <button
             onClick={newPerson}
-            className="flex h-8 items-center gap-1.5 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
           >
-            <SFIcon glyph={SF.personBadgePlus} size={16} />
-            <span className="whitespace-nowrap">Добавить персону</span>
+            <span className="whitespace-nowrap">＋ Добавить персону</span>
           </button>
-
           <button
             onClick={() => setTreeOpen(true)}
             className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
