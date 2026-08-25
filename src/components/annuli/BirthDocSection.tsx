@@ -377,7 +377,7 @@ export function BirthDocSection({ person: p, editMode, onChange, onOpenScans }: 
           onChange={(ev) => void onFile(ev.target.files?.[0])}
         />
 
-        <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+        <div className="flex flex-col gap-2 border-t border-border pt-4">
           {!ro && (
             <ToolButton
               icon={<ImageIcon className="size-4" />}
