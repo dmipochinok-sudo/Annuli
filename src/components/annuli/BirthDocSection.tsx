@@ -102,7 +102,7 @@ function ToolButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-xl border border-border bg-surface-dark px-3 text-[13px] transition",
+        "flex h-9 w-full items-center gap-2 rounded-xl border border-border bg-surface-dark px-3 text-[13px] transition",
         "hover:border-stroke-bright hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40",
         danger && "border-destructive/40 text-destructive hover:bg-destructive/10",
       )}
