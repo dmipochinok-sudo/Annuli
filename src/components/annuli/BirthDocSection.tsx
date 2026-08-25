@@ -4,9 +4,10 @@ import {
   Download,
   Eye,
   FolderOpen,
-  ExternalLink,
+  Globe,
   Image as ImageIcon,
-  Plus,
+  FilePlus2,
+  RefreshCw,
   Trash2,
 } from "lucide-react";
 
@@ -28,57 +29,64 @@ const copy = (text: string) => {
   void navigator.clipboard?.writeText(text);
 };
 
-/** Поле «подпись — значение» с кнопкой копирования справа. */
+const labelCls = "pl-2 text-[12px] leading-3 text-muted-foreground";
+
+/** Поле «подпись — значение»: в режиме просмотра без рамки, в редактировании — инпут. */
 function Field({
   label,
   value,
   readOnly,
   onChange,
   className,
-  mono,
+  multiline,
 }: {
   label: string;
   value: string;
   readOnly: boolean;
   onChange: (v: string) => void;
   className?: string;
-  mono?: boolean;
+  multiline?: boolean;
 }) {
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
-      <span className="pl-1 text-[11px] uppercase tracking-[0.04em] text-muted-foreground">
-        {label}
-      </span>
-      <div className="flex items-center gap-1 rounded-xl border border-border bg-surface-dark px-3 transition focus-within:border-stroke-bright">
-        {readOnly ? (
+    <div className={cn("flex min-w-0 flex-col gap-1", className)}>
+      <span className={labelCls}>{label}</span>
+      {readOnly ? (
+        multiline ? (
+          <p className="whitespace-pre-wrap px-3 py-1 text-[14px] leading-5 text-foreground">
+            {value || "—"}
+          </p>
+        ) : (
           <span
-            className={cn(
-              "min-w-0 flex-1 truncate py-2 text-[14px] text-foreground",
-              mono && "font-mono text-[13px]",
-            )}
+            className="truncate px-3 py-1.5 text-[14px] leading-4 text-foreground"
             title={value}
           >
             {value || "—"}
           </span>
-        ) : (
+        )
+      ) : multiline ? (
+        <textarea
+          rows={12}
+          value={value}
+          onChange={(ev) => onChange(ev.target.value)}
+          className="w-full resize-y rounded-lg border-[0.5px] border-border bg-surface-dark p-3 text-[14px] leading-5 text-foreground outline-none transition focus:border-stroke-bright"
+        />
+      ) : (
+        <div className="flex h-8 items-center gap-1 rounded-lg border-[0.5px] border-border bg-surface-dark px-3 transition focus-within:border-stroke-bright">
           <input
             value={value}
             onChange={(ev) => onChange(ev.target.value)}
-            className={cn(
-              "min-w-0 flex-1 bg-transparent py-2 text-[14px] text-foreground outline-none",
-              mono && "font-mono text-[13px]",
-            )}
+            className="min-w-0 flex-1 bg-transparent text-[14px] leading-4 text-foreground outline-none"
           />
-        )}
-        <button
-          type="button"
-          title="Копировать"
-          onClick={() => copy(value)}
-          className="grid size-6 shrink-0 place-items-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
-        >
-          <Copy className="size-3.5" />
-        </button>
-      </div>
+          <button
+            type="button"
+            title="Копировать"
+            onClick={() => copy(value)}
+            className="grid size-5 shrink-0 place-items-center rounded text-muted-foreground transition hover:text-foreground"
+          >
+            <Copy className="size-3" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -89,12 +97,14 @@ function ToolButton({
   onClick,
   disabled,
   danger,
+  grow,
 }: {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
   disabled?: boolean;
   danger?: boolean;
+  grow?: boolean;
 }) {
   return (
     <button
@@ -102,9 +112,12 @@ function ToolButton({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "inline-flex h-9 items-center gap-2 rounded-xl border border-border bg-surface-dark px-3 text-[13px] transition",
-        "hover:border-stroke-bright hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40",
-        danger && "border-destructive/40 text-destructive hover:bg-destructive/10",
+        "flex h-8 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg pl-3 pr-4 text-[14px] leading-4 transition",
+        grow && "flex-1",
+        danger
+          ? "border border-destructive text-destructive hover:bg-destructive/10"
+          : "border-[0.5px] border-border bg-surface-light text-foreground hover:border-stroke-bright",
+        "disabled:cursor-not-allowed disabled:opacity-40",
       )}
     >
       {icon}
@@ -134,11 +147,13 @@ function PageThumb({
       onDoubleClick={onOpen}
       title={page.imageName || `Страница ${index + 1}`}
       className={cn(
-        "group relative w-[104px] shrink-0 overflow-hidden rounded-xl border bg-surface-dark text-left transition",
-        active ? "border-stroke-bright ring-3 ring-primary/20" : "border-border hover:border-stroke-bright",
+        "flex flex-col items-center gap-2 rounded-2xl border-[0.5px] p-2 transition",
+        active
+          ? "border-stroke-bright bg-surface-light"
+          : "border-border bg-card hover:border-stroke-bright",
       )}
     >
-      <span className="block h-[124px] w-full overflow-hidden bg-muted">
+      <span className="block h-[126px] w-full overflow-hidden rounded-lg bg-muted">
         {url ? (
           <img
             src={url}
@@ -148,18 +163,23 @@ function PageThumb({
           />
         ) : (
           <span className="grid size-full place-items-center text-muted-foreground">
-            <ImageIcon className="size-5" />
+            <ImageIcon className="size-6" />
           </span>
         )}
       </span>
-      <span className="block px-2 py-1.5 text-center text-[12px] text-muted-foreground">
+      <span
+        className={cn(
+          "text-[12px] leading-3",
+          active ? "text-foreground" : "text-muted-foreground",
+        )}
+      >
         стр. {index + 1}
       </span>
     </button>
   );
 }
 
-/** Блок «Документы о рождении» — новая структура дизайна. */
+/** Блок «Документы о рождении». */
 export function BirthDocSection({ person: p, editMode, onChange, onOpenScans }: Props) {
   const ro = !editMode;
   const pages = p.birthDocPages || [];
@@ -176,9 +196,7 @@ export function BirthDocSection({ person: p, editMode, onChange, onOpenScans }: 
     await imgPut(imageId, file);
     const thumb = file.type.startsWith("image/") ? await makeThumbnail(file) : "";
     setPages(
-      pages.map((pg, i) =>
-        i === sel ? { ...pg, imageId, imageName: file.name, thumb } : pg,
-      ),
+      pages.map((pg, i) => (i === sel ? { ...pg, imageId, imageName: file.name, thumb } : pg)),
     );
   };
 
@@ -195,178 +213,147 @@ export function BirthDocSection({ person: p, editMode, onChange, onOpenScans }: 
   };
 
   return (
-    <section className="mb-4 overflow-hidden rounded-2xl border border-border bg-card">
-      <h3 className="flex items-center gap-3 border-b border-border bg-surface-light px-4 py-3 text-[14px] font-semibold uppercase tracking-[0.04em]">
-        <Eye aria-hidden className="size-4 text-muted-foreground" />
+    <section className="mb-4 overflow-hidden rounded-lg border border-border bg-card">
+      <h3 className="flex h-10 items-center gap-3 border-b border-border bg-surface-light px-3 text-[14px] font-semibold uppercase leading-4 tracking-[0.04em]">
+        <Eye aria-hidden className="size-4" />
         Документы о рождении
       </h3>
 
-      <div className="space-y-4 p-4 sm:p-6">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <Field
-            label="Название документа"
-            value={p.birthDocName}
-            readOnly={ro}
-            className="sm:col-span-2"
-            onChange={(v) => onChange({ birthDocName: v })}
-          />
-          <Field
-            label="Дата"
-            value={p.birthDocDate || ""}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocDate: v })}
-          />
-          <Field
-            label="Номер документа в базе"
-            value={p.birthDocId}
-            readOnly={ro}
-            mono
-            onChange={(v) => onChange({ birthDocId: v })}
-          />
-          <Field
-            label="Архив"
-            value={p.birthDocArchive}
-            readOnly={ro}
-            className="sm:col-span-2"
-            onChange={(v) => onChange({ birthDocArchive: v })}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Field
-            label="Фонд"
-            value={p.birthDocFund}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocFund: v })}
-          />
-          <Field
-            label="Опись"
-            value={p.birthDocOpis}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocOpis: v })}
-          />
-          <Field
-            label="Дело"
-            value={p.birthDocDelo}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocDelo: v })}
-          />
-          <Field
-            label="Лист"
-            value={p.birthDocList}
-            readOnly={ro}
-            onChange={(v) => onChange({ birthDocList: v })}
-          />
-        </div>
-
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-end">
-          <Field
-            label="Ссылка"
-            value={p.birthDocPath || ""}
-            readOnly={ro}
-            className="min-w-0 flex-1"
-            mono
-            onChange={(v) => onChange({ birthDocPath: v })}
-          />
-          <div className="flex gap-2">
-            <ToolButton
-              icon={<Copy className="size-4" />}
-              label="Копировать ссылку"
-              disabled={!p.birthDocPath}
-              onClick={() => copy(p.birthDocPath || "")}
+      <div className="flex flex-col gap-7 px-4 pb-10 pt-8 sm:px-8">
+        <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Field
+              label="Название документа"
+              value={p.birthDocName}
+              readOnly={ro}
+              className="col-span-2"
+              onChange={(v) => onChange({ birthDocName: v })}
             />
-            <ToolButton
-              icon={<ExternalLink className="size-4" />}
-              label="Перейти"
-              disabled={!p.birthDocPath}
-              onClick={() => window.open(p.birthDocPath, "_blank", "noopener")}
+            <Field
+              label="Дата"
+              value={p.birthDocDate || ""}
+              readOnly={ro}
+              onChange={(v) => onChange({ birthDocDate: v })}
+            />
+            <Field
+              label="Номер документа в базе"
+              value={p.birthDocId}
+              readOnly={ro}
+              onChange={(v) => onChange({ birthDocId: v })}
             />
           </div>
-        </div>
 
-        <div className="flex gap-3 overflow-x-auto pb-1">
-          {pages.map((pg, i) => (
-            <PageThumb
-              key={pg.id || i}
-              page={pg}
-              index={i}
-              active={i === sel}
-              onSelect={() => setSel(i)}
-              onOpen={() => onOpenScans(pages, i)}
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+            <Field
+              label="Архив"
+              value={p.birthDocArchive}
+              readOnly={ro}
+              className="col-span-2 sm:col-span-1"
+              onChange={(v) => onChange({ birthDocArchive: v })}
             />
-          ))}
-          {!ro && (
-            <button
-              type="button"
-              onClick={() => {
-                setPages([...pages, mkPage()]);
-                setSel(pages.length);
-              }}
-              className="grid h-[156px] w-[104px] shrink-0 place-items-center gap-1 rounded-xl border border-dashed border-border text-[12px] text-muted-foreground transition hover:border-stroke-bright hover:text-foreground"
-            >
-              <Plus className="size-5" />
-              Добавить
-              <span className="sr-only">страницу</span>
-            </button>
-          )}
-          {pages.length === 0 && ro && (
-            <p className="text-[13px] text-muted-foreground">Сканы не добавлены</p>
-          )}
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <span className="pl-1 text-[11px] uppercase tracking-[0.04em] text-muted-foreground">
-            Расшифровка записи
-          </span>
-          {ro ? (
-            <p className="whitespace-pre-wrap rounded-xl border border-border bg-surface-dark p-3 text-[13px] leading-relaxed">
-              {selPage?.transcription || "—"}
-            </p>
-          ) : (
-            <textarea
-              rows={10}
-              value={selPage?.transcription || ""}
-              disabled={!selPage}
-              onChange={(ev) =>
-                setPages(
-                  pages.map((pg, i) =>
-                    i === sel ? { ...pg, transcription: ev.target.value } : pg,
-                  ),
-                )
-              }
-              className="w-full resize-y rounded-xl border border-border bg-surface-dark p-3 text-[13px] leading-relaxed outline-none transition focus:border-stroke-bright disabled:opacity-50"
+            <Field
+              label="Фонд"
+              value={p.birthDocFund}
+              readOnly={ro}
+              onChange={(v) => onChange({ birthDocFund: v })}
             />
-          )}
-        </div>
+            <Field
+              label="Опись"
+              value={p.birthDocOpis}
+              readOnly={ro}
+              onChange={(v) => onChange({ birthDocOpis: v })}
+            />
+            <Field
+              label="Дело"
+              value={p.birthDocDelo}
+              readOnly={ro}
+              onChange={(v) => onChange({ birthDocDelo: v })}
+            />
+            <Field
+              label="Лист"
+              value={p.birthDocList}
+              readOnly={ro}
+              onChange={(v) => onChange({ birthDocList: v })}
+            />
+          </div>
 
-        <div className="flex flex-col gap-1">
-          <span className="pl-1 text-[11px] uppercase tracking-[0.04em] text-muted-foreground">
-            Комментарии к документу
-          </span>
-          <div className="flex items-center gap-1 rounded-xl border border-border bg-surface-dark px-3 transition focus-within:border-stroke-bright">
-            {ro ? (
-              <span className="flex-1 py-2 text-[13px]">{selPage?.comment || "—"}</span>
-            ) : (
-              <input
-                value={selPage?.comment || ""}
-                disabled={!selPage}
-                onChange={(ev) =>
-                  setPages(
-                    pages.map((pg, i) => (i === sel ? { ...pg, comment: ev.target.value } : pg)),
-                  )
-                }
-                className="flex-1 bg-transparent py-2 text-[13px] outline-none disabled:opacity-50"
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end">
+            <Field
+              label="Ссылка"
+              value={p.birthDocPath || ""}
+              readOnly={ro}
+              className="min-w-0 flex-1"
+              onChange={(v) => onChange({ birthDocPath: v })}
+            />
+            <div className="flex gap-3">
+              <ToolButton
+                icon={<Copy className="size-4" />}
+                label="Копировать ссылку"
+                disabled={!p.birthDocPath}
+                onClick={() => copy(p.birthDocPath || "")}
               />
-            )}
-            <button
-              type="button"
-              title="Копировать"
-              onClick={() => copy(selPage?.comment || "")}
-              className="grid size-6 shrink-0 place-items-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
-            >
-              <Copy className="size-3.5" />
-            </button>
+              <ToolButton
+                icon={<Globe className="size-4" />}
+                label="Перейти"
+                disabled={!p.birthDocPath}
+                onClick={() => window.open(p.birthDocPath, "_blank", "noopener")}
+              />
+            </div>
           </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+            {pages.map((pg, i) => (
+              <PageThumb
+                key={pg.id || i}
+                page={pg}
+                index={i}
+                active={i === sel}
+                onSelect={() => setSel(i)}
+                onOpen={() => onOpenScans(pages, i)}
+              />
+            ))}
+            {!ro && (
+              <button
+                type="button"
+                onClick={() => {
+                  setPages([...pages, mkPage()]);
+                  setSel(pages.length);
+                }}
+                className="flex flex-col items-center gap-2 rounded-2xl border-[0.5px] border-border bg-surface-dark p-2 transition hover:border-stroke-bright"
+              >
+                <span className="grid h-[126px] w-full place-items-center rounded-lg text-muted-foreground">
+                  <FilePlus2 className="size-12" />
+                </span>
+                <span className="text-[12px] leading-3 text-muted-foreground">
+                  Добавить страницу
+                </span>
+              </button>
+            )}
+            {pages.length === 0 && ro && (
+              <p className="text-[13px] text-muted-foreground">Сканы не добавлены</p>
+            )}
+          </div>
+
+          <Field
+            label="Расшифровка записи"
+            value={selPage?.transcription || ""}
+            readOnly={ro || !selPage}
+            multiline
+            onChange={(v) =>
+              setPages(pages.map((pg, i) => (i === sel ? { ...pg, transcription: v } : pg)))
+            }
+          />
+
+          <Field
+            label="Комментарии к документу"
+            value={selPage?.comment || ""}
+            readOnly={ro || !selPage}
+            onChange={(v) =>
+              setPages(pages.map((pg, i) => (i === sel ? { ...pg, comment: v } : pg)))
+            }
+          />
         </div>
 
         <input
@@ -377,10 +364,11 @@ export function BirthDocSection({ person: p, editMode, onChange, onOpenScans }: 
           onChange={(ev) => void onFile(ev.target.files?.[0])}
         />
 
-        <div className="flex flex-nowrap gap-2 overflow-x-auto border-t border-border pt-4">
+        <div className="flex flex-nowrap gap-2 overflow-x-auto">
           {!ro && (
             <ToolButton
-              icon={<ImageIcon className="size-4" />}
+              grow
+              icon={<RefreshCw className="size-4" />}
               label="Заменить скан"
               disabled={!selPage}
               onClick={() => {
@@ -392,18 +380,21 @@ export function BirthDocSection({ person: p, editMode, onChange, onOpenScans }: 
             />
           )}
           <ToolButton
+            grow
             icon={<Copy className="size-4" />}
             label="Копировать текст"
             disabled={!selPage?.transcription}
             onClick={() => copy(selPage?.transcription || "")}
           />
           <ToolButton
+            grow
             icon={<FolderOpen className="size-4" />}
-            label="Показать скан"
+            label="Показать в папке"
             disabled={!selPage?.imageId}
             onClick={() => onOpenScans(pages, sel)}
           />
           <ToolButton
+            grow
             icon={<Download className="size-4" />}
             label="Скачать фото"
             disabled={!selPage?.imageId}
