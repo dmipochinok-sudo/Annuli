@@ -1077,3 +1077,41 @@ Vision, Architecture Decisions, инварианты модели данных, 
 9. Не спрашивать лишний раз — Дмитрий ожидает автономного выполнения задач и
    кратких подтверждений с его стороны. Исключение — Development Rules 7.7,
    последний пункт: одно уточнение, если без него работа пойдёт не туда.
+
+---
+## Аутентификация и управление пользователями (Lovable Cloud, 2026-08)
+
+Добавлено в React-версии (не в legacy HTML). Стек: Lovable Cloud (Supabase Auth).
+
+**Методы входа:** email + пароль, Google, Apple (управляемые OAuth-учётные
+данные Lovable Cloud). Страницы: `/auth` (вход/регистрация/восстановление),
+`/reset-password` (установка нового пароля по recovery-ссылке).
+
+**Модель данных:**
+- `public.profiles` — id (FK auth.users), display_name, email, avatar_url,
+  is_blocked. Профиль создаётся триггером `handle_new_user` при регистрации.
+- `public.user_roles` — роли (`admin`, `user`) в отдельной таблице;
+  проверка через security-definer `has_role`. Первый зарегистрированный
+  пользователь автоматически становится `admin`.
+- RLS включён на обеих таблицах; `has_role` доступна только `authenticated`
+  (предупреждение линтера 0029 — осознанное исключение, канонический паттерн).
+
+**Маршруты:**
+- Защищённые (layout `_authenticated/route.tsx`, `ssr: false`, редирект
+  на `/auth`): `/` (база персон), `/profile`, `/admin/users`.
+- Блокировка: если `profiles.is_blocked = true`, layout показывает экран
+  «Доступ ограничен» и выполняет выход. Заблокировать себя нельзя.
+- `/admin/users` — список пользователей (имя, email, роль, дата, статус),
+  блокировка/разблокировка через server functions `listUsers` /
+  `setUserBlocked` (`src/lib/users.functions.ts`, `requireSupabaseAuth` +
+  проверка `has_role` внутри).
+
+**Важно:** генеалогическая база остаётся в IndexedDB (локально в браузере) —
+облако используется только для аккаунтов. Данные персон между устройствами
+не синхронизируются; перенос — через экспорт/импорт ZIP.
+
+**Ключевые файлы:** `src/routes/auth.tsx`, `src/routes/reset-password.tsx`,
+`src/routes/_authenticated/route.tsx`, `src/routes/_authenticated/profile.tsx`,
+`src/routes/_authenticated/admin/users.tsx`,
+`src/components/annuli/UserMenu.tsx`, `src/lib/users.functions.ts`,
+`src/start.ts` (functionMiddleware: attachSupabaseAuth).
