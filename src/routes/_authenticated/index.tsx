@@ -38,7 +38,7 @@ import {
 } from "@/lib/annuli/person-export";
 import { mkPerson, uid, type Page, type Person, type Photo } from "@/lib/annuli/types";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Annuli — генеалогическая база семьи" },
