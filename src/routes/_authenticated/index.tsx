@@ -427,6 +427,7 @@ function Index() {
           >
             <span className="whitespace-nowrap">Импорт / Экспорт базы</span>
           </button>
+          <UserMenu />
         </div>
       </header>
 
