@@ -15,6 +15,7 @@ import { TreeOverlay } from "@/components/annuli/TreeOverlay";
 
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
 import { DbModal } from "@/components/annuli/DbModal";
+import { DupeModal } from "@/components/annuli/DupeModal";
 import { UserMenu } from "@/components/annuli/UserMenu";
 import { Lightbox, type LightboxItem } from "@/components/annuli/Lightbox";
 import {
