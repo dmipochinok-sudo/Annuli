@@ -16,6 +16,7 @@ import { TreeOverlay } from "@/components/annuli/TreeOverlay";
 import { PersonSidebar } from "@/components/annuli/PersonSidebar";
 import { DbModal } from "@/components/annuli/DbModal";
 import { DupeModal } from "@/components/annuli/DupeModal";
+import { UserMenu } from "@/components/annuli/UserMenu";
 import { Lightbox, type LightboxItem } from "@/components/annuli/Lightbox";
 import {
   applyResolutions,
@@ -38,7 +39,7 @@ import {
 } from "@/lib/annuli/person-export";
 import { mkPerson, uid, type Page, type Person, type Photo } from "@/lib/annuli/types";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Annuli — генеалогическая база семьи" },
@@ -426,6 +427,7 @@ function Index() {
           >
             <span className="whitespace-nowrap">Импорт / Экспорт базы</span>
           </button>
+          <UserMenu />
         </div>
       </header>
 
