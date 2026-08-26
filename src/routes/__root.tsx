@@ -78,14 +78,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Annuli — генеалогическая база семьи" },
+      {
+        name: "description",
+        content: "Annuli — личная генеалогическая база: персоны, даты, документы и архивные ссылки.",
+      },
+      { name: "author", content: "Dmitry Pochinok" },
+      { property: "og:title", content: "Annuli — генеалогическая база семьи" },
+      {
+        property: "og:description",
+        content: "Персоны, даты, документы и архивные ссылки в одной базе.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
