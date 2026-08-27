@@ -48,7 +48,7 @@ export function UserMenu() {
     queryKey: ["menu-is-admin", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase.rpc("has_role", { _user_id: userId!, _role: "admin" });
+      const { data } = await supabase.rpc("is_admin");
       return !!data;
     },
   });

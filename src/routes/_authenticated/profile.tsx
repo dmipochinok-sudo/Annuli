@@ -40,7 +40,7 @@ function ProfilePage() {
   const { data: role } = useQuery({
     queryKey: ["own-role", user.id],
     queryFn: async () => {
-      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
+      const { data } = await supabase.rpc("is_admin");
       return data ? "Администратор" : "Пользователь";
     },
   });
