@@ -1,73 +1,115 @@
-// Слой доступа к IndexedDB. Имена базы и хранилищ совпадают с legacy-версией,
-// поэтому уже существующие данные пользователя открываются как есть.
+// Облачный слой доступа к данным Annuli.
+// Персоны хранятся в таблице public.persons, сканы и фото — в приватном
+// хранилище annuli-media (файлы лежат в папке владельца базы).
+// Изоляция между пользователями обеспечивается политиками доступа в облаке.
+import { supabase } from "@/integrations/supabase/client";
+
+import { fullName } from "./format";
 import { normalizePerson, type Person } from "./types";
 
-const DBN = "genealogy_db";
-const DBV = 2;
-const DST = "persons";
-const IST = "images";
+const BUCKET = "annuli-media";
+const PAGE = 1000;
 
-let dbPromise: Promise<IDBDatabase> | null = null;
+let activeOwner: string | null = null;
+const urlCache = new Map<string, { url: string; exp: number }>();
 
-function openDB(): Promise<IDBDatabase> {
-  if (typeof indexedDB === "undefined") {
-    return Promise.reject(new Error("IndexedDB недоступна"));
-  }
-  if (!dbPromise) {
-    dbPromise = new Promise((resolve, reject) => {
-      const req = indexedDB.open(DBN, DBV);
-      req.onupgradeneeded = (ev) => {
-        const d = (ev.target as IDBOpenDBRequest).result;
-        if (!d.objectStoreNames.contains(DST)) d.createObjectStore(DST, { keyPath: "id" });
-        if (!d.objectStoreNames.contains(IST)) d.createObjectStore(IST, { keyPath: "id" });
-      };
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-  return dbPromise;
+/** Устанавливает владельца базы, с которой сейчас работает интерфейс. */
+export function setActiveOwner(id: string | null): void {
+  if (id === activeOwner) return;
+  activeOwner = id;
+  urlCache.clear();
 }
 
-function wrap<T>(req: IDBRequest<T>): Promise<T> {
-  return new Promise((resolve, reject) => {
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+export function getActiveOwner(): string | null {
+  return activeOwner;
+}
+
+async function ownerId(): Promise<string> {
+  if (activeOwner) return activeOwner;
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) throw new Error("Требуется вход в аккаунт");
+  activeOwner = data.user.id;
+  return activeOwner;
+}
+
+function key(owner: string, imageId: string): string {
+  return `${owner}/${imageId}`;
 }
 
 export async function dbAllPersons(): Promise<Person[]> {
-  const db = await openDB();
-  const rows = await wrap<Partial<Person>[]>(
-    db.transaction(DST, "readonly").objectStore(DST).getAll(),
-  );
-  return rows.map(normalizePerson);
+  const owner = await ownerId();
+  const rows: { data: unknown }[] = [];
+  for (let from = 0; ; from += PAGE) {
+    const { data, error } = await supabase
+      .from("persons")
+      .select("data")
+      .eq("owner_id", owner)
+      .order("person_index", { ascending: true })
+      .range(from, from + PAGE - 1);
+    if (error) throw new Error(error.message);
+    rows.push(...(data ?? []));
+    if (!data || data.length < PAGE) break;
+  }
+  return rows.map((r) => normalizePerson(r.data as Partial<Person>));
 }
 
 export async function dbPutPerson(p: Person): Promise<void> {
-  const db = await openDB();
-  await wrap(db.transaction(DST, "readwrite").objectStore(DST).put(p));
+  const owner = await ownerId();
+  const { error } = await supabase.from("persons").upsert(
+    {
+      id: p.id,
+      owner_id: owner,
+      person_index: p.personIndex || "",
+      full_name: fullName(p) || "",
+      data: p as unknown as Record<string, unknown>,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "id" },
+  );
+  if (error) throw new Error(error.message);
 }
 
 export async function dbDelPerson(id: string): Promise<void> {
-  const db = await openDB();
-  await wrap(db.transaction(DST, "readwrite").objectStore(DST).delete(id));
+  const owner = await ownerId();
+  const { error } = await supabase.from("persons").delete().eq("id", id).eq("owner_id", owner);
+  if (error) throw new Error(error.message);
 }
 
 export async function imgPut(id: string, blob: Blob): Promise<void> {
-  const db = await openDB();
-  await wrap(db.transaction(IST, "readwrite").objectStore(IST).put({ id, blob }));
+  const owner = await ownerId();
+  const { error } = await supabase.storage.from(BUCKET).upload(key(owner, id), blob, {
+    upsert: true,
+    contentType: blob.type || "application/octet-stream",
+  });
+  if (error) throw new Error(error.message);
+  urlCache.delete(id);
 }
 
 export async function imgGet(id: string): Promise<Blob | null> {
-  const db = await openDB();
-  const rec = await wrap<{ id: string; blob: Blob } | undefined>(
-    db.transaction(IST, "readonly").objectStore(IST).get(id),
-  );
-  return rec?.blob ?? null;
+  if (!id) return null;
+  const owner = await ownerId();
+  const { data, error } = await supabase.storage.from(BUCKET).download(key(owner, id));
+  if (error || !data) return null;
+  return data;
+}
+
+/** Подписанная ссылка на изображение (кэшируется в памяти). */
+export async function imgUrl(id: string): Promise<string> {
+  if (!id) return "";
+  const hit = urlCache.get(id);
+  if (hit && hit.exp > Date.now()) return hit.url;
+  const owner = await ownerId();
+  const { data, error } = await supabase.storage
+    .from(BUCKET)
+    .createSignedUrl(key(owner, id), 3600);
+  if (error || !data?.signedUrl) return "";
+  urlCache.set(id, { url: data.signedUrl, exp: Date.now() + 55 * 60 * 1000 });
+  return data.signedUrl;
 }
 
 export async function imgDel(id: string): Promise<void> {
   if (!id) return;
-  const db = await openDB();
-  await wrap(db.transaction(IST, "readwrite").objectStore(IST).delete(id));
+  const owner = await ownerId();
+  urlCache.delete(id);
+  await supabase.storage.from(BUCKET).remove([key(owner, id)]);
 }
