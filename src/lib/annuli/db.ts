@@ -61,7 +61,7 @@ export async function dbPutPerson(p: Person): Promise<void> {
       owner_id: owner,
       person_index: p.personIndex || "",
       full_name: fullName(p) || "",
-      data: p as unknown as Record<string, unknown>,
+      data: JSON.parse(JSON.stringify(p)) as never,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "id" },
