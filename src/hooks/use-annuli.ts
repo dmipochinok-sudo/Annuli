@@ -1,15 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { dbAllPersons, dbDelPerson, dbPutPerson } from "@/lib/annuli/db";
+import { dbAllPersons, dbDelPerson, dbPutPerson, setActiveOwner } from "@/lib/annuli/db";
 import type { Person } from "@/lib/annuli/types";
 
-export function useAnnuli() {
+/**
+ * Загружает облачную базу персон выбранного владельца.
+ * `ownerId` задаётся администратором при работе с чужой базой; по умолчанию —
+ * текущий пользователь.
+ */
+export function useAnnuli(ownerId?: string | null) {
   const [persons, setPersons] = useState<Person[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
+    setActiveOwner(ownerId ?? null);
+    setLoading(true);
+    setError(null);
+    setPersons([]);
     dbAllPersons()
       .then((rows) => {
         if (alive) setPersons(rows);
@@ -23,7 +32,7 @@ export function useAnnuli() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [ownerId]);
 
   const reload = useCallback(async () => {
     const rows = await dbAllPersons();
