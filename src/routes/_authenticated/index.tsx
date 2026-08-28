@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -26,6 +26,8 @@ import {
   type DupeSlot,
 } from "@/lib/annuli/dedupe";
 import { imgGet, imgPut, imgDel } from "@/lib/annuli/db";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { makeThumbnail } from "@/lib/annuli/media";
 import { Toaster } from "@/components/ui/sonner";
 import { useAnnuli } from "@/hooks/use-annuli";
@@ -39,7 +41,14 @@ import {
 } from "@/lib/annuli/person-export";
 import { mkPerson, uid, type Page, type Person, type Photo } from "@/lib/annuli/types";
 
+interface IndexSearch {
+  owner?: string;
+}
+
 export const Route = createFileRoute("/_authenticated/")({
+  validateSearch: (search: Record<string, unknown>): IndexSearch => ({
+    owner: typeof search['owner'] === "string" && search['owner'] ? String(search['owner']) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Annuli — генеалогическая база семьи" },
@@ -72,7 +81,22 @@ const TABS = [
 
 
 function Index() {
-  const { persons, loading, error, savePerson, deletePerson, reload } = useAnnuli();
+  const { user } = Route.useRouteContext();
+  const { owner } = Route.useSearch();
+  const foreign = !!owner && owner !== user.id;
+  const { data: ownerName } = useQuery({
+    queryKey: ["owner-name", owner],
+    enabled: foreign,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("display_name, email")
+        .eq("id", owner!)
+        .maybeSingle();
+      return data?.display_name || data?.email || "пользователь";
+    },
+  });
+  const { persons, loading, error, savePerson, deletePerson, reload } = useAnnuli(owner ?? user.id);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Person | null>(null);
   const [editMode, setEditMode] = useState(false);
@@ -431,6 +455,21 @@ function Index() {
         </div>
       </header>
 
+      {foreign && (
+        <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border bg-surface-light px-3 py-2 text-[13px] text-foreground sm:px-4">
+          <span>
+            Вы работаете в базе: <strong>{ownerName ?? "…"}</strong>
+          </span>
+          <Link
+            to="/"
+            search={{}}
+            className="ml-auto rounded-lg border border-border bg-surface-dark px-3 py-1 transition hover:border-stroke-bright"
+          >
+            Вернуться в свою базу
+          </Link>
+        </div>
+      )}
+
 
       <div className="relative flex flex-1 overflow-hidden">
         {sidebarOpen && (
@@ -462,7 +501,7 @@ function Index() {
             <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-muted-foreground">
               <h2 className="text-2xl font-bold text-foreground">Annuli</h2>
               <p className="text-[13px]">
-                Выберите персону слева или создайте новую. Данные хранятся локально в браузере.
+                Выберите персону слева или создайте новую. Данные хранятся в облаке и доступны на любом устройстве.
               </p>
             </div>
           ) : (
