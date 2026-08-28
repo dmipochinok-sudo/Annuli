@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      persons: {
+        Row: {
+          created_at: string
+          data: Json
+          full_name: string
+          id: string
+          owner_id: string
+          person_index: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          full_name?: string
+          id: string
+          owner_id: string
+          person_index?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          full_name?: string
+          id?: string
+          owner_id?: string
+          person_index?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string
