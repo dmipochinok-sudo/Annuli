@@ -48,7 +48,7 @@ function relativeAvatarIds(p: Person): string[] {
 /** Собирает ZIP-архив со всеми персонами, сканами и GEDCOM. */
 export async function buildArchive(
   persons: Person[],
-  onProgress?: (msg: string) => void,
+  onProgress?: ProgressFn,
   getImage: (id: string) => Promise<Blob | null> = imgGet,
 ): Promise<Blob> {
   const zip = new JSZip();
