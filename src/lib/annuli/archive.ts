@@ -14,6 +14,9 @@ import {
 } from "./media";
 import { normalizePerson, type Page, type Person } from "./types";
 
+/** Колбэк прогресса: текст этапа и, при наличии, счётчик обработанного. */
+export type ProgressFn = (msg: string, done?: number, total?: number) => void;
+
 export interface ImportPayload {
   persons: Person[];
   zip: JSZip | null;
