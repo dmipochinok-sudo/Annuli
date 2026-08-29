@@ -133,7 +133,8 @@ export async function buildArchive(
       }
     }
     done++;
-    if (done % 5 === 0) onProgress?.(`Подготовка архива… ${done}/${exportPersons.length}`);
+    onProgress?.(`Подготовка архива… ${done}/${exportPersons.length}`, done, exportPersons.length);
+    await new Promise((r) => setTimeout(r));
   }
 
 
