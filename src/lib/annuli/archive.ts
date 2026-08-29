@@ -331,7 +331,8 @@ export async function applyImport(
       existingIds.add(p.id);
     }
     done++;
-    if (done % 5 === 0) onProgress?.(`Импорт… ${done}/${selected.length}`);
+    onProgress?.(`Импорт… ${done}/${selected.length}`, done, selected.length);
+    await new Promise((r) => setTimeout(r));
   }
   return { added, updated, images };
 }
