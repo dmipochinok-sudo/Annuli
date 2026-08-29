@@ -14,6 +14,9 @@ import {
 } from "./media";
 import { normalizePerson, type Page, type Person } from "./types";
 
+/** Колбэк прогресса: текст этапа и, при наличии, счётчик обработанного. */
+export type ProgressFn = (msg: string, done?: number, total?: number) => void;
+
 export interface ImportPayload {
   persons: Person[];
   zip: JSZip | null;
@@ -45,7 +48,7 @@ function relativeAvatarIds(p: Person): string[] {
 /** Собирает ZIP-архив со всеми персонами, сканами и GEDCOM. */
 export async function buildArchive(
   persons: Person[],
-  onProgress?: (msg: string) => void,
+  onProgress?: ProgressFn,
   getImage: (id: string) => Promise<Blob | null> = imgGet,
 ): Promise<Blob> {
   const zip = new JSZip();
@@ -130,7 +133,8 @@ export async function buildArchive(
       }
     }
     done++;
-    if (done % 5 === 0) onProgress?.(`Подготовка архива… ${done}/${exportPersons.length}`);
+    onProgress?.(`Подготовка архива… ${done}/${exportPersons.length}`, done, exportPersons.length);
+    await new Promise((r) => setTimeout(r));
   }
 
 
@@ -145,12 +149,15 @@ export async function buildArchive(
     }),
   );
   zip.file("annuli.ged", buildGEDCOM(persons));
-  onProgress?.("Сжатие архива…");
-  return zip.generateAsync({
-    type: "blob",
-    compression: "DEFLATE",
-    compressionOptions: { level: 6 },
-  });
+  onProgress?.("Сжатие архива…", 0, 100);
+  return zip.generateAsync(
+    {
+      type: "blob",
+      compression: "DEFLATE",
+      compressionOptions: { level: 6 },
+    },
+    (meta) => onProgress?.("Сжатие архива…", Math.round(meta.percent), 100),
+  );
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
@@ -282,7 +289,7 @@ export async function applyImport(
   selected: Person[],
   mode: "add" | "replace",
   existing: Person[],
-  onProgress?: (msg: string) => void,
+  onProgress?: ProgressFn,
 ): Promise<{ added: number; updated: number; images: number }> {
   let added = 0;
   let updated = 0;
@@ -290,9 +297,12 @@ export async function applyImport(
   const existingIds = new Set(existing.map((p) => p.id));
 
   if (mode === "replace") {
+    let cleared = 0;
     for (const p of existing) {
       for (const id of collectImageIds(p)) await imgDel(id).catch(() => {});
       await dbDelPerson(p.id);
+      cleared++;
+      onProgress?.(`Очистка базы… ${cleared}/${existing.length}`, cleared, existing.length);
     }
     existingIds.clear();
   }
@@ -321,7 +331,8 @@ export async function applyImport(
       existingIds.add(p.id);
     }
     done++;
-    if (done % 5 === 0) onProgress?.(`Импорт… ${done}/${selected.length}`);
+    onProgress?.(`Импорт… ${done}/${selected.length}`, done, selected.length);
+    await new Promise((r) => setTimeout(r));
   }
   return { added, updated, images };
 }

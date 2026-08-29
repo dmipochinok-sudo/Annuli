@@ -23,17 +23,33 @@ interface Props {
 export function DbModal({ persons, onClose, onImported }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState<string>("");
+  const [percent, setPercent] = useState<number | null>(null);
   const [payload, setPayload] = useState<ImportPayload | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  /** Приёмник прогресса: текст этапа + доля выполнения для полосы. */
+  const progress = (msg: string, done?: number, total?: number) => {
+    setBusy(msg);
+    setPercent(
+      typeof done === "number" && typeof total === "number" && total > 0
+        ? Math.min(100, Math.round((done / total) * 100))
+        : null,
+    );
+  };
+
+  const reset = () => {
+    setBusy("");
+    setPercent(null);
+  };
 
   const exportZip = async () => {
     if (!persons.length) {
       toast.error("База пуста");
       return;
     }
-    setBusy("Подготовка архива…");
+    progress("Подготовка архива…", 0, persons.length);
     try {
-      const blob = await buildArchive(persons, setBusy);
+      const blob = await buildArchive(persons, progress);
       downloadBlob(blob, `Annuli_${new Date().toISOString().slice(0, 10)}.zip`);
       toast.success("Архив с данными, сканами и GEDCOM сохранён");
     } catch (e) {
