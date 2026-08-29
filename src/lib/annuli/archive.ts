@@ -289,7 +289,7 @@ export async function applyImport(
   selected: Person[],
   mode: "add" | "replace",
   existing: Person[],
-  onProgress?: (msg: string) => void,
+  onProgress?: ProgressFn,
 ): Promise<{ added: number; updated: number; images: number }> {
   let added = 0;
   let updated = 0;
