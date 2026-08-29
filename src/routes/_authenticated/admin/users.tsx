@@ -121,6 +121,13 @@ function AdminUsersPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
+                      <Link
+                        to="/"
+                        search={{ owner: u.id }}
+                        className="mr-2 inline-flex h-8 items-center rounded-lg border border-border bg-surface-dark px-3 text-[12px] font-medium text-foreground transition hover:border-stroke-bright"
+                      >
+                        Открыть базу
+                      </Link>
                       {!u.isSelf && (
                         <button
                           onClick={() =>

@@ -42,7 +42,7 @@ import {
 import { mkPerson, uid, type Page, type Person, type Photo } from "@/lib/annuli/types";
 
 interface IndexSearch {
-  owner?: string;
+  owner?: string | undefined;
 }
 
 export const Route = createFileRoute("/_authenticated/")({
