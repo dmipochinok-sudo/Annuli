@@ -297,9 +297,12 @@ export async function applyImport(
   const existingIds = new Set(existing.map((p) => p.id));
 
   if (mode === "replace") {
+    let cleared = 0;
     for (const p of existing) {
       for (const id of collectImageIds(p)) await imgDel(id).catch(() => {});
       await dbDelPerson(p.id);
+      cleared++;
+      onProgress?.(`Очистка базы… ${cleared}/${existing.length}`, cleared, existing.length);
     }
     existingIds.clear();
   }
