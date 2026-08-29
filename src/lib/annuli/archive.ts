@@ -149,12 +149,15 @@ export async function buildArchive(
     }),
   );
   zip.file("annuli.ged", buildGEDCOM(persons));
-  onProgress?.("Сжатие архива…");
-  return zip.generateAsync({
-    type: "blob",
-    compression: "DEFLATE",
-    compressionOptions: { level: 6 },
-  });
+  onProgress?.("Сжатие архива…", 0, 100);
+  return zip.generateAsync(
+    {
+      type: "blob",
+      compression: "DEFLATE",
+      compressionOptions: { level: 6 },
+    },
+    (meta) => onProgress?.("Сжатие архива…", Math.round(meta.percent), 100),
+  );
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
