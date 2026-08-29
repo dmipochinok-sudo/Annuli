@@ -46,6 +46,7 @@ function relativeAvatarIds(p: Person): string[] {
 export async function buildArchive(
   persons: Person[],
   onProgress?: (msg: string) => void,
+  getImage: (id: string) => Promise<Blob | null> = imgGet,
 ): Promise<Blob> {
   const zip = new JSZip();
   const usedFolders = new Set<string>();
@@ -66,7 +67,7 @@ export async function buildArchive(
     if (!imageId) return null;
     let blob: Blob | null = null;
     try {
-      blob = await imgGet(imageId);
+      blob = await getImage(imageId);
     } catch {
       blob = null;
     }
