@@ -9,6 +9,7 @@ import {
   type ImportPayload,
 } from "@/lib/annuli/archive";
 import { buildGEDCOM } from "@/lib/annuli/gedcom";
+import { buildLocalArchive } from "@/lib/annuli/local-export";
 import { fullName } from "@/lib/annuli/format";
 import type { Person } from "@/lib/annuli/types";
 
@@ -50,6 +51,23 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     const blob = new Blob([buildGEDCOM(persons)], { type: "text/plain;charset=utf-8" });
     downloadBlob(blob, `Annuli_${new Date().toISOString().slice(0, 10)}.ged`);
     toast.success("GEDCOM сохранён");
+  };
+
+  const exportLocal = async () => {
+    setBusy("Чтение локальной базы браузера…");
+    try {
+      const { blob, count } = await buildLocalArchive(setBusy);
+      if (!count) {
+        toast.error("В браузере нет сохранённой локальной базы");
+        return;
+      }
+      downloadBlob(blob, `Annuli_local_${new Date().toISOString().slice(0, 10)}.zip`);
+      toast.success(`Локальная база выгружена: ${count} персон`);
+    } catch (e) {
+      toast.error("Ошибка выгрузки: " + (e instanceof Error ? e.message : String(e)));
+    } finally {
+      setBusy("");
+    }
   };
 
   const pickFile = async (file: File | undefined) => {
@@ -128,6 +146,17 @@ export function DbModal({ persons, onClose, onImported }: Props) {
             </div>
             <p className="mt-1.5 text-[12px] text-muted-foreground">
               В архиве: {persons.length} персон, оригиналы сканов и файл annuli.ged.
+            </p>
+            <button
+              onClick={() => void exportLocal()}
+              disabled={!!busy}
+              className="mt-2 rounded-md border border-border bg-secondary px-3 py-2 text-[13px] font-semibold hover:bg-muted disabled:opacity-40"
+            >
+              ⬇ Скачать старую локальную базу браузера
+            </button>
+            <p className="mt-1.5 text-[12px] text-muted-foreground">
+              Разовая операция: выгружает данные, сохранённые в браузере до перехода в облако.
+              Полученный ZIP можно сразу импортировать ниже.
             </p>
           </section>
 
