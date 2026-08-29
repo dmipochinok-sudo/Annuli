@@ -1106,12 +1106,33 @@ Vision, Architecture Decisions, инварианты модели данных, 
   `setUserBlocked` (`src/lib/users.functions.ts`, `requireSupabaseAuth` +
   проверка `has_role` внутри).
 
-**Важно:** генеалогическая база остаётся в IndexedDB (локально в браузере) —
-облако используется только для аккаунтов. Данные персон между устройствами
-не синхронизируются; перенос — через экспорт/импорт ZIP.
+**Обновлено (28.08.2026): база перенесена в облако.**
 
 **Ключевые файлы:** `src/routes/auth.tsx`, `src/routes/reset-password.tsx`,
 `src/routes/_authenticated/route.tsx`, `src/routes/_authenticated/profile.tsx`,
 `src/routes/_authenticated/admin/users.tsx`,
 `src/components/annuli/UserMenu.tsx`, `src/lib/users.functions.ts`,
 `src/start.ts` (functionMiddleware: attachSupabaseAuth).
+
+
+## Облачная база персон (v3.1, 28.08.2026)
+
+- Таблица `public.persons`: `id text PK` (тот же `uid()`, что и раньше),
+  `owner_id uuid` (владелец базы), `person_index`, `full_name`, `data jsonb`
+  (полная карточка персоны в прежнем формате), `created_at`, `updated_at`
+  (триггер `update_updated_at_column`). RLS: своя база по `auth.uid() =
+  owner_id`, админ — по `private.has_role(auth.uid(),'admin')`.
+- Приватный bucket `annuli-media`, ключ файла `{owner_id}/{imageId}`.
+  Политики на `storage.objects`: свой префикс либо роль admin.
+- `src/lib/annuli/db.ts` — облачный слой с прежним API
+  (`dbAllPersons/dbPutPerson/dbDelPerson/imgPut/imgGet/imgDel`) плюс
+  `imgUrl` (подписанные ссылки, кэш 55 мин) и `setActiveOwner/getActiveOwner`.
+- `src/lib/annuli/local-db.ts` — прежний IndexedDB-слой, используется только
+  для разовой выгрузки старой локальной базы (`local-export.ts`, кнопка
+  «Скачать старую локальную базу браузера» в диалоге базы данных).
+- `useAnnuli(ownerId)` загружает базу выбранного владельца; на главной
+  владелец берётся из search-параметра `?owner=` (по умолчанию — свой).
+- Админ открывает чужую базу кнопкой «Открыть базу» в `/admin/users`;
+  на главной показывается плашка «Вы работаете в базе: …» и возврат к своей.
+- `useImageUrl` использует подписанные ссылки; миниатюра — временный фолбэк.
+- Офлайн-режима нет: без сети база не загружается.
