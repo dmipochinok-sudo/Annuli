@@ -55,7 +55,7 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка экспорта: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
@@ -70,9 +70,9 @@ export function DbModal({ persons, onClose, onImported }: Props) {
   };
 
   const exportLocal = async () => {
-    setBusy("Чтение локальной базы браузера…");
+    progress("Чтение локальной базы браузера…");
     try {
-      const { blob, count } = await buildLocalArchive(setBusy);
+      const { blob, count } = await buildLocalArchive(progress);
       if (!count) {
         toast.error("В браузере нет сохранённой локальной базы");
         return;
@@ -82,13 +82,13 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка выгрузки: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
   const pickFile = async (file: File | undefined) => {
     if (!file) return;
-    setBusy("Чтение файла…");
+    progress("Чтение файла…");
     try {
       const data = await readImportFile(file);
       setPayload(data);
@@ -96,7 +96,7 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка чтения: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
@@ -108,9 +108,9 @@ export function DbModal({ persons, onClose, onImported }: Props) {
       return;
     }
     if (mode === "replace" && !confirm(`Заменить все ${persons.length} персон в базе?`)) return;
-    setBusy("Импорт…");
+    progress("Импорт…", 0, chosen.length);
     try {
-      const res = await applyImport(payload, chosen, mode, persons, setBusy);
+      const res = await applyImport(payload, chosen, mode, persons, progress);
       await onImported();
       toast.success(
         `Импорт завершён: добавлено ${res.added}, обновлено ${res.updated}, сканов ${res.images}`,
@@ -120,7 +120,7 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка импорта: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
@@ -275,8 +275,30 @@ export function DbModal({ persons, onClose, onImported }: Props) {
         </div>
 
         {busy && (
-          <div className="border-t border-border px-4 py-2 text-[12px] text-muted-foreground">
-            {busy}
+          <div className="border-t border-border px-4 py-3">
+            <div className="mb-1.5 flex items-center justify-between text-[12px] text-muted-foreground">
+              <span className="min-w-0 truncate">{busy}</span>
+              {percent !== null && (
+                <span className="ml-2 font-mono tabular-nums text-foreground">{percent}%</span>
+              )}
+            </div>
+            <div
+              className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-label="Прогресс операции"
+              {...(percent !== null
+                ? { "aria-valuenow": percent, "aria-valuemin": 0, "aria-valuemax": 100 }
+                : {})}
+            >
+              <div
+                className={
+                  percent !== null
+                    ? "h-full rounded-full bg-primary transition-[width] duration-200"
+                    : "h-full w-1/3 animate-pulse rounded-full bg-primary"
+                }
+                {...(percent !== null ? { style: { width: `${percent}%` } } : {})}
+              />
+            </div>
           </div>
         )}
       </div>
