@@ -96,7 +96,7 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка чтения: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
