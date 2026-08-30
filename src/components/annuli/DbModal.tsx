@@ -70,9 +70,9 @@ export function DbModal({ persons, onClose, onImported }: Props) {
   };
 
   const exportLocal = async () => {
-    setBusy("Чтение локальной базы браузера…");
+    progress("Чтение локальной базы браузера…");
     try {
-      const { blob, count } = await buildLocalArchive(setBusy);
+      const { blob, count } = await buildLocalArchive(progress);
       if (!count) {
         toast.error("В браузере нет сохранённой локальной базы");
         return;
