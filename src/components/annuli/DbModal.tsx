@@ -120,7 +120,7 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка импорта: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
