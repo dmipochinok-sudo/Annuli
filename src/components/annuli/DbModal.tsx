@@ -82,13 +82,13 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка выгрузки: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
   const pickFile = async (file: File | undefined) => {
     if (!file) return;
-    setBusy("Чтение файла…");
+    progress("Чтение файла…");
     try {
       const data = await readImportFile(file);
       setPayload(data);
