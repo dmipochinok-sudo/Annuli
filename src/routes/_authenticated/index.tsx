@@ -349,111 +349,181 @@ function Index() {
   };
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background text-foreground">
-      <header className="flex h-auto shrink-0 flex-wrap items-center gap-2 border-b border-border bg-header px-3 py-2.5 text-header-foreground sm:px-4">
-        <button
-          onClick={() => setSidebarOpen((v) => !v)}
-          aria-label="Список персон"
-          className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] transition hover:border-stroke-bright md:hidden"
-        >
-          ☰
-        </button>
-        <div className="flex min-w-0 items-center gap-2">
-          <svg viewBox="0 0 100 100" className="size-7 text-foreground" aria-hidden>
-            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
-            <circle
-              cx="50"
-              cy="50"
-              r="32"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              opacity=".7"
-            />
-            <circle
-              cx="50"
-              cy="50"
-              r="18"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              opacity=".45"
-            />
-          </svg>
-          <h1 className="text-[20px] font-semibold tracking-tight">Annuli</h1>
+    <div className="flex h-[100svh] flex-col overflow-hidden bg-background text-foreground">
+      <header className="shrink-0 border-b border-border bg-header pt-[env(safe-area-inset-top)] text-header-foreground">
+        <div className="flex h-14 items-center gap-2 px-3 sm:h-auto sm:flex-wrap sm:py-2.5 sm:px-4">
+          <button
+            onClick={() => setSidebarOpen((v) => !v)}
+            aria-label="Список персон"
+            className="grid size-10 shrink-0 place-items-center rounded-lg border border-border bg-surface-light text-[16px] transition hover:border-stroke-bright md:hidden"
+          >
+            ☰
+          </button>
+          <div className="flex min-w-0 items-center gap-2">
+            <svg viewBox="0 0 100 100" className="size-7 shrink-0 text-foreground" aria-hidden>
+              <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
+              <circle
+                cx="50"
+                cy="50"
+                r="32"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                opacity=".7"
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="18"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                opacity=".45"
+              />
+            </svg>
+            <h1 className="truncate text-[20px] font-semibold tracking-tight">Annuli</h1>
+          </div>
+
+          {/* Поиск: на десктопе всегда в строке, на мобильном — раскрывается отдельной строкой */}
+          <div className="hidden min-w-0 flex-1 items-center gap-2 sm:flex">
+            <div className="relative min-w-0 flex-1">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-muted-foreground">
+                ⌕
+              </span>
+              <input
+                value={query}
+                onChange={(ev) => setQuery(ev.target.value)}
+                placeholder="Поиск по имени или индексу…"
+                aria-label="Поиск персоны"
+                className="h-8 w-full rounded-lg border border-border bg-surface-dark pl-8 pr-8 text-[14px] text-foreground outline-none transition focus:border-stroke-bright"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  aria-label="Очистить поиск"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-foreground"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="h-8 shrink-0 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
+            >
+              Найти
+            </button>
+          </div>
+
+          <div className="ml-auto flex items-center gap-2">
+            {/* Мобильные кнопки: поиск и меню действий */}
+            <button
+              onClick={() => setSearchOpen((v) => !v)}
+              aria-label="Поиск персоны"
+              className="grid size-10 place-items-center rounded-lg border border-border bg-surface-light text-[16px] sm:hidden"
+            >
+              ⌕
+            </button>
+            <div className="relative sm:hidden" ref={moreRef}>
+              <button
+                onClick={() => setMoreOpen((v) => !v)}
+                aria-label="Ещё действия"
+                aria-expanded={moreOpen}
+                className="grid size-10 place-items-center rounded-lg border border-border bg-surface-light text-[16px]"
+              >
+                ⋯
+              </button>
+              {moreOpen && (
+                <div className="absolute right-0 top-12 z-40 w-60 overflow-hidden rounded-xl border border-border bg-popover p-1 shadow-xl">
+                  {[
+                    { label: "＋ Добавить персону", run: newPerson },
+                    { label: "Древо", run: () => setTreeOpen(true) },
+                    { label: "Импорт / Экспорт базы", run: () => setDbOpen(true) },
+                    { label: dark ? "☀︎ Светлая тема" : "☾ Тёмная тема", run: toggleTheme },
+                  ].map((it) => (
+                    <button
+                      key={it.label}
+                      onClick={() => {
+                        setMoreOpen(false);
+                        it.run();
+                      }}
+                      className="block w-full rounded-lg px-3 py-3 text-left text-[15px] text-popover-foreground transition hover:bg-surface-light"
+                    >
+                      {it.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Десктопные кнопки */}
+            <button
+              onClick={toggleTheme}
+              className="hidden h-8 items-center gap-2 rounded-lg px-2 text-[14px] text-foreground sm:flex"
+            >
+              <span>{dark ? "☾ Тёмная тема" : "☀︎ Светлая тема"}</span>
+              <span
+                className={
+                  "relative h-5 w-9 rounded-full transition " +
+                  (dark ? "bg-primary" : "bg-surface-light")
+                }
+              >
+                <span
+                  className={
+                    "absolute top-0.5 size-4 rounded-full bg-foreground transition-all " +
+                    (dark ? "left-[18px]" : "left-0.5")
+                  }
+                />
+              </span>
+            </button>
+            <button
+              onClick={newPerson}
+              className="hidden h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright sm:block"
+            >
+              <span className="whitespace-nowrap">＋ Добавить персону</span>
+            </button>
+            <button
+              onClick={() => setTreeOpen(true)}
+              className="hidden h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright sm:block"
+            >
+              <span className="whitespace-nowrap">Древо</span>
+            </button>
+            <button
+              onClick={() => setDbOpen(true)}
+              className="hidden h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright sm:block"
+            >
+              <span className="whitespace-nowrap">Импорт / Экспорт базы</span>
+            </button>
+            <UserMenu />
+          </div>
         </div>
 
-        <div className="order-last flex min-w-0 flex-1 basis-full items-center gap-2 sm:order-none sm:basis-auto">
-          <div className="relative min-w-0 flex-1">
-            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-muted-foreground">
+        {searchOpen && (
+          <div className="relative px-3 pb-2.5 sm:hidden">
+            <span className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground">
               ⌕
             </span>
             <input
+              autoFocus
               value={query}
               onChange={(ev) => setQuery(ev.target.value)}
               placeholder="Поиск по имени или индексу…"
               aria-label="Поиск персоны"
-              className="h-8 w-full rounded-lg border border-border bg-surface-dark pl-8 pr-8 text-[14px] text-foreground outline-none transition focus:border-stroke-bright"
+              className="h-11 w-full rounded-lg border border-border bg-surface-dark pl-9 pr-9 text-[16px] text-foreground outline-none transition focus:border-stroke-bright"
             />
             {query && (
               <button
                 onClick={() => setQuery("")}
                 aria-label="Очистить поиск"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-foreground"
+                className="absolute right-6 top-1/2 -translate-y-1/2 text-[15px] text-muted-foreground"
               >
                 ✕
               </button>
             )}
           </div>
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="h-8 shrink-0 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-          >
-            Найти
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 sm:ml-auto">
-          <button
-            onClick={toggleTheme}
-            className="hidden h-8 items-center gap-2 rounded-lg px-2 text-[14px] text-foreground sm:flex"
-          >
-            <span>{dark ? "☾ Тёмная тема" : "☀︎ Светлая тема"}</span>
-            <span
-              className={
-                "relative h-5 w-9 rounded-full transition " +
-                (dark ? "bg-primary" : "bg-surface-light")
-              }
-            >
-              <span
-                className={
-                  "absolute top-0.5 size-4 rounded-full bg-foreground transition-all " +
-                  (dark ? "left-[18px]" : "left-0.5")
-                }
-              />
-            </span>
-          </button>
-          <button
-            onClick={newPerson}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-          >
-            <span className="whitespace-nowrap">＋ Добавить персону</span>
-          </button>
-          <button
-            onClick={() => setTreeOpen(true)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-          >
-            <span className="whitespace-nowrap">Древо</span>
-          </button>
-          <button
-            onClick={() => setDbOpen(true)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-          >
-            <span className="whitespace-nowrap">Импорт / Экспорт базы</span>
-          </button>
-          <UserMenu />
-        </div>
+        )}
       </header>
+
 
       {foreign && (
         <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border bg-surface-light px-3 py-2 text-[13px] text-foreground sm:px-4">
