@@ -55,7 +55,7 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     } catch (e) {
       toast.error("Ошибка экспорта: " + (e instanceof Error ? e.message : String(e)));
     } finally {
-      setBusy("");
+      reset();
     }
   };
 
