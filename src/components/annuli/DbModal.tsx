@@ -108,9 +108,9 @@ export function DbModal({ persons, onClose, onImported }: Props) {
       return;
     }
     if (mode === "replace" && !confirm(`Заменить все ${persons.length} персон в базе?`)) return;
-    setBusy("Импорт…");
+    progress("Импорт…", 0, chosen.length);
     try {
-      const res = await applyImport(payload, chosen, mode, persons, setBusy);
+      const res = await applyImport(payload, chosen, mode, persons, progress);
       await onImported();
       toast.success(
         `Импорт завершён: добавлено ${res.added}, обновлено ${res.updated}, сканов ${res.images}`,
