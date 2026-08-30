@@ -275,8 +275,30 @@ export function DbModal({ persons, onClose, onImported }: Props) {
         </div>
 
         {busy && (
-          <div className="border-t border-border px-4 py-2 text-[12px] text-muted-foreground">
-            {busy}
+          <div className="border-t border-border px-4 py-3">
+            <div className="mb-1.5 flex items-center justify-between text-[12px] text-muted-foreground">
+              <span className="min-w-0 truncate">{busy}</span>
+              {percent !== null && (
+                <span className="ml-2 font-mono tabular-nums text-foreground">{percent}%</span>
+              )}
+            </div>
+            <div
+              className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-label="Прогресс операции"
+              {...(percent !== null
+                ? { "aria-valuenow": percent, "aria-valuemin": 0, "aria-valuemax": 100 }
+                : {})}
+            >
+              <div
+                className={
+                  percent !== null
+                    ? "h-full rounded-full bg-primary transition-[width] duration-200"
+                    : "h-full w-1/3 animate-pulse rounded-full bg-primary"
+                }
+                {...(percent !== null ? { style: { width: `${percent}%` } } : {})}
+              />
+            </div>
           </div>
         )}
       </div>
