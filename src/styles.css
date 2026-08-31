@@ -170,3 +170,22 @@
     font-family: var(--font-sans);
   }
 }
+
+/* Скрытая полоса прокрутки для горизонтальных панелей (вкладки, ряды кнопок). */
+@utility no-scrollbar {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* На мобильных iOS не зумит поля с размером шрифта от 16px. */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
