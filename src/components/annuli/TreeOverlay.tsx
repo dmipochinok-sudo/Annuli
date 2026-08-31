@@ -113,7 +113,7 @@ export function TreeOverlay({ persons, currentId, onSelect, onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-[900] flex flex-col bg-background text-foreground">
-      <div className="flex min-h-[46px] flex-wrap items-center gap-3 border-b border-border bg-card px-3 py-2">
+      <div className="flex min-h-[46px] flex-wrap items-center gap-3 border-b border-border bg-card px-3 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2">
         <span className="text-[15px] font-bold">🌳 Родословное дерево</span>
         <label className="flex items-center gap-1.5 text-[12px]">
           <input
@@ -129,19 +129,19 @@ export function TreeOverlay({ persons, currentId, onSelect, onClose }: Props) {
         <div className="ml-auto flex gap-1.5">
           <button
             onClick={() => zoom(1.2)}
-            className="rounded-md border border-border px-2.5 py-1 text-[13px] transition hover:bg-muted"
+            className="grid size-10 place-items-center rounded-md border border-border text-[16px] transition hover:bg-muted"
           >
             ＋
           </button>
           <button
             onClick={() => zoom(0.8)}
-            className="rounded-md border border-border px-2.5 py-1 text-[13px] transition hover:bg-muted"
+            className="grid size-10 place-items-center rounded-md border border-border text-[16px] transition hover:bg-muted"
           >
             －
           </button>
           <button
             onClick={onClose}
-            className="rounded-md border border-border px-2.5 py-1 text-[13px] transition hover:bg-muted"
+            className="h-10 rounded-md border border-border px-3 text-[14px] transition hover:bg-muted"
           >
             ✕ Закрыть
           </button>
