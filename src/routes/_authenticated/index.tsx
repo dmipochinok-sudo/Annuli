@@ -857,10 +857,13 @@ function Index() {
         />
       )}
 
-      <footer className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-border bg-header px-4 py-2 text-[12px] text-muted-foreground">
-        <span>Annuli 2026 — Genealogical data management system</span>
-        <span>Developer: Dmitry Pochinok. All rights reserved. © 2026</span>
+      <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-border bg-header px-3 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-[11px] text-muted-foreground sm:px-4 sm:text-[12px]">
+        <span className="truncate">Annuli 2026 — Genealogical data management system</span>
+        <span className="hidden truncate sm:inline">
+          Developer: Dmitry Pochinok. All rights reserved. © 2026
+        </span>
       </footer>
+
 
       <Toaster />
     </div>
