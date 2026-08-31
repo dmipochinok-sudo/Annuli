@@ -60,7 +60,7 @@ export function Lightbox({ items, index, onIndexChange, onClose, loadImage }: Pr
         if (ev.target === ev.currentTarget) onClose();
       }}
     >
-      <div className="flex items-center justify-between gap-2 px-3 py-2 text-[13px] text-white">
+      <div className="flex items-center justify-between gap-2 px-3 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 text-[13px] text-white">
         <span className="truncate">
           {item.title || "Скан"}
           {items.length > 1 && (
@@ -71,21 +71,21 @@ export function Lightbox({ items, index, onIndexChange, onClose, loadImage }: Pr
         </span>
         <div className="flex shrink-0 items-center gap-1">
           <button
-            className="rounded-md border border-white/20 px-2 py-1 hover:bg-white/10"
+            className="grid size-10 place-items-center rounded-md border border-white/20 text-[16px] hover:bg-white/10"
             onClick={() => setScale((s) => Math.max(0.2, s / 1.25))}
             aria-label="Уменьшить"
           >
             −
           </button>
           <button
-            className="rounded-md border border-white/20 px-2 py-1 hover:bg-white/10"
+            className="grid size-10 place-items-center rounded-md border border-white/20 text-[16px] hover:bg-white/10"
             onClick={() => setScale((s) => Math.min(8, s * 1.25))}
             aria-label="Увеличить"
           >
             +
           </button>
           <button
-            className="rounded-md border border-white/20 px-2 py-1 hover:bg-white/10"
+            className="grid size-10 place-items-center rounded-md border border-white/20 text-[16px] hover:bg-white/10"
             onClick={() => {
               setScale(1);
               setPan({ x: 0, y: 0 });
@@ -97,13 +97,13 @@ export function Lightbox({ items, index, onIndexChange, onClose, loadImage }: Pr
             <a
               href={url}
               download={item.title || "scan"}
-              className="rounded-md border border-white/20 px-2 py-1 hover:bg-white/10"
+              className="grid size-10 place-items-center rounded-md border border-white/20 text-[16px] hover:bg-white/10"
             >
               ⤓
             </a>
           )}
           <button
-            className="rounded-md border border-white/20 px-2 py-1 hover:bg-white/10"
+            className="grid size-10 place-items-center rounded-md border border-white/20 text-[16px] hover:bg-white/10"
             onClick={onClose}
             aria-label="Закрыть"
           >
@@ -129,7 +129,19 @@ export function Lightbox({ items, index, onIndexChange, onClose, loadImage }: Pr
             y: drag.current.oy + (ev.clientY - drag.current.y),
           });
         }}
-        onPointerUp={() => (drag.current = null)}
+        onPointerUp={(ev) => {
+          const d = drag.current;
+          drag.current = null;
+          if (!d) return;
+          const dx = ev.clientX - d.x;
+          // Свайп между изображениями, когда масштаб не увеличен.
+          if (items.length > 1 && scale <= 1 && Math.abs(dx) > 60 && Math.abs(ev.clientY - d.y) < 80) {
+            if (dx < 0 && index < items.length - 1) onIndexChange(index + 1);
+            if (dx > 0 && index > 0) onIndexChange(index - 1);
+            setPan({ x: 0, y: 0 });
+          }
+        }}
+        style={{ touchAction: "none" }}
       >
         {url ? (
           <img
@@ -151,7 +163,7 @@ export function Lightbox({ items, index, onIndexChange, onClose, loadImage }: Pr
         {items.length > 1 && (
           <>
             <button
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/15 px-3 py-2 text-white disabled:opacity-30"
+              className="absolute left-2 top-1/2 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-[26px] text-white disabled:opacity-30"
               disabled={index === 0}
               onClick={() => onIndexChange(index - 1)}
               aria-label="Предыдущий скан"
@@ -159,7 +171,7 @@ export function Lightbox({ items, index, onIndexChange, onClose, loadImage }: Pr
               ‹
             </button>
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/15 px-3 py-2 text-white disabled:opacity-30"
+              className="absolute right-2 top-1/2 grid size-12 -translate-y-1/2 place-items-center rounded-full bg-white/15 text-[26px] text-white disabled:opacity-30"
               disabled={index === items.length - 1}
               onClick={() => onIndexChange(index + 1)}
               aria-label="Следующий скан"

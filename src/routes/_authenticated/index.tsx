@@ -108,6 +108,32 @@ function Index() {
   const [exporting, setExporting] = useState(false);
   const [dbOpen, setDbOpen] = useState(false);
   const [treeOpen, setTreeOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Закрытие мобильного меню действий по клику вне него.
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onDown = (ev: MouseEvent | TouchEvent) => {
+      if (moreRef.current && !moreRef.current.contains(ev.target as Node)) setMoreOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("touchstart", onDown);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("touchstart", onDown);
+    };
+  }, [moreOpen]);
+
+  // Прокрутка панели вкладок к активной вкладке.
+  useEffect(() => {
+    const el = tabsRef.current?.querySelector<HTMLElement>(`[data-tab="${tab}"]`);
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [tab]);
+
+
 
   const [dupeSlots, setDupeSlots] = useState<DupeSlot[]>([]);
   const [dupeRes, setDupeRes] = useState<Map<string, DupeResolution>>(new Map());
@@ -622,72 +648,84 @@ function Index() {
                     {[current.personIndex, lifeDates(current)].filter(Boolean).join(" · ") || "—"}
                   </p>
                 </div>
-                {editMode ? (
-                  <>
-                    <button
-                      onClick={save}
-                      className="rounded-md bg-primary px-3 py-2 text-[13px] font-semibold text-primary-foreground hover:brightness-110"
-                    >
-                      Сохранить
-                    </button>
-                    <button
-                      onClick={cancelEdit}
-                      className="rounded-md border border-border bg-secondary px-3 py-2 text-[13px] font-semibold hover:bg-muted"
-                    >
-                      Отмена
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={startEdit}
-                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright"
-                    >
-                      Редактировать
-                    </button>
-                    <button
-                      onClick={exportTxt}
-                      disabled={isNew}
-                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
-                    >
-                      Экспорт в .TXT
-                    </button>
-                    <button
-                      onClick={() => void exportDocsArchive()}
-                      disabled={exporting || isNew}
-                      className="h-8 rounded-lg border border-border bg-surface-light px-3 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
-                    >
-                      {exporting ? "Готовим архив…" : "Создать архивный раздел"}
-                    </button>
-                    <button
-                      onClick={remove}
-                      className="h-8 rounded-lg bg-destructive px-3 text-[14px] font-medium text-destructive-foreground transition hover:brightness-110"
-                    >
-                      Удалить
-                    </button>
-                  </>
-                )}
+                <div className="no-scrollbar -mx-3 flex gap-2 overflow-x-auto px-3 sm:mx-0 sm:overflow-visible sm:px-0">
+                  {editMode ? (
+                    <>
+                      <button
+                        onClick={save}
+                        className="h-10 shrink-0 rounded-lg bg-primary px-4 text-[14px] font-semibold text-primary-foreground hover:brightness-110"
+                      >
+                        Сохранить
+                      </button>
+                      <button
+                        onClick={cancelEdit}
+                        className="h-10 shrink-0 rounded-lg border border-border bg-secondary px-4 text-[14px] font-semibold hover:bg-muted"
+                      >
+                        Отмена
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={startEdit}
+                        className="h-10 shrink-0 rounded-lg border border-border bg-surface-light px-4 text-[14px] transition hover:border-stroke-bright"
+                      >
+                        Редактировать
+                      </button>
+                      <button
+                        onClick={exportTxt}
+                        disabled={isNew}
+                        className="h-10 shrink-0 rounded-lg border border-border bg-surface-light px-4 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
+                      >
+                        Экспорт в .TXT
+                      </button>
+                      <button
+                        onClick={() => void exportDocsArchive()}
+                        disabled={exporting || isNew}
+                        className="h-10 shrink-0 rounded-lg border border-border bg-surface-light px-4 text-[14px] transition hover:border-stroke-bright disabled:opacity-40"
+                      >
+                        {exporting ? "Готовим архив…" : "Создать архивный раздел"}
+                      </button>
+                      <button
+                        onClick={remove}
+                        className="h-10 shrink-0 rounded-lg bg-destructive px-4 text-[14px] font-medium text-destructive-foreground transition hover:brightness-110"
+                      >
+                        Удалить
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
 
-              <div className="mb-4 -mx-3 flex gap-1 overflow-x-auto rounded-xl border border-border bg-surface-light px-3 sm:mx-0 sm:flex-wrap sm:px-2">
-                {TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    disabled={!t.ready}
-                    onClick={() => setTab(t.id)}
-                    className={
-                      "-mb-px shrink-0 border-b-2 px-3 py-3 text-[14px] font-medium uppercase tracking-[0.03em] transition " +
-                      (tab === t.id
-                        ? "border-link text-foreground"
-                        : "border-transparent text-muted-foreground hover:text-foreground") +
-                      (t.ready ? "" : " cursor-not-allowed opacity-40")
-                    }
-                    title={t.ready ? undefined : "Появится на следующем этапе миграции"}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+              {/* Панель вкладок: только горизонтальная прокрутка, один ряд */}
+              <div className="relative mb-4">
+                <div
+                  ref={tabsRef}
+                  className="no-scrollbar flex snap-x snap-mandatory gap-1 overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-xl border border-border bg-surface-light px-2"
+                >
+                  {TABS.map((t) => (
+                    <button
+                      key={t.id}
+                      data-tab={t.id}
+                      disabled={!t.ready}
+                      onClick={() => setTab(t.id)}
+                      className={
+                        "shrink-0 snap-start whitespace-nowrap border-b-2 px-3 py-3 text-[14px] font-medium uppercase tracking-[0.03em] transition " +
+                        (tab === t.id
+                          ? "border-link text-foreground"
+                          : "border-transparent text-muted-foreground hover:text-foreground") +
+                        (t.ready ? "" : " cursor-not-allowed opacity-40")
+                      }
+                      title={t.ready ? undefined : "Появится на следующем этапе миграции"}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="pointer-events-none absolute inset-y-px left-px w-6 rounded-l-xl bg-gradient-to-r from-surface-light to-transparent" />
+                <div className="pointer-events-none absolute inset-y-px right-px w-6 rounded-r-xl bg-gradient-to-l from-surface-light to-transparent" />
               </div>
+
 
               {tab === "t1" && (
                 <PersonMain
@@ -819,10 +857,13 @@ function Index() {
         />
       )}
 
-      <footer className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-border bg-header px-4 py-2 text-[12px] text-muted-foreground">
-        <span>Annuli 2026 — Genealogical data management system</span>
-        <span>Developer: Dmitry Pochinok. All rights reserved. © 2026</span>
+      <footer className="flex shrink-0 items-center justify-between gap-2 border-t border-border bg-header px-3 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-[11px] text-muted-foreground sm:px-4 sm:text-[12px]">
+        <span className="truncate">Annuli 2026 — Genealogical data management system</span>
+        <span className="hidden truncate sm:inline">
+          Developer: Dmitry Pochinok. All rights reserved. © 2026
+        </span>
       </footer>
+
 
       <Toaster />
     </div>
