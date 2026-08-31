@@ -15,12 +15,12 @@ export function DupeModal({ slots, resolutions, onResolve, onConfirm, onCancel }
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-3"
+      className="fixed inset-0 z-50 grid place-items-end bg-black/60 sm:place-items-center sm:p-3"
       onClick={(ev) => {
         if (ev.target === ev.currentTarget) onCancel();
       }}
     >
-      <div className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-card shadow-2xl">
+      <div className="flex h-[100svh] w-full max-w-2xl flex-col overflow-hidden bg-card pb-[env(safe-area-inset-bottom)] shadow-2xl sm:h-auto sm:max-h-[85vh] sm:rounded-xl sm:pb-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h3 className="text-[14px] font-bold">🔍 Найдены совпадения с персонами в базе</h3>
           <button onClick={onCancel} className="px-2 text-muted-foreground hover:text-foreground">

@@ -32,7 +32,7 @@ function Label({ children }: { children: ReactNode }) {
 }
 
 const inputCls =
-  "h-8 rounded-lg border border-border bg-surface-dark px-3 text-[14px] text-foreground outline-none transition focus:border-stroke-bright";
+  "h-10 sm:h-8 rounded-lg border border-border bg-surface-dark px-3 text-[14px] text-foreground outline-none transition focus:border-stroke-bright";
 
 export function TextField({
   label,
