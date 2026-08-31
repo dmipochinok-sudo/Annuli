@@ -108,6 +108,32 @@ function Index() {
   const [exporting, setExporting] = useState(false);
   const [dbOpen, setDbOpen] = useState(false);
   const [treeOpen, setTreeOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Закрытие мобильного меню действий по клику вне него.
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onDown = (ev: MouseEvent | TouchEvent) => {
+      if (moreRef.current && !moreRef.current.contains(ev.target as Node)) setMoreOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("touchstart", onDown);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("touchstart", onDown);
+    };
+  }, [moreOpen]);
+
+  // Прокрутка панели вкладок к активной вкладке.
+  useEffect(() => {
+    const el = tabsRef.current?.querySelector<HTMLElement>(`[data-tab="${tab}"]`);
+    el?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [tab]);
+
+
 
   const [dupeSlots, setDupeSlots] = useState<DupeSlot[]>([]);
   const [dupeRes, setDupeRes] = useState<Map<string, DupeResolution>>(new Map());
