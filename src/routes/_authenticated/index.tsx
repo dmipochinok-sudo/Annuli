@@ -496,7 +496,7 @@ function Index() {
               >
                 <span
                   className={
-                    "absolute top-0.5 size-4 rounded-full bg-foreground transition-all " +
+                    "absolute top-0.5 size-4 rounded-full bg-header-foreground transition-all " +
                     (dark ? "left-[18px]" : "left-0.5")
                   }
                 />
