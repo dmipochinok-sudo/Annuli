@@ -69,23 +69,6 @@ export function DbModal({ persons, onClose, onImported }: Props) {
     toast.success("GEDCOM сохранён");
   };
 
-  const exportLocal = async () => {
-    progress("Чтение локальной базы браузера…");
-    try {
-      const { blob, count } = await buildLocalArchive(progress);
-      if (!count) {
-        toast.error("В браузере нет сохранённой локальной базы");
-        return;
-      }
-      downloadBlob(blob, `Annuli_local_${new Date().toISOString().slice(0, 10)}.zip`);
-      toast.success(`Локальная база выгружена: ${count} персон`);
-    } catch (e) {
-      toast.error("Ошибка выгрузки: " + (e instanceof Error ? e.message : String(e)));
-    } finally {
-      reset();
-    }
-  };
-
   const pickFile = async (file: File | undefined) => {
     if (!file) return;
     progress("Чтение файла…");
