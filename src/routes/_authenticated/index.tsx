@@ -386,7 +386,7 @@ function Index() {
             ☰
           </button>
           <div className="flex min-w-0 items-center gap-2">
-            <svg viewBox="0 0 100 100" className="size-7 shrink-0 text-foreground" aria-hidden>
+            <svg viewBox="0 0 100 100" className="size-7 shrink-0 text-header-foreground" aria-hidden>
               <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
               <circle
                 cx="50"
@@ -421,13 +421,13 @@ function Index() {
                 onChange={(ev) => setQuery(ev.target.value)}
                 placeholder="Поиск по имени или индексу…"
                 aria-label="Поиск персоны"
-                className="h-8 w-full rounded-lg border border-border bg-surface-dark pl-8 pr-8 text-[14px] text-foreground outline-none transition focus:border-stroke-bright"
+                className="h-8 w-full rounded-lg border border-border bg-surface-dark pl-8 pr-8 text-[14px] text-header-foreground outline-none transition focus:border-stroke-bright"
               />
               {query && (
                 <button
                   onClick={() => setQuery("")}
                   aria-label="Очистить поиск"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-foreground"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground hover:text-header-foreground"
                 >
                   ✕
                 </button>
@@ -485,7 +485,7 @@ function Index() {
             {/* Десктопные кнопки */}
             <button
               onClick={toggleTheme}
-              className="hidden h-8 items-center gap-2 rounded-lg px-2 text-[14px] text-foreground sm:flex"
+              className="hidden h-8 items-center gap-2 rounded-lg px-2 text-[14px] text-header-foreground sm:flex"
             >
               <span>{dark ? "☾ Тёмная тема" : "☀︎ Светлая тема"}</span>
               <span
@@ -535,7 +535,7 @@ function Index() {
               onChange={(ev) => setQuery(ev.target.value)}
               placeholder="Поиск по имени или индексу…"
               aria-label="Поиск персоны"
-              className="h-11 w-full rounded-lg border border-border bg-surface-dark pl-9 pr-9 text-[16px] text-foreground outline-none transition focus:border-stroke-bright"
+              className="h-11 w-full rounded-lg border border-border bg-surface-dark pl-9 pr-9 text-[16px] text-header-foreground outline-none transition focus:border-stroke-bright"
             />
             {query && (
               <button
