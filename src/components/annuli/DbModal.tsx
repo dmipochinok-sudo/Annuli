@@ -146,17 +146,6 @@ export function DbModal({ persons, onClose, onImported }: Props) {
             <p className="mt-1.5 text-[12px] text-muted-foreground">
               В архиве: {persons.length} персон, оригиналы сканов и файл annuli.ged.
             </p>
-            <button
-              onClick={() => void exportLocal()}
-              disabled={!!busy}
-              className="mt-2 rounded-md border border-border bg-secondary px-3 py-2 text-[13px] font-semibold hover:bg-muted disabled:opacity-40"
-            >
-              ⬇ Скачать старую локальную базу браузера
-            </button>
-            <p className="mt-1.5 text-[12px] text-muted-foreground">
-              Разовая операция: выгружает данные, сохранённые в браузере до перехода в облако.
-              Полученный ZIP можно сразу импортировать ниже.
-            </p>
           </section>
 
           <section>
