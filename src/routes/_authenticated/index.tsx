@@ -602,7 +602,7 @@ function Index() {
             </div>
           ) : (
             <>
-              <div className="mb-4 grid grid-cols-[minmax(0,1fr)] items-center gap-2 sm:flex sm:flex-wrap">
+              <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <input
                   ref={avatarInput}
                   type="file"
@@ -610,7 +610,7 @@ function Index() {
                   className="hidden"
                   onChange={(ev) => void onAvatarFile(ev.target.files?.[0])}
                 />
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <button
                     type="button"
                     onClick={() => {
@@ -627,7 +627,7 @@ function Index() {
                       }
                     }}
                     title={editMode ? "Загрузить портрет" : "Открыть портрет"}
-                    className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-muted text-[13px] font-bold text-muted-foreground"
+                    className="grid size-28 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-muted text-[18px] font-bold text-muted-foreground"
                   >
                     {avatarUrl || current.avatarThumb ? (
                       <img
@@ -639,16 +639,16 @@ function Index() {
                       <span>{editMode ? "＋" : "?"}</span>
                     )}
                   </button>
+                  <div className="min-w-0">
+                    <h2 className="truncate text-[18px] font-bold tracking-tight sm:text-[22px]">
+                      {fullName(current) || "Новая персона"}
+                    </h2>
+                    <p className="text-[12px] text-muted-foreground">
+                      {[current.personIndex, lifeDates(current)].filter(Boolean).join(" · ") || "—"}
+                    </p>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h2 className="truncate text-[18px] font-bold tracking-tight sm:text-[22px]">
-                    {fullName(current) || "Новая персона"}
-                  </h2>
-                  <p className="text-[12px] text-muted-foreground">
-                    {[current.personIndex, lifeDates(current)].filter(Boolean).join(" · ") || "—"}
-                  </p>
-                </div>
-                <div className="no-scrollbar -mx-3 flex gap-2 overflow-x-auto px-3 sm:mx-0 sm:overflow-visible sm:px-0">
+                <div className="flex shrink-0 flex-wrap gap-2">
                   {editMode ? (
                     <>
                       <button
