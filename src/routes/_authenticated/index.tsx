@@ -648,7 +648,7 @@ function Index() {
                     </p>
                   </div>
                 </div>
-                <div className="flex shrink-0 flex-wrap gap-2">
+                <div className="ml-auto flex shrink-0 flex-wrap gap-2">
                   {editMode ? (
                     <>
                       <button
