@@ -90,41 +90,32 @@ export function PersonSidebar({
       <div className="flex flex-col gap-3 border-b border-border p-3">
         <label className="flex flex-col gap-1">
           <span className="pl-2 text-[11px] text-muted-foreground">Поколение</span>
-          <select
-            value={gen}
-            onChange={(ev) => setGen(ev.target.value)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] text-foreground outline-none focus:border-stroke-bright"
-          >
+          <SidebarSelect value={gen} onChange={(ev) => setGen(ev.target.value)}>
             <option value="">Все</option>
             {generations.map((g) => (
               <option key={g} value={g}>
                 {g}-е поколение
               </option>
             ))}
-          </select>
+          </SidebarSelect>
         </label>
         <label className="flex flex-col gap-1">
           <span className="pl-2 text-[11px] text-muted-foreground">Пол</span>
-          <select
-            value={gender}
-            onChange={(ev) => setGender(ev.target.value)}
-            className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] text-foreground outline-none focus:border-stroke-bright"
-          >
+          <SidebarSelect value={gender} onChange={(ev) => setGender(ev.target.value)}>
             <option value="">Любой</option>
             <option value="М">Мужской</option>
             <option value="Ж">Женский</option>
-          </select>
+          </SidebarSelect>
         </label>
         <label className="flex flex-col gap-1">
           <span className="pl-2 text-[11px] text-muted-foreground">Ветви</span>
-          <select
+          <SidebarSelect
             value={showLateral ? "all" : "direct"}
             onChange={(ev) => setShowLateral(ev.target.value === "all")}
-            className="h-8 rounded-lg border border-border bg-surface-light px-2.5 text-[14px] text-foreground outline-none focus:border-stroke-bright"
           >
             <option value="all">Все ветви</option>
             <option value="direct">Только прямые ветви</option>
-          </select>
+          </SidebarSelect>
         </label>
         {queryProp === undefined && (
           <input
