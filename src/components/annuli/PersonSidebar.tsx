@@ -1,8 +1,35 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type SelectHTMLAttributes } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { compareGenerations, compareIndex, fullName, initials, lifeDates } from "@/lib/annuli/format";
 import type { Person } from "@/lib/annuli/types";
 import { cn } from "@/lib/utils";
+
+/** Кастомный select с единым дизайном Annuli: убирает нативную стрелку браузера
+ *  и заменяет её собственным шевроном с корректными отступами. */
+function SidebarSelect({
+  className,
+  children,
+  ...props
+}: SelectHTMLAttributes<HTMLSelectElement>) {
+  return (
+    <div className="relative">
+      <select
+        {...props}
+        className={cn(
+          "h-8 w-full appearance-none rounded-lg border border-border bg-surface-light pl-2.5 pr-8 text-[14px] text-foreground outline-none focus:border-stroke-bright",
+          className,
+        )}
+      >
+        {children}
+      </select>
+      <ChevronDown
+        aria-hidden
+        className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+      />
+    </div>
+  );
+}
 
 interface Props {
   persons: Person[];
