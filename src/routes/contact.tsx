@@ -4,7 +4,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Contact } from "@/components/site/sections";
 
 interface ContactSearch {
-  plan?: string;
+  plan: string | undefined;
 }
 
 export const Route = createFileRoute("/contact")({
