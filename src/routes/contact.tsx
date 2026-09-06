@@ -4,13 +4,14 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { Contact } from "@/components/site/sections";
 
 interface ContactSearch {
-  plan: string | undefined;
+  plan?: string;
 }
 
 export const Route = createFileRoute("/contact")({
-  validateSearch: (search: Record<string, unknown>): ContactSearch => ({
-    plan: typeof search['plan'] === "string" && search['plan'] ? String(search['plan']) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): ContactSearch => {
+    const plan = typeof search['plan'] === "string" ? search['plan'] : "";
+    return plan ? { plan } : {};
+  },
   head: () => ({
     meta: [
       { title: "Начать проект — Annuli" },
