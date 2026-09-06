@@ -45,7 +45,7 @@ interface IndexSearch {
   owner?: string | undefined;
 }
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/_authenticated/app")({
   validateSearch: (search: Record<string, unknown>): IndexSearch => ({
     owner: typeof search['owner'] === "string" && search['owner'] ? String(search['owner']) : undefined,
   }),
