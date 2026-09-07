@@ -85,6 +85,13 @@ export function UserMenu() {
             )}
           </div>
           <Link
+            to="/account"
+            onClick={() => setOpen(false)}
+            className="block rounded-lg px-3 py-2 text-[13px] text-foreground transition hover:bg-surface-dark"
+          >
+            Личный кабинет
+          </Link>
+          <Link
             to="/profile"
             onClick={() => setOpen(false)}
             className="block rounded-lg px-3 py-2 text-[13px] text-foreground transition hover:bg-surface-dark"
