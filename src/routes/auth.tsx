@@ -1,16 +1,25 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { Logo } from "@/components/site/Logo";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Вход — Annuli" },
-      { name: "description", content: "Вход в генеалогическую базу Annuli." },
+      {
+        name: "description",
+        content: "Вход в личный кабинет Annuli: проект книги, заявки и родословная база.",
+      },
+      { property: "og:title", content: "Вход — Annuli" },
+      { property: "og:description", content: "Личный кабинет Annuli." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AuthPage,
@@ -20,6 +29,7 @@ type Mode = "signin" | "signup" | "forgot";
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,10 +37,8 @@ function AuthPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const dark = localStorage.getItem("annuli-theme") !== "light";
-    document.documentElement.classList.toggle("dark", dark);
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/", replace: true });
+      if (data.session) navigate({ to: "/account", replace: true });
     });
   }, [navigate]);
 
@@ -41,11 +49,11 @@ function AuthPage() {
     });
     if (result.error) {
       setBusy(false);
-      toast.error("Ошибка входа: " + result.error.message);
+      toast.error(t("Ошибка входа: ", "Sign-in error: ") + result.error.message);
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/", replace: true });
+    navigate({ to: "/account", replace: true });
   };
 
   const submit = async (ev: FormEvent) => {
@@ -57,7 +65,9 @@ function AuthPage() {
           redirectTo: `${window.location.origin}/reset-password`,
         });
         if (error) throw error;
-        toast.success("Письмо со ссылкой для сброса пароля отправлено");
+        toast.success(
+          t("Письмо со ссылкой для сброса пароля отправлено", "Password reset email sent"),
+        );
         setMode("signin");
         return;
       }
@@ -72,16 +82,18 @@ function AuthPage() {
         });
         if (error) throw error;
         if (!data.session) {
-          toast.success("Проверьте почту и подтвердите регистрацию");
+          toast.success(
+            t("Проверьте почту и подтвердите регистрацию", "Check your email to confirm sign-up"),
+          );
           setMode("signin");
           return;
         }
-        navigate({ to: "/", replace: true });
+        navigate({ to: "/account", replace: true });
         return;
       }
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      navigate({ to: "/", replace: true });
+      navigate({ to: "/account", replace: true });
     } catch (e) {
       toast.error(e instanceof Error ? e.message : String(e));
     } finally {
@@ -89,106 +101,97 @@ function AuthPage() {
     }
   };
 
-  const inputCls =
-    "h-10 w-full rounded-lg border border-border bg-surface-dark px-3 text-[14px] text-foreground outline-none transition focus:border-stroke-bright";
-
   return (
-    <div className="grid min-h-screen place-items-center bg-background px-4 py-10">
-      <div className="w-full max-w-sm">
-        <div className="mb-6 flex flex-col items-center gap-2 text-center">
-          <svg viewBox="0 0 100 100" className="size-12 text-foreground" aria-hidden>
-            <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="5" />
-            <circle cx="50" cy="50" r="32" fill="none" stroke="currentColor" strokeWidth="4" opacity=".7" />
-            <circle cx="50" cy="50" r="18" fill="none" stroke="currentColor" strokeWidth="3" opacity=".45" />
-          </svg>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Annuli</h1>
-          <p className="text-[13px] text-muted-foreground">
-            Приложение для работы с генеалогической базой данных
-          </p>
+    <div className="auth-page">
+      <Link to="/" className="auth-brand">
+        <Logo size={32} />
+        <span className="masthead-name auth-brand-name">Annuli</span>
+      </Link>
+
+      <div className="auth-card">
+        <div className="contact-kicker">
+          {mode === "signup"
+            ? t("Регистрация", "Create account")
+            : mode === "forgot"
+              ? t("Восстановление пароля", "Password recovery")
+              : t("Вход в кабинет", "Sign in")}
+        </div>
+        <p className="ap-card-desc">
+          {t(
+            "Личный кабинет: проект книги, заявки и ваша родословная база.",
+            "Your account: book project, requests and your family database.",
+          )}
+        </p>
+
+        <div className="auth-oauth">
+          <button className="btn btn--ghost" onClick={() => void oauth("google")} disabled={busy}>
+            {t("Войти через Google", "Continue with Google")}
+          </button>
+          <button className="btn btn--ghost" onClick={() => void oauth("apple")} disabled={busy}>
+            {t("Войти через Apple", "Continue with Apple")}
+          </button>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface-light p-5">
-          <div className="flex flex-col gap-2">
-            <button
-              onClick={() => void oauth("google")}
-              disabled={busy}
-              className="h-10 rounded-lg border border-border bg-surface-dark text-[14px] font-medium text-foreground transition hover:border-stroke-bright disabled:opacity-50"
-            >
-              Войти через Google
-            </button>
-            <button
-              onClick={() => void oauth("apple")}
-              disabled={busy}
-              className="h-10 rounded-lg border border-border bg-surface-dark text-[14px] font-medium text-foreground transition hover:border-stroke-bright disabled:opacity-50"
-            >
-              Войти через Apple
-            </button>
-          </div>
+        <div className="auth-sep">
+          <span>{t("или по электронной почте", "or with email")}</span>
+        </div>
 
-          <div className="my-4 flex items-center gap-3 text-[11px] uppercase tracking-wide text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            или по электронной почте
-            <span className="h-px flex-1 bg-border" />
-          </div>
-
-          <form onSubmit={(ev) => void submit(ev)} className="flex flex-col gap-3">
-            {mode === "signup" && (
+        <form className="form" onSubmit={(ev) => void submit(ev)}>
+          {mode === "signup" && (
+            <div className="form-field">
+              <label className="form-lbl">{t("Отображаемое имя", "Display name")}</label>
               <input
+                className="form-inp"
                 value={name}
                 onChange={(ev) => setName(ev.target.value)}
-                placeholder="Отображаемое имя"
-                aria-label="Отображаемое имя"
-                className={inputCls}
               />
-            )}
+            </div>
+          )}
+          <div className="form-field">
+            <label className="form-lbl">Email</label>
             <input
+              className="form-inp"
               type="email"
               required
               value={email}
               onChange={(ev) => setEmail(ev.target.value)}
-              placeholder="Email"
-              aria-label="Email"
-              className={inputCls}
             />
-            {mode !== "forgot" && (
+          </div>
+          {mode !== "forgot" && (
+            <div className="form-field">
+              <label className="form-lbl">{t("Пароль", "Password")}</label>
               <input
+                className="form-inp"
                 type="password"
                 required
                 minLength={6}
                 value={password}
                 onChange={(ev) => setPassword(ev.target.value)}
-                placeholder="Пароль"
-                aria-label="Пароль"
-                className={inputCls}
               />
-            )}
-            <button
-              type="submit"
-              disabled={busy}
-              className="h-10 rounded-lg bg-primary text-[14px] font-semibold text-primary-foreground transition hover:brightness-110 disabled:opacity-50"
-            >
-              {mode === "signin" && "Войти"}
-              {mode === "signup" && "Зарегистрироваться"}
-              {mode === "forgot" && "Отправить ссылку"}
-            </button>
-          </form>
+            </div>
+          )}
+          <button className="form-btn" type="submit" disabled={busy}>
+            {mode === "signin" && t("Войти", "Sign in")}
+            {mode === "signup" && t("Зарегистрироваться", "Create account")}
+            {mode === "forgot" && t("Отправить ссылку", "Send link")}
+          </button>
+        </form>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-[13px]">
-            {mode === "signin" ? (
-              <>
-                <button onClick={() => setMode("forgot")} className="text-link hover:underline">
-                  Забыли пароль?
-                </button>
-                <button onClick={() => setMode("signup")} className="text-link hover:underline">
-                  Создать аккаунт
-                </button>
-              </>
-            ) : (
-              <button onClick={() => setMode("signin")} className="text-link hover:underline">
-                ← Назад ко входу
+        <div className="auth-switch">
+          {mode === "signin" ? (
+            <>
+              <button onClick={() => setMode("forgot")}>
+                {t("Забыли пароль?", "Forgot password?")}
               </button>
-            )}
-          </div>
+              <button onClick={() => setMode("signup")}>
+                {t("Создать аккаунт", "Create account")}
+              </button>
+            </>
+          ) : (
+            <button onClick={() => setMode("signin")}>
+              {t("← Назад ко входу", "← Back to sign in")}
+            </button>
+          )}
         </div>
       </div>
       <Toaster />
