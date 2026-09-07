@@ -1136,3 +1136,15 @@ Vision, Architecture Decisions, инварианты модели данных, 
   на главной показывается плашка «Вы работаете в базе: …» и возврат к своей.
 - `useImageUrl` использует подписанные ссылки; миниатюра — временный фолбэк.
 - Офлайн-режима нет: без сети база не загружается.
+
+## v4.0 — Лэндинг, личный кабинет и приложение в одном проекте
+
+- Публичный сайт в редакционном стиле (NYT-верстка лэндинга Annuli): `/` (главная), `/approach`, `/process`, `/plans`, `/services`, `/contact`.
+- Общие компоненты сайта: `src/components/site/` (SiteHeader, SiteFooter, SiteLayout, sections, Logo, Reveal).
+- Дизайн-система лэндинга перенесена в `src/styles.css` (токены ink/paper/rule/wash/mid/dim/signal, шрифты Playfair Display, PT Serif, PT Sans, fluid typography, 4px-сетка); shadcn-токены приложения сохранены.
+- Двуязычность RU/EN и переключение темы: `src/lib/i18n.tsx` (провайдер подключён в `__root.tsx`).
+- Заявки с лэндинга: серверная функция `src/lib/leads.functions.ts` → таблица `leads`.
+- Личный кабинет: `src/routes/_authenticated/account.tsx` — родословная база, проект книги, этапы, заявки, сообщения, профиль, выход.
+- Рабочее приложение перенесено с `/` на `/app` (`src/routes/_authenticated/app.tsx`).
+- Страница входа `/auth` переверстана в стиле лэндинга; после входа — переход в `/account`.
+- Новые таблицы: `leads`, `book_projects`, `project_stages`, `messages` (RLS: владелец + админ; заявку может отправить любой посетитель).
