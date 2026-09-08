@@ -158,6 +158,77 @@
   --success: #2f7d4f;
   --success-foreground: #ffffff;
   --link: var(--signal);
+
+  /* — v2 primitives & semantic roles — */
+  --annuli-white: #ffffff;
+  --annuli-ink-950: #111110;
+  --annuli-paper-50: #fffff8;
+  --annuli-warm-100: #f2f1ec;
+  --annuli-warm-200: #dedcd7;
+  --annuli-warm-400: #a8a5a0;
+  --annuli-warm-600: #767470;
+  --annuli-red-700: #b8251a;
+  --annuli-red-800: #9b1a14;
+  --annuli-green-700: #2d6a2d;
+  --annuli-black: #000000;
+
+  --color-text: var(--ink);
+  --color-text-muted: var(--mid);
+  --color-text-subtle: var(--dim);
+  --color-surface: var(--paper);
+  --color-surface-muted: var(--wash);
+  --color-border: var(--rule);
+  --color-accent: var(--signal);
+  --color-accent-hover: var(--annuli-red-800);
+  --color-on-dark: var(--paper);
+  --color-success: var(--annuli-green-700);
+  --color-photo-scrim: rgba(0, 0, 0, 0.55);
+  --color-photo-caption: rgba(255, 255, 255, 0.7);
+  --color-ghost-on-dark: rgba(255, 255, 255, 0.8);
+  --color-border-on-dark: rgba(255, 255, 255, 0.4);
+
+  /* Инверсная featured-поверхность (избранный тариф). В тёмной теме
+     инвертируется автоматически через --ink/--paper. */
+  --color-featured-surface: var(--ink);
+  --color-on-featured: var(--paper);
+  --color-muted-on-featured: rgba(232, 230, 223, 0.5);
+  --color-subtle-on-featured: rgba(232, 230, 223, 0.45);
+  --color-rule-on-featured: rgba(255, 255, 255, 0.12);
+  --color-rule-subtle-on-featured: rgba(255, 255, 255, 0.08);
+
+  /* Motion (текущие анимации сохраняются) */
+  --motion-fast: 0.2s;
+  --motion-standard: 0.3s;
+  --motion-reveal: 0.7s;
+  --motion-hero: 10s;
+  --ease-standard: ease;
+  --motion-distance-intro: 12px;
+  --motion-distance-reveal: 14px;
+
+  /* Z-scale */
+  --z-drawer: 299;
+  --z-navigation: 300;
+  --z-utility: 400;
+  --z-cms: 450;
+  --z-modal: 500;
+  --z-toast: 600;
+
+  /* Compact header v2 */
+  --header-util-h: 32px;
+  --header-bar-h: 56px;
+  --header-mark: 30px;
+
+  /* Control & CMS metrics */
+  --control-cta-h: 30px;
+  --cms-bar-h: 44px;
+  --cms-nav-w: 240px;
+  --cms-thumb-w: 96px;
+  --cms-thumb-h: 60px;
+  --cms-content-w: 860px;
+
+  --radius-control: 2px;
+  --border-hairline: 1px;
+  --border-emphasis: 3px;
 }
 
 .dark {
