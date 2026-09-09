@@ -1114,8 +1114,10 @@ a:focus-visible,
 .plan-card:not(.plan-card--f):hover::before {
   background: var(--signal);
 }
+/* Featured-карточка — инверсная поверхность через семантические токены.
+   В тёмной теме автоматически инвертируется (светлый фон, тёмный текст). */
 .plan-card--f {
-  background: var(--ink);
+  background: var(--color-featured-surface);
 }
 .plan-card--f::before {
   background: var(--signal);
@@ -1139,7 +1141,7 @@ a:focus-visible,
   margin-bottom: var(--s3);
 }
 .plan-card--f .plan-name {
-  color: var(--paper);
+  color: var(--color-on-featured);
 }
 .plan-tag {
   font-family: var(--f-body);
@@ -1150,7 +1152,7 @@ a:focus-visible,
   line-height: 1.5;
 }
 .plan-card--f .plan-tag {
-  color: rgba(232, 230, 223, 0.5);
+  color: var(--color-muted-on-featured);
 }
 .plan-divider {
   border: none;
@@ -1158,7 +1160,7 @@ a:focus-visible,
   margin: var(--s6) 0;
 }
 .plan-card--f .plan-divider {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-rule-on-featured);
 }
 .plan-price {
   font-family: var(--f-display);
@@ -1169,7 +1171,7 @@ a:focus-visible,
   color: var(--ink);
 }
 .plan-card--f .plan-price {
-  color: var(--paper);
+  color: var(--color-on-featured);
 }
 .plan-price sup {
   font-size: 0.44em;
@@ -1187,7 +1189,7 @@ a:focus-visible,
   margin-top: var(--s1);
 }
 .plan-card--f .plan-price-note {
-  color: rgba(232, 230, 223, 0.45);
+  color: var(--color-subtle-on-featured);
 }
 .plan-specs {
   list-style: none;
@@ -1209,8 +1211,8 @@ a:focus-visible,
   border-bottom: 1px solid var(--rule);
 }
 .plan-card--f .plan-specs li {
-  color: rgba(232, 230, 223, 0.4);
-  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--color-muted-on-featured);
+  border-color: var(--color-rule-subtle-on-featured);
 }
 .plan-specs li span:last-child {
   font-weight: 700;
@@ -1219,7 +1221,7 @@ a:focus-visible,
   flex-shrink: 0;
 }
 .plan-card--f .plan-specs li span:last-child {
-  color: var(--paper);
+  color: var(--color-on-featured);
 }
 .plan-btn {
   font-family: var(--f-ui);
@@ -1250,8 +1252,8 @@ a:focus-visible,
   color: #fff;
 }
 .plan-btn--f:hover {
-  background: #9b1a14;
-  border-color: #9b1a14;
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
 }
 @media (min-width: 600px) {
   .plans-grid {
