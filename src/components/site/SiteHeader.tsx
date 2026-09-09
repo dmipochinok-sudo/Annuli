@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 import { Logo } from "./Logo";
@@ -13,7 +14,7 @@ const NAV = [
   { to: "/contact" as const, ru: "Контакт", en: "Contact" },
 ];
 
-/** Верхняя панель: дата, язык, тема. */
+/** Верхняя служебная полоса: дата, язык, тема. */
 function UtilBar() {
   const { lang, setLang, theme, toggleTheme, t } = useI18n();
   const [date, setDate] = useState("");
@@ -48,9 +49,9 @@ function UtilBar() {
         >
           <svg className="ctrl-icon" viewBox="0 0 14 14" fill="none">
             {theme === "dark" ? (
-              <circle cx="7" cy="7" r="4" fill="currentColor" />
+              <circle className="icon-sun" cx="7" cy="7" r="4" fill="currentColor" />
             ) : (
-              <path d="M12 9A5 5 0 0 1 5 2a5 5 0 1 0 7 7z" fill="currentColor" />
+              <path className="icon-moon" d="M12 9A5 5 0 0 1 5 2a5 5 0 1 0 7 7z" fill="currentColor" />
             )}
           </svg>
         </button>
@@ -59,59 +60,67 @@ function UtilBar() {
   );
 }
 
-/** Шапка сайта: утилити-бар, мастхед, навигация. */
+/** Компактная шапка v2: утилити-полоса, топбар с маркой и навигацией, полоса-мастхед. */
 export function SiteHeader() {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
-  const [signedIn, setSignedIn] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSignedIn(!!data.session));
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
-      setSignedIn(!!session),
+      setUserId(session?.user?.id ?? null),
     );
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  const { data: isAdmin } = useQuery<boolean>({
+    queryKey: ["menu-is-admin", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await supabase.rpc("is_admin");
+      return !!data;
+    },
+  });
+
+  const signedIn = !!userId;
+  const accountLabel = signedIn ? t("Личный кабинет", "Account") : t("Войти", "Sign in");
 
   return (
     <>
       <UtilBar />
 
-      <header className="masthead">
-        <div className="masthead-left">
-          <span className="masthead-tag">
-            {t("Издательство семейных историй", "Family History Publishers")}
+      <header className="topbar">
+        <Link to="/" className="brand">
+          <span className="brand-mark">
+            <Logo />
           </span>
-          <hr className="masthead-left-rule" />
-        </div>
-
-        <Link to="/" className="masthead-center">
-          <Logo />
-          <div className="masthead-name">Annuli</div>
-          <div className="masthead-sub">
-            {t("Фамильные книги · с 2024", "Family Books · Est. 2024")}
-          </div>
+          <span className="brand-text">
+            <span className="brand-name">Annuli</span>
+            <span className="brand-sub">
+              {t("Издательство семейных историй", "Family History Publishers")}
+            </span>
+          </span>
         </Link>
 
-        <div className="masthead-right">
-          <hr className="masthead-left-rule" />
-          <span className="masthead-tag" style={{ textAlign: "right" }}>
-            {t("Полностью под ключ", "Fully managed")}
-          </span>
-        </div>
-      </header>
+        <nav>
+          <ul className="topbar-nav">
+            {NAV.map((n) => (
+              <li key={n.to}>
+                <Link to={n.to}>{t(n.ru, n.en)}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-      <nav className="main-nav">
-        <ul className="nav-sections">
-          {NAV.map((n) => (
-            <li key={n.to}>
-              <Link to={n.to}>{t(n.ru, n.en)}</Link>
-            </li>
-          ))}
-        </ul>
-        <div className="nav-right">
+        <div className="topbar-actions">
+          {isAdmin && (
+            <Link to="/admin/cms" className="nav-link">
+              {t("CMS", "CMS")}
+            </Link>
+          )}
           <Link to={signedIn ? "/account" : "/auth"} className="nav-link">
-            {signedIn ? t("Личный кабинет", "Account") : t("Войти", "Sign in")}
+            {accountLabel}
           </Link>
           <Link to="/contact" className="nav-cta">
             {t("Начать проект", "Start a Project")}
@@ -119,6 +128,7 @@ export function SiteHeader() {
           <button
             className={`nav-burger${open ? " open" : ""}`}
             aria-label={t("Меню", "Menu")}
+            aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
           >
             <span />
@@ -126,7 +136,7 @@ export function SiteHeader() {
             <span />
           </button>
         </div>
-      </nav>
+      </header>
 
       <nav className={`nav-drawer${open ? " open" : ""}`}>
         {NAV.map((n) => (
@@ -135,9 +145,23 @@ export function SiteHeader() {
           </Link>
         ))}
         <Link to={signedIn ? "/account" : "/auth"} onClick={() => setOpen(false)}>
-          {signedIn ? t("Личный кабинет", "Account") : t("Войти", "Sign in")}
+          {accountLabel}
         </Link>
+        {isAdmin && (
+          <Link to="/admin/cms" onClick={() => setOpen(false)}>
+            {t("Управление сайтом", "Site CMS")}
+          </Link>
+        )}
       </nav>
+
+      <div className="masthead-strip">
+        <span className="masthead-tag">
+          {t("Фамильные книги · с 2024", "Family Books · Est. 2024")}
+        </span>
+        <span className="masthead-tag masthead-tag--r">
+          {t("Полностью под ключ", "Fully managed")}
+        </span>
+      </div>
     </>
   );
 }
