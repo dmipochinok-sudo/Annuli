@@ -13,6 +13,14 @@ export type Lang = "ru" | "en";
 const LANG_KEY = "annuli-lang";
 const THEME_KEY = "annuli-theme";
 
+/** Применяет тему одновременно через класс .dark и атрибут data-theme
+ *  (синонимы, чтобы дизайн-система v2 работала с обоих механизмов). */
+function applyTheme(next: "light" | "dark") {
+  const el = document.documentElement;
+  el.classList.toggle("dark", next === "dark");
+  el.setAttribute("data-theme", next);
+}
+
 interface I18nValue {
   lang: Lang;
   setLang: (l: Lang) => void;
@@ -35,7 +43,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const savedTheme = localStorage.getItem(THEME_KEY);
     const next = savedTheme === "dark" ? "dark" : "light";
     setTheme(next);
-    document.documentElement.classList.toggle("dark", next === "dark");
+    applyTheme(next);
   }, []);
 
   const setLang = useCallback((l: Lang) => {
@@ -48,7 +56,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
       localStorage.setItem(THEME_KEY, next);
-      document.documentElement.classList.toggle("dark", next === "dark");
+      applyTheme(next);
       return next;
     });
   }, []);
