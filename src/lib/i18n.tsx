@@ -13,6 +13,14 @@ export type Lang = "ru" | "en";
 const LANG_KEY = "annuli-lang";
 const THEME_KEY = "annuli-theme";
 
+/** Применяет тему одновременно через класс .dark и атрибут data-theme
+ *  (синонимы, чтобы дизайн-система v2 работала с обоих механизмов). */
+function applyTheme(next: "light" | "dark") {
+  const el = document.documentElement;
+  el.classList.toggle("dark", next === "dark");
+  el.setAttribute("data-theme", next);
+}
+
 interface I18nValue {
   lang: Lang;
   setLang: (l: Lang) => void;
