@@ -35,7 +35,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const savedTheme = localStorage.getItem(THEME_KEY);
     const next = savedTheme === "dark" ? "dark" : "light";
     setTheme(next);
-    document.documentElement.classList.toggle("dark", next === "dark");
+    applyTheme(next);
   }, []);
 
   const setLang = useCallback((l: Lang) => {
