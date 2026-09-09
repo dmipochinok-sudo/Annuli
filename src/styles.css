@@ -231,7 +231,8 @@
   --border-emphasis: 3px;
 }
 
-.dark {
+.dark,
+[data-theme="dark"] {
   --ink: #e8e6df;
   --paper: #161614;
   --rule: #2e2d29;
@@ -247,6 +248,12 @@
   --chart-5: #d9a441;
   --success: #5fbf85;
   --success-foreground: #10120f;
+
+  /* Featured-карточка в тёмной теме инверсна (светлая поверхность, тёмный текст) */
+  --color-muted-on-featured: rgba(17, 17, 16, 0.6);
+  --color-subtle-on-featured: rgba(17, 17, 16, 0.45);
+  --color-rule-on-featured: rgba(17, 17, 16, 0.16);
+  --color-rule-subtle-on-featured: rgba(17, 17, 16, 0.1);
 }
 
 @layer base {
