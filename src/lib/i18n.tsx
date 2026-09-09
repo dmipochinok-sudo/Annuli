@@ -56,7 +56,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     setTheme((prev) => {
       const next = prev === "dark" ? "light" : "dark";
       localStorage.setItem(THEME_KEY, next);
-      document.documentElement.classList.toggle("dark", next === "dark");
+      applyTheme(next);
       return next;
     });
   }, []);
