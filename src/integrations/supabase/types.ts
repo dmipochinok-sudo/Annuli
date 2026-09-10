@@ -225,6 +225,27 @@ export type Database = {
           },
         ]
       }
+      site_content: {
+        Row: {
+          en: string
+          key: string
+          ru: string
+          updated_at: string
+        }
+        Insert: {
+          en?: string
+          key: string
+          ru?: string
+          updated_at?: string
+        }
+        Update: {
+          en?: string
+          key?: string
+          ru?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
