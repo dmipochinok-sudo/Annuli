@@ -44,7 +44,10 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
   const dirtyCount = dirtyKeys.length;
 
   const setField = (key: string, lang: "ru" | "en", value: string) =>
-    setDraft((prev) => ({ ...prev, [key]: { ...prev[key], [lang]: value } }));
+    setDraft((prev) => {
+      const cur = prev[key] ?? { ru: "", en: "" };
+      return { ...prev, [key]: { ru: cur.ru, en: cur.en, [lang]: value } } as Record<string, Pair>;
+    });
 
   const saveMutation = useMutation({
     mutationFn: async () => {
