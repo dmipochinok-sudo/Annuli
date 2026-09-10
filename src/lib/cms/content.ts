@@ -254,7 +254,7 @@ function prettyLabel(key: string): string {
 
 /** Плоский список полей, сгруппированных по префиксу. */
 export const CONTENT_FIELDS: FieldDef[] = Object.keys(DEFAULTS).map((key) => {
-  const group = key.split(".")[0];
+  const group: string = key.split(".")[0] ?? key;
   return { key, group, label: prettyLabel(key), multiline: MULTILINE.has(key) };
 });
 
