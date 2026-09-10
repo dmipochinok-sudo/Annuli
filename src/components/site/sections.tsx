@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import heroAsset from "@/assets/annuli-hero.jpg.asset.json";
 import { useI18n } from "@/lib/i18n";
+import { useSiteContent } from "@/lib/cms/content";
 import { submitLead } from "@/lib/leads.functions";
 
 /** Заголовок редакционной секции. */
@@ -16,62 +17,52 @@ export function SecHead({ title, sub }: { title: string; sub: string }) {
 }
 
 export function Hero() {
-  const { t } = useI18n();
+  const { c } = useSiteContent();
   return (
     <section className="hero">
       <div className="hero-photo">
-        <img src={heroAsset.url} alt={t("Семейный портрет, 1927 год", "Family portrait, 1927")} />
-        <div className="hero-caption">
-          {t(
-            "Семейный портрет. Студийная фотография, 1927 г.",
-            "Family portrait. Studio photograph, 1927.",
-          )}
-        </div>
+        <img src={heroAsset.url} alt={c("hero.alt")} />
+        <div className="hero-caption">{c("hero.caption")}</div>
       </div>
 
       <div className="hero-text-wrap">
         <div className="hero-main">
-          <p className="hero-kicker a1">{t("Семейная летопись", "Family Chronicle")}</p>
+          <p className="hero-kicker a1">{c("hero.kicker")}</p>
           <h1 className="hero-headline a2">
-            {t("История рода,", "A family story")}
+            {c("hero.headline1")}
             <br />
-            <i>{t("достойная вечности", "worthy of eternity")}</i>
+            <i>{c("hero.headline2")}</i>
           </h1>
-          <p className="hero-deck a3">
-            {t(
-              "Мы создаём книги о вашей семье — от первого интервью до готового тома в твёрдом переплёте. Полностью под ключ.",
-              "We create books about your family — from the first interview to a finished hardcover volume. Fully managed, start to finish.",
-            )}
-          </p>
+          <p className="hero-deck a3">{c("hero.deck")}</p>
           <p className="hero-byline a3">
-            {t("Издательство", "Publisher")} <span>Annuli</span>
+            {c("hero.byline_label")} <span>Annuli</span>
           </p>
           <div className="hero-actions a4">
             <Link to="/plans" className="btn btn--primary">
-              {t("Выбрать план", "View Plans")}
+              {c("hero.cta1")}
             </Link>
             <Link to="/account" className="btn btn--ghost">
-              {t("Личный кабинет", "Your account")}
+              {c("hero.cta2")}
             </Link>
           </div>
         </div>
 
         <aside className="hero-sidebar a4">
           <div className="stat-cell">
-            <span className="stat-num">4</span>
-            <span className="stat-lbl">{t("Тарифных плана", "Service tiers")}</span>
+            <span className="stat-num">{c("hero.stat1_num")}</span>
+            <span className="stat-lbl">{c("hero.stat1_lbl")}</span>
           </div>
           <div className="stat-cell">
-            <span className="stat-num">100%</span>
-            <span className="stat-lbl">{t("Под ключ", "Fully managed")}</span>
+            <span className="stat-num">{c("hero.stat2_num")}</span>
+            <span className="stat-lbl">{c("hero.stat2_lbl")}</span>
           </div>
           <div className="stat-cell">
-            <span className="stat-num">7+</span>
-            <span className="stat-lbl">{t("Поколений в архиве", "Generations archived")}</span>
+            <span className="stat-num">{c("hero.stat3_num")}</span>
+            <span className="stat-lbl">{c("hero.stat3_lbl")}</span>
           </div>
           <div className="stat-cell">
-            <span className="stat-num">132</span>
-            <span className="stat-lbl">{t("Часов в Эксклюзиве", "Hours in Exclusive")}</span>
+            <span className="stat-num">{c("hero.stat4_num")}</span>
+            <span className="stat-lbl">{c("hero.stat4_lbl")}</span>
           </div>
         </aside>
       </div>
@@ -80,66 +71,34 @@ export function Hero() {
 }
 
 export function Approach() {
-  const { t } = useI18n();
+  const { c } = useSiteContent();
   const cards = [
-    {
-      n: "01",
-      ru: "Только под ключ",
-      en: "Fully Managed",
-      dru: "Вы передаёте фотографии и воспоминания — мы создаём готовую книгу. Никаких шаблонов для самостоятельного заполнения.",
-      den: "You bring photos and memories — we create the finished book. No templates, no DIY.",
-    },
-    {
-      n: "02",
-      ru: "Живые истории",
-      en: "Living Stories",
-      dru: "Интервью с членами семьи превращают сухую хронологию в повествование, которое хочется читать.",
-      den: "Family interviews turn dry timelines into narratives people actually want to read.",
-    },
-    {
-      n: "03",
-      ru: "Ничего лишнего",
-      en: "Nothing Superfluous",
-      dru: "Каждый элемент книги служит содержанию. Дизайн не отвлекает — он помогает историям звучать.",
-      den: "Every element serves the content. Design doesn't distract — it makes stories resonate.",
-    },
-    {
-      n: "04",
-      ru: "На века",
-      en: "Built to Last",
-      dru: "Материалы и переплёт подобраны так, чтобы книга хранилась десятилетиями и передавалась следующим поколениям.",
-      den: "Materials and binding are chosen so the book endures for decades and passes to future generations.",
-    },
+    { n: "01", title: c("ap.card01_title"), desc: c("ap.card01_desc") },
+    { n: "02", title: c("ap.card02_title"), desc: c("ap.card02_desc") },
+    { n: "03", title: c("ap.card03_title"), desc: c("ap.card03_desc") },
+    { n: "04", title: c("ap.card04_title"), desc: c("ap.card04_desc") },
   ];
 
   return (
     <section className="approach" id="approach">
-      <SecHead
-        title={t("Наш подход", "Our Approach")}
-        sub={t("02 — Методология", "02 — Methodology")}
-      />
+      <SecHead title={c("head.approach.title")} sub={c("head.approach.sub")} />
       <div className="approach-inner">
         <div className="ap-standfirst r">
           <div className="ap-number">02</div>
           <h2 className="ap-title">
-            {t("Наш", "Our")}
+            {c("ap.title1")}
             <br />
-            <i>{t("подход", "approach")}</i>
+            <i>{c("ap.title2")}</i>
           </h2>
-          <p className="ap-body">
-            {t(
-              "Вы передаёте материалы — мы берём на себя сбор историй, дизайн, тексты и печать. От первого звонка до готовой книги.",
-              "You provide the materials — we handle stories, design, writing and printing. From the first call to the finished book.",
-            )}
-          </p>
+          <p className="ap-body">{c("ap.body")}</p>
         </div>
         <div className="ap-cards r" style={{ transitionDelay: ".1s" }}>
-          {cards.map((c) => (
-            <div className="ap-card" key={c.n}>
-              <div className="ap-card-n">{c.n}</div>
+          {cards.map((card) => (
+            <div className="ap-card" key={card.n}>
+              <div className="ap-card-n">{card.n}</div>
               <hr className="ap-card-rule" />
-              <div className="ap-card-title">{t(c.ru, c.en)}</div>
-              <p className="ap-card-desc">{t(c.dru, c.den)}</p>
+              <div className="ap-card-title">{card.title}</div>
+              <p className="ap-card-desc">{card.desc}</p>
             </div>
           ))}
         </div>
@@ -149,60 +108,25 @@ export function Approach() {
 }
 
 export function Process() {
-  const { t } = useI18n();
+  const { c } = useSiteContent();
   const steps = [
-    {
-      n: "01",
-      kru: "Этап первый",
-      ken: "Step One",
-      tru: "Знакомство",
-      ten: "Discovery",
-      dru: "Первый созвон и бриф. Обсуждаем объём, ожидания и выбираем план.",
-      den: "First call and brief. We discuss scope, expectations and choose a plan.",
-    },
-    {
-      n: "02",
-      kru: "Этап второй",
-      ken: "Step Two",
-      tru: "Сбор историй",
-      ten: "Story Collection",
-      dru: "Интервью, сбор фотографий и документов. Всё это вы загружаете в личном кабинете.",
-      den: "Interviews, photos and documents — all uploaded through your account.",
-    },
-    {
-      n: "03",
-      kru: "Этап третий",
-      ken: "Step Three",
-      tru: "Создание",
-      ten: "Creation",
-      dru: "Пишем тексты, разрабатываем дизайн, верстаем, строим генеалогическое древо.",
-      den: "We write, design, typeset and build the genealogical tree.",
-    },
-    {
-      n: "04",
-      kru: "Этап четвёртый",
-      ken: "Step Four",
-      tru: "Печать и передача",
-      ten: "Print & Delivery",
-      dru: "Контролируем качество печати. Готовые экземпляры — вашей семье.",
-      den: "We oversee print quality. Finished copies delivered to your family.",
-    },
+    { n: "01", kicker: c("pr.step01_kicker"), title: c("pr.step01_title"), desc: c("pr.step01_desc") },
+    { n: "02", kicker: c("pr.step02_kicker"), title: c("pr.step02_title"), desc: c("pr.step02_desc") },
+    { n: "03", kicker: c("pr.step03_kicker"), title: c("pr.step03_title"), desc: c("pr.step03_desc") },
+    { n: "04", kicker: c("pr.step04_kicker"), title: c("pr.step04_title"), desc: c("pr.step04_desc") },
   ];
 
   return (
     <section className="process" id="process">
-      <SecHead
-        title={t("Как мы работаем", "How We Work")}
-        sub={t("03 — Четыре шага", "03 — Four Steps")}
-      />
+      <SecHead title={c("head.process.title")} sub={c("head.process.sub")} />
       <div className="process-list">
         {steps.map((s, i) => (
           <div className="step-cell r" key={s.n} style={{ transitionDelay: `${i * 0.08}s` }}>
             <div className="step-num-large">{s.n}</div>
             <div className="step-body">
-              <div className="step-kicker">{t(s.kru, s.ken)}</div>
-              <div className="step-title">{t(s.tru, s.ten)}</div>
-              <p className="step-desc">{t(s.dru, s.den)}</p>
+              <div className="step-kicker">{s.kicker}</div>
+              <div className="step-title">{s.title}</div>
+              <p className="step-desc">{s.desc}</p>
             </div>
           </div>
         ))}
@@ -218,31 +142,24 @@ interface PlanSpec {
   ven: string;
 }
 
-interface Plan {
-  tru: string;
-  ten: string;
-  nru: string;
-  nen: string;
-  gru: string;
-  gen: string;
+export interface Plan {
+  tier: string;
+  name: string;
+  tag: string;
   price: string;
-  noteRu: string;
-  noteEn: string;
+  note: string;
   featured?: boolean;
   specs: PlanSpec[];
 }
 
+/** Статические характеристики тарифов (не редактируются через CMS). */
 export const PLANS: Plan[] = [
   {
-    tru: "Базовый",
-    ten: "Basic",
-    nru: "Семейный Портрет",
-    nen: "Family Portrait",
-    gru: "Компактная книга для небольшого архива",
-    gen: "A compact book for a small archive",
+    tier: "Basic",
+    name: "Family Portrait",
+    tag: "compact",
     price: "500",
-    noteRu: "Фиксированная цена",
-    noteEn: "Fixed price",
+    note: "fixed",
     specs: [
       { ru: "Страниц", en: "Pages", vru: "40–50", ven: "40–50" },
       { ru: "Фотографий", en: "Photos", vru: "до 30", ven: "up to 30" },
@@ -254,15 +171,11 @@ export const PLANS: Plan[] = [
     ],
   },
   {
-    tru: "Стандарт",
-    ten: "Standard",
-    nru: "Семейная Летопись",
-    nen: "Family Chronicle",
-    gru: "Несколько поколений, архивные материалы",
-    gen: "Multiple generations, archival materials",
+    tier: "Standard",
+    name: "Family Chronicle",
+    tag: "multi-gen",
     price: "850",
-    noteRu: "Фиксированная цена",
-    noteEn: "Fixed price",
+    note: "fixed",
     specs: [
       { ru: "Страниц", en: "Pages", vru: "60–70", ven: "60–70" },
       { ru: "Фотографий", en: "Photos", vru: "до 60", ven: "up to 60" },
@@ -274,15 +187,11 @@ export const PLANS: Plan[] = [
     ],
   },
   {
-    tru: "Премиум",
-    ten: "Premium",
-    nru: "Фамильный Архив",
-    nen: "Family Archive",
-    gru: "Глубокая летопись с авторской обработкой",
-    gen: "A deep chronicle with editorial treatment",
-    price: "1 750",
-    noteRu: "Фиксированная цена",
-    noteEn: "Fixed price",
+    tier: "Premium",
+    name: "Family Archive",
+    tag: "deep",
+    price: "1750",
+    note: "fixed",
     specs: [
       { ru: "Страниц", en: "Pages", vru: "110–130", ven: "110–130" },
       { ru: "Фотографий", en: "Photos", vru: "до 120", ven: "up to 120" },
@@ -294,15 +203,11 @@ export const PLANS: Plan[] = [
     ],
   },
   {
-    tru: "Эксклюзив",
-    ten: "Exclusive",
-    nru: "Libro di Famiglia",
-    nen: "Libro di Famiglia",
-    gru: "Один месяц — одна семья. Реликвия навсегда",
-    gen: "One month — one family. A heirloom forever",
-    price: "4 000",
-    noteRu: "Индивидуальный проект",
-    noteEn: "Custom project",
+    tier: "Exclusive",
+    name: "Libro di Famiglia",
+    tag: "heirloom",
+    price: "4000",
+    note: "custom",
     featured: true,
     specs: [
       { ru: "Страниц", en: "Pages", vru: "180–220", ven: "180–220" },
@@ -317,130 +222,75 @@ export const PLANS: Plan[] = [
 ];
 
 export function Plans() {
-  const { t } = useI18n();
+  const { c } = useSiteContent();
   return (
     <section className="plans" id="plans">
-      <SecHead
-        title={t("Тарифные планы", "Pricing Plans")}
-        sub={t("04 — USD · Ставка $10/ч", "04 — USD · Rate $10/hr")}
-      />
+      <SecHead title={c("head.plans.title")} sub={c("head.plans.sub")} />
       <div className="plans-grid">
-        {PLANS.map((p, i) => (
-          <div
-            key={p.nen}
-            className={`plan-card r${p.featured ? " plan-card--f" : ""}`}
-            style={{ transitionDelay: `${i * 0.08}s` }}
-          >
-            <div className="plan-tier">{t(p.tru, p.ten)}</div>
-            <div className="plan-name">{t(p.nru, p.nen)}</div>
-            <p className="plan-tag">{t(p.gru, p.gen)}</p>
-            <hr className="plan-divider" />
-            <div className="plan-price">
-              <sup>$</sup>
-              {p.price}
-            </div>
-            <div className="plan-price-note">{t(p.noteRu, p.noteEn)}</div>
-            <ul className="plan-specs">
-              {p.specs.map((s) => (
-                <li key={s.en}>
-                  <span>{t(s.ru, s.en)}</span>
-                  <span>{t(s.vru, s.ven)}</span>
-                </li>
-              ))}
-            </ul>
-            <Link
-              to="/contact"
-              search={{ plan: p.ten }}
-              className={`plan-btn${p.featured ? " plan-btn--f" : ""}`}
+        {PLANS.map((p, i) => {
+          const idx = i + 1;
+          return (
+            <div
+              key={p.name}
+              className={`plan-card r${p.featured ? " plan-card--f" : ""}`}
+              style={{ transitionDelay: `${i * 0.08}s` }}
             >
-              {t("Выбрать план", "Choose Plan")}
-            </Link>
-          </div>
-        ))}
+              <div className="plan-tier">{c(`pl.${idx}.tier`)}</div>
+              <div className="plan-name">{c(`pl.${idx}.name`)}</div>
+              <p className="plan-tag">{c(`pl.${idx}.tag`)}</p>
+              <hr className="plan-divider" />
+              <div className="plan-price">
+                <sup>$</sup>
+                {c(`pl.${idx}.price`)}
+              </div>
+              <div className="plan-price-note">{c(`pl.${idx}.note`)}</div>
+              <ul className="plan-specs">
+                {p.specs.map((s) => {
+                  const { t } = useI18n();
+                  return (
+                    <li key={s.en}>
+                      <span>{t(s.ru, s.en)}</span>
+                      <span>{t(s.vru, s.ven)}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <Link
+                to="/contact"
+                search={{ plan: p.tier }}
+                className={`plan-btn${p.featured ? " plan-btn--f" : ""}`}
+              >
+                {c("pl.cta")}
+              </Link>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
 }
 
 export function Addons() {
-  const { t } = useI18n();
-  const items = [
-    {
-      idx: "A — 01",
-      ru: "Доп. экземпляр",
-      en: "Extra Copy",
-      dru: "Допечатка готовой книги для других членов семьи.",
-      den: "A reprint of the finished book for other family members.",
-      price: "$45 — $120",
-      nru: "за экземпляр",
-      nen: "per copy",
-    },
-    {
-      idx: "A — 02",
-      ru: "Цифровой архив",
-      en: "Digital Archive",
-      dru: "Документы, фото, PDF, генеалогия — на флешке или в облаке.",
-      den: "Documents, photos, PDF, genealogy — on USB or cloud storage.",
-      price: "$75",
-      nru: "единоразово",
-      nen: "one-time fee",
-    },
-    {
-      idx: "A — 03",
-      ru: "Реставрация фото",
-      en: "Photo Restoration",
-      dru: "Ретушь и восстановление старых снимков сверх лимита плана.",
-      den: "Retouching and restoration of old photos beyond your plan's limit.",
-      price: "от $15",
-      nru: "пакет из 10 фото",
-      nen: "per 10 photos",
-    },
-    {
-      idx: "A — 04",
-      ru: "Перевод книги",
-      en: "Book Translation",
-      dru: "Перевод на другой язык и повторная вёрстка.",
-      den: "Translation into another language and full re-typesetting.",
-      price: "$200 — $800",
-      nru: "зависит от объёма",
-      nen: "depends on volume",
-    },
-    {
-      idx: "A — 05",
-      ru: "Экспресс",
-      en: "Express",
-      dru: "Приоритетная работа, срок сокращается вдвое.",
-      den: "Priority work — delivery time cut in half.",
-      price: "+$150 — +$500",
-      nru: "надбавка к плану",
-      nen: "surcharge on plan",
-    },
-    {
-      idx: "A — 06",
-      ru: "Постер с древом",
-      en: "Family Tree Poster",
-      dru: "Иллюстрированное генеалогическое древо для оформления в рамку.",
-      den: "An illustrated genealogical tree designed for framing.",
-      price: "$120 — $350",
-      nru: "зависит от глубины",
-      nen: "depends on depth",
-    },
-  ];
+  const { c } = useSiteContent();
+  const items = [1, 2, 3, 4, 5, 6].map((i) => ({
+    idx: c(`ad.${i}.idx`),
+    name: c(`ad.${i}.name`),
+    desc: c(`ad.${i}.desc`),
+    price: c(`ad.${i}.price`),
+    note: c(`ad.${i}.note`),
+  }));
 
   return (
     <section className="addons" id="addons">
-      <SecHead
-        title={t("Дополнительные услуги", "Add-on Services")}
-        sub={t("05 — К любому плану", "05 — Available with any plan")}
-      />
+      <SecHead title={c("head.addons.title")} sub={c("head.addons.sub")} />
       <div className="addons-grid">
         {items.map((a, i) => (
           <div className="addon-card r" key={a.idx} style={{ transitionDelay: `${(i % 3) * 0.08}s` }}>
             <div className="addon-idx">{a.idx}</div>
-            <div className="addon-name">{t(a.ru, a.en)}</div>
-            <p className="addon-desc">{t(a.dru, a.den)}</p>
+            <div className="addon-name">{a.name}</div>
+            <p className="addon-desc">{a.desc}</p>
             <div className="addon-price">{a.price}</div>
-            <div className="addon-note">{t(a.nru, a.nen)}</div>
+            <div className="addon-note">{a.note}</div>
           </div>
         ))}
       </div>
@@ -449,24 +299,15 @@ export function Addons() {
 }
 
 export function PullQuote() {
-  const { t } = useI18n();
+  const { c } = useSiteContent();
   return (
     <section className="pullquote r">
       <div className="pq-mark">&laquo;</div>
       <div>
         <p className="pq-text">
-          {t(
-            "Семейная книга — это не альбом с фотографиями. Это разговор с теми, кто ещё",
-            "A family book is not a photo album. It is a conversation with those who have",
-          )}{" "}
-          <i>{t("не родился", "not yet been born")}</i>
+          {c("pq.text1")} <i>{c("pq.text2")}</i>
         </p>
-        <p className="pq-attr">
-          {t(
-            "— Идея, лежащая в основе каждого проекта",
-            "— The idea behind every project we make",
-          )}
-        </p>
+        <p className="pq-attr">{c("pq.attr")}</p>
       </div>
     </section>
   );
@@ -474,6 +315,7 @@ export function PullQuote() {
 
 export function Contact({ initialPlan = "" }: { initialPlan?: string }) {
   const { t } = useI18n();
+  const { c } = useSiteContent();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [plan, setPlan] = useState(initialPlan);
@@ -490,7 +332,7 @@ export function Contact({ initialPlan = "" }: { initialPlan?: string }) {
       await submitLead({ data: { name, email, plan, message } });
       setSent(true);
     } catch {
-      setError(t("Не удалось отправить. Попробуйте ещё раз.", "Could not send. Please try again."));
+      setError(c("ct.err"));
     } finally {
       setSending(false);
     }
@@ -498,51 +340,38 @@ export function Contact({ initialPlan = "" }: { initialPlan?: string }) {
 
   return (
     <section className="contact" id="contact">
-      <SecHead
-        title={t("Начать проект", "Start a Project")}
-        sub={t("06 — Ответим за 24 часа", "06 — We reply within 24 hours")}
-      />
+      <SecHead title={c("head.contact.title")} sub={c("head.contact.sub")} />
       <div className="contact-inner">
         <div className="contact-l r">
-          <div className="contact-kicker">{t("Связаться с нами", "Get in Touch")}</div>
+          <div className="contact-kicker">{c("ct.kicker")}</div>
           <h2 className="contact-title">
-            {t("Расскажите", "Tell us")}
+            {c("ct.title1")}
             <br />
-            {t("о вашей", "about your")}
+            {c("ct.title2")}
             <br />
-            <i>{t("семье", "family")}</i>
+            <i>{c("ct.title3")}</i>
           </h2>
-          <p className="contact-body">
-            {t(
-              "Заполните форму — мы свяжемся в течение 24 часов и подберём подходящий формат. Первая консультация бесплатно.",
-              "Fill in the form — we'll be in touch within 24 hours and find the right format for your story. First consultation is free.",
-            )}
-          </p>
+          <p className="contact-body">{c("ct.body")}</p>
         </div>
 
         <div className="contact-r r" style={{ transitionDelay: ".15s" }}>
           {sent ? (
             <div>
-              <div className="contact-kicker">{t("Заявка отправлена", "Request sent")}</div>
-              <p className="contact-body">
-                {t(
-                  "Спасибо! Мы свяжемся с вами в течение 24 часов. Заявка сохранена в вашем личном кабинете, если вы вошли в аккаунт.",
-                  "Thank you! We'll be in touch within 24 hours. The request is saved in your account if you are signed in.",
-                )}
-              </p>
+              <div className="contact-kicker">{c("ct.sent_kicker")}</div>
+              <p className="contact-body">{c("ct.sent_body")}</p>
             </div>
           ) : (
             <form className="form" onSubmit={onSubmit}>
               <div className="form-row">
                 <div className="form-field">
-                  <label className="form-lbl">{t("Имя", "Name")}</label>
+                  <label className="form-lbl">{c("ct.lbl_name")}</label>
                   <input
                     className="form-inp"
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder={t("Александр", "Alexander")}
+                    placeholder={c("ct.ph_name")}
                   />
                 </div>
                 <div className="form-field">
@@ -558,7 +387,7 @@ export function Contact({ initialPlan = "" }: { initialPlan?: string }) {
                 </div>
               </div>
               <div className="form-field">
-                <label className="form-lbl">{t("Интересующий план", "Plan of interest")}</label>
+                <label className="form-lbl">{c("ct.lbl_plan")}</label>
                 <select
                   className="form-sel"
                   value={plan}
@@ -566,34 +395,33 @@ export function Contact({ initialPlan = "" }: { initialPlan?: string }) {
                   required
                 >
                   <option value="" disabled>
-                    {t("Выберите план", "Select a plan")}
+                    {c("ct.ph_plan")}
                   </option>
-                  <option value="Basic">{t("Базовый — $500", "Basic — $500")}</option>
-                  <option value="Standard">{t("Стандарт — $850", "Standard — $850")}</option>
-                  <option value="Premium">{t("Премиум — $1 750", "Premium — $1,750")}</option>
-                  <option value="Exclusive">{t("Эксклюзив — $4 000", "Exclusive — $4,000")}</option>
-                  <option value="Discuss">{t("Хочу обсудить", "I'd like to discuss")}</option>
+                  {PLANS.map((p, i) => {
+                    const idx = i + 1;
+                    return (
+                      <option key={p.tier} value={p.tier}>
+                        {`${c(`pl.${idx}.tier`)} — $${c(`pl.${idx}.price`)}`}
+                      </option>
+                    );
+                  })}
+                  <option value="Discuss">{c("ct.opt_discuss")}</option>
                 </select>
               </div>
               <div className="form-field">
-                <label className="form-lbl">{t("О вашей семье", "About your family")}</label>
+                <label className="form-lbl">{c("ct.lbl_message")}</label>
                 <textarea
                   className="form-ta"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder={t(
-                    "Несколько слов о том, что хотите сохранить",
-                    "A few words about the story you want to preserve",
-                  )}
+                  placeholder={c("ct.ph_message")}
                 />
               </div>
               {error && <p className="form-note">{error}</p>}
               <button type="submit" className="form-btn" disabled={sending}>
-                {sending ? t("Отправляем…", "Sending…") : t("Отправить запрос", "Send Request")}
+                {sending ? c("ct.btn_sending") : c("ct.btn_send")}
               </button>
-              <p className="form-note">
-                {t("Первая консультация — бесплатно", "First consultation is free")}
-              </p>
+              <p className="form-note">{c("ct.note_free")}</p>
             </form>
           )}
         </div>
