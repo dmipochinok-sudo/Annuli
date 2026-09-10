@@ -74,9 +74,12 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["site-content"] });
-      setDraft(
-        Object.fromEntries(CONTENT_FIELDS.map((f) => [f.key, { ...DEFAULTS[f.key] }])),
-      );
+      const reset: Record<string, Pair> = {};
+      for (const f of CONTENT_FIELDS) {
+        const d = DEFAULTS[f.key];
+        reset[f.key] = d ? { ru: d.ru, en: d.en } : { ru: "", en: "" };
+      }
+      setDraft(reset);
       toast.success(t("Контент сброшен к исходному", "Content reset to defaults"));
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : String(e)),
