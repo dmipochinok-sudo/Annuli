@@ -51,11 +51,10 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const rows = dirtyKeys.map((f) => ({
-        key: f.key,
-        ru: draft[f.key].ru,
-        en: draft[f.key].en,
-      }));
+      const rows = dirtyKeys.map((f) => {
+        const v = draft[f.key] ?? { ru: "", en: "" };
+        return { key: f.key, ru: v.ru, en: v.en };
+      });
       if (rows.length === 0) return;
       const { error } = await supabase.from("site_content").upsert(rows, { onConflict: "key" });
       if (error) throw error;
