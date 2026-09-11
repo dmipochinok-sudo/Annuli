@@ -48,11 +48,12 @@ function UtilBar() {
           aria-label={t("Сменить тему", "Toggle theme")}
         >
           <svg className="ctrl-icon" viewBox="0 0 14 14" fill="none">
-            {theme === "dark" ? (
-              <circle className="icon-sun" cx="7" cy="7" r="4" fill="currentColor" />
-            ) : (
-              <path className="icon-moon" d="M12 9A5 5 0 0 1 5 2a5 5 0 1 0 7 7z" fill="currentColor" />
-            )}
+            <circle className="icon-sun" cx="7" cy="7" r="3.2" fill="currentColor" />
+            <path
+              className="icon-moon"
+              d="M12 9A5 5 0 0 1 5 2a5 5 0 1 0 7 7z"
+              fill="currentColor"
+            />
           </svg>
         </button>
       </div>
