@@ -16,7 +16,7 @@ const NAV = [
 
 /** Верхняя служебная полоса: дата, язык, тема. */
 function UtilBar() {
-  const { lang, setLang, theme, toggleTheme, t } = useI18n();
+  const { lang, setLang, toggleTheme, t } = useI18n();
   const [date, setDate] = useState("");
 
   useEffect(() => {
@@ -48,11 +48,22 @@ function UtilBar() {
           aria-label={t("Сменить тему", "Toggle theme")}
         >
           <svg className="ctrl-icon" viewBox="0 0 14 14" fill="none">
-            {theme === "dark" ? (
-              <circle className="icon-sun" cx="7" cy="7" r="4" fill="currentColor" />
-            ) : (
-              <path className="icon-moon" d="M12 9A5 5 0 0 1 5 2a5 5 0 1 0 7 7z" fill="currentColor" />
-            )}
+            <g className="icon-sun" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+              <circle cx="7" cy="7" r="2.6" fill="currentColor" stroke="none" />
+              <line x1="7" y1="0.6" x2="7" y2="2" />
+              <line x1="7" y1="12" x2="7" y2="13.4" />
+              <line x1="0.6" y1="7" x2="2" y2="7" />
+              <line x1="12" y1="7" x2="13.4" y2="7" />
+              <line x1="2.5" y1="2.5" x2="3.5" y2="3.5" />
+              <line x1="10.5" y1="10.5" x2="11.5" y2="11.5" />
+              <line x1="11.5" y1="2.5" x2="10.5" y2="3.5" />
+              <line x1="3.5" y1="10.5" x2="2.5" y2="11.5" />
+            </g>
+            <path
+              className="icon-moon"
+              d="M12 9A5 5 0 0 1 5 2a5 5 0 1 0 7 7z"
+              fill="currentColor"
+            />
           </svg>
         </button>
       </div>
