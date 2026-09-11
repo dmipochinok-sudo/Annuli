@@ -425,12 +425,13 @@ a:focus-visible,
   width: 11px;
   height: 11px;
 }
-[data-theme="dark"] .icon-sun,
-.dark .icon-sun {
+[data-theme="light"] .icon-sun,
+:root:not([data-theme="dark"]) .icon-sun,
+:root:not(.dark) .icon-sun {
   display: none;
 }
-[data-theme="light"] .icon-moon,
-:root:not([data-theme="dark"]) .icon-moon {
+[data-theme="dark"] .icon-moon,
+.dark .icon-moon {
   display: none;
 }
 
