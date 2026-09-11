@@ -222,6 +222,7 @@ export const PLANS: Plan[] = [
 ];
 
 export function Plans() {
+  const { t } = useI18n();
   const { c } = useSiteContent();
   return (
     <section className="plans" id="plans">
@@ -245,15 +246,12 @@ export function Plans() {
               </div>
               <div className="plan-price-note">{c(`pl.${idx}.note`)}</div>
               <ul className="plan-specs">
-                {p.specs.map((s) => {
-                  const { t } = useI18n();
-                  return (
-                    <li key={s.en}>
-                      <span>{t(s.ru, s.en)}</span>
-                      <span>{t(s.vru, s.ven)}</span>
-                    </li>
-                  );
-                })}
+                {p.specs.map((s) => (
+                  <li key={s.en}>
+                    <span>{t(s.ru, s.en)}</span>
+                    <span>{t(s.vru, s.ven)}</span>
+                  </li>
+                ))}
               </ul>
               <Link
                 to="/contact"
