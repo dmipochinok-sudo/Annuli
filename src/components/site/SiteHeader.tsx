@@ -16,7 +16,7 @@ const NAV = [
 
 /** Верхняя служебная полоса: дата, язык, тема. */
 function UtilBar() {
-  const { lang, setLang, theme, toggleTheme, t } = useI18n();
+  const { lang, setLang, toggleTheme, t } = useI18n();
   const [date, setDate] = useState("");
 
   useEffect(() => {
