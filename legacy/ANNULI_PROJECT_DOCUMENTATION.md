@@ -1148,3 +1148,14 @@ Vision, Architecture Decisions, инварианты модели данных, 
 - Рабочее приложение перенесено с `/` на `/app` (`src/routes/_authenticated/app.tsx`).
 - Страница входа `/auth` переверстана в стиле лэндинга; после входа — переход в `/account`.
 - Новые таблицы: `leads`, `book_projects`, `project_stages`, `messages` (RLS: владелец + админ; заявку может отправить любой посетитель).
+
+## v4.1 — Дизайн-система v2 и CMS главной страницы (2026-09-11)
+
+- Сверка со спецификацией «Design System v2»: токены `src/styles.css` дополнены v2-метриками (`--header-util-h`, `--header-bar-h`, `--control-cta-h`, `--header-mark`, `--cms-thumb-*`), семантическими алиасами, поверхностью `--wash`/`--featured` и motion-токенами. Шрифты (Playfair Display, PT Serif, PT Sans) и анимации `.a1`–`.a4`, `.r` сохранены без изменений.
+- Компактная шапка v2: `SiteHeader.tsx` переписан под `.util-bar` (дата, RU/EN, тема) + `.topbar` (марка, навигация, действия) + `.masthead-strip`. Мобильный `.nav-burger`/`.nav-drawer` и медиаправила добавлены.
+- Переключатель темы: иконка солнце/луна переведена на CSS-управление (`display:none` по `[data-theme]`) — больше не десинхронизируется с DOM; `applyTheme()` в `i18n.tsx` одновременно ставит класс `.dark` и атрибут `data-theme`.
+- CMS главной страницы: таблица `site_content` (`key` PK, `ru`, `en`, `updated_at` + триггер) с публичным SELECT и записью только через `is_admin()` (RLS). Маршрут `/admin/cms` (под `_authenticated/admin`) с админ-проверкой через `supabase.rpc("is_admin")`.
+- Редактор `CmsPanel.tsx`: сгруппированные RU/EN-поля (`FIELD_GROUPS`), dirty-статус, upsert/сброс в `site_content`, toast. Реестр полей и дефолты — `src/lib/cms/content.ts`; `sections.tsx` переведён на `useSiteContent().c(key)` (тексты, цены, названия тарифов, доп. услуги). Статические характеристики тарифов остаются в коде.
+- Стили CMS (`.cms-panel`, `.cms-head`, `.cms-head-actions`, `.cms-btn`, `.cms-group`, `.cms-field-inputs`) добавлены в `src/styles.css`.
+- Глобальный `<Toaster richColors position="top-center">` смонтирован в `__root.tsx`.
+- Проверено: `tsgo --noEmit` чисто; сохранение/сброс CMS отражаются на главной; шапка и тема корректны в светлой/тёмной темах, десктоп/мобильный.
