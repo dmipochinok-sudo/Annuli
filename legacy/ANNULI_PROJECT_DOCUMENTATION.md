@@ -1159,3 +1159,5 @@ Vision, Architecture Decisions, инварианты модели данных, 
 - Стили CMS (`.cms-panel`, `.cms-head`, `.cms-head-actions`, `.cms-btn`, `.cms-group`, `.cms-field-inputs`) добавлены в `src/styles.css`.
 - Глобальный `<Toaster richColors position="top-center">` смонтирован в `__root.tsx`.
 - Проверено: `tsgo --noEmit` чисто; сохранение/сброс CMS отражаются на главной; шапка и тема корректны в светлой/тёмной темах, десктоп/мобильный.
+
+<!-- build: 2026-09-12 republish -->
