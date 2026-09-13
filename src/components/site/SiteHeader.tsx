@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
+import { isCloudConfigured } from "@/lib/cloud-availability";
 
 const NAV = [
   { to: "/approach" as const, ru: "Подход", en: "Approach" },
@@ -78,6 +79,7 @@ export function SiteHeader() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isCloudConfigured()) return;
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
       setUserId(session?.user?.id ?? null),
