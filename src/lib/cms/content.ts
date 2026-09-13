@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n, type Lang } from "@/lib/i18n";
+import { isCloudConfigured } from "@/lib/cloud-availability";
 
 /** Пара локализованных строк. */
 export interface Pair {
@@ -277,6 +278,7 @@ export function useSiteContent(): SiteContent {
 
   const { data, isLoading, refetch } = useQuery<Record<string, Pair>>({
     queryKey: ["site-content"],
+    enabled: isCloudConfigured(),
     queryFn: async () => {
       const { data: rows, error } = await supabase
         .from("site_content")
