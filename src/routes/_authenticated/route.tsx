@@ -2,10 +2,12 @@ import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/integrations/supabase/client";
+import { isCloudConfigured } from "@/lib/cloud-availability";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
+    if (!isCloudConfigured()) throw redirect({ to: "/auth" });
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });
     return { user: data.user };

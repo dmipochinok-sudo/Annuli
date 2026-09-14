@@ -6,6 +6,7 @@ import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { Logo } from "@/components/site/Logo";
+import { isCloudConfigured } from "@/lib/cloud-availability";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth")({
@@ -35,14 +36,20 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const cloudAvailable = isCloudConfigured();
 
   useEffect(() => {
+    if (!cloudAvailable) return;
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/account", replace: true });
     });
-  }, [navigate]);
+  }, [cloudAvailable, navigate]);
 
   const oauth = async (provider: "google" | "apple") => {
+    if (!cloudAvailable) {
+      toast.error(t("Вход временно недоступен. Попробуйте обновить страницу.", "Sign-in is temporarily unavailable. Please refresh the page."));
+      return;
+    }
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: window.location.origin,
@@ -58,6 +65,10 @@ function AuthPage() {
 
   const submit = async (ev: FormEvent) => {
     ev.preventDefault();
+    if (!cloudAvailable) {
+      toast.error(t("Вход временно недоступен. Попробуйте обновить страницу.", "Sign-in is temporarily unavailable. Please refresh the page."));
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "forgot") {
@@ -124,10 +135,10 @@ function AuthPage() {
         </p>
 
         <div className="auth-oauth">
-          <button className="btn btn--ghost" onClick={() => void oauth("google")} disabled={busy}>
+          <button className="btn btn--ghost" onClick={() => void oauth("google")} disabled={busy || !cloudAvailable}>
             {t("Войти через Google", "Continue with Google")}
           </button>
-          <button className="btn btn--ghost" onClick={() => void oauth("apple")} disabled={busy}>
+          <button className="btn btn--ghost" onClick={() => void oauth("apple")} disabled={busy || !cloudAvailable}>
             {t("Войти через Apple", "Continue with Apple")}
           </button>
         </div>
@@ -170,7 +181,7 @@ function AuthPage() {
               />
             </div>
           )}
-          <button className="form-btn" type="submit" disabled={busy}>
+          <button className="form-btn" type="submit" disabled={busy || !cloudAvailable}>
             {mode === "signin" && t("Войти", "Sign in")}
             {mode === "signup" && t("Зарегистрироваться", "Create account")}
             {mode === "forgot" && t("Отправить ссылку", "Send link")}
