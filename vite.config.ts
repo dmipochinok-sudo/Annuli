@@ -6,6 +6,12 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// Public Lovable Cloud connection values. Keeping these fallbacks here makes
+// published builds resilient when the hosting build omits injected VITE_* vars.
+process.env["VITE_SUPABASE_URL"] ??= "https://vxrkpcwywtfbhaqivmyd.supabase.co";
+process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ??=
+  "sb_publishable_ssT8Iv5xGyOrieBajPO36w_76_QpGHt";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
