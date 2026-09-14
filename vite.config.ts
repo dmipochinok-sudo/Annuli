@@ -8,8 +8,8 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // Public Lovable Cloud connection values. Keeping these fallbacks here makes
 // published builds resilient when the hosting build omits injected VITE_* vars.
-process.env.VITE_SUPABASE_URL ??= "https://vxrkpcwywtfbhaqivmyd.supabase.co";
-process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??=
+process.env["VITE_SUPABASE_URL"] ??= "https://vxrkpcwywtfbhaqivmyd.supabase.co";
+process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ??=
   "sb_publishable_ssT8Iv5xGyOrieBajPO36w_76_QpGHt";
 
 export default defineConfig({
