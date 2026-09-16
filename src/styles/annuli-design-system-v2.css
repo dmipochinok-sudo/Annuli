@@ -1,0 +1,196 @@
+/* Annuli Design System v2 — public-site layer.
+ * Visual rules are scoped to .annuli-site so protected product surfaces keep
+ * their existing presentation. Remote fonts remain linked from __root.tsx. */
+
+.annuli-site {
+  --color-text: var(--ink);
+  --color-text-muted: var(--mid);
+  --color-text-subtle: var(--dim);
+  --color-surface: var(--paper);
+  --color-surface-muted: var(--wash);
+  --color-border: var(--rule);
+  --color-accent: var(--signal);
+  --font-display: var(--f-display);
+  --font-body: var(--f-body);
+  --font-ui: var(--f-ui);
+  --layout-gutter: var(--g);
+  --layout-section-y: var(--sec-v);
+  --layout-block-y: var(--blk-v);
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+.annuli-site *,
+.annuli-site *::before,
+.annuli-site *::after {
+  box-sizing: border-box;
+}
+
+.annuli-site .logo-svg {
+  overflow: visible;
+  color: inherit;
+}
+
+.annuli-site .logo-ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.annuli-site .sec-head.r {
+  transition-delay: var(--motion-stagger-1);
+}
+
+.annuli-site .ap-standfirst > .r:nth-child(1) {
+  transition-delay: var(--motion-stagger-1);
+}
+
+.annuli-site .ap-standfirst > .r:nth-child(2) {
+  transition-delay: var(--motion-stagger-2);
+}
+
+.annuli-site .ap-standfirst > .r:nth-child(3) {
+  transition-delay: var(--motion-stagger-3);
+}
+
+.annuli-site .ap-number.r {
+  transform: translateY(var(--motion-distance-reveal)) scale(1.04);
+  transform-origin: left top;
+}
+
+.annuli-site .ap-number.r.in {
+  transform: none;
+}
+
+.annuli-site .ap-title i {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(var(--s2));
+  transition:
+    opacity var(--motion-fast) var(--ease-standard) var(--motion-accent-delay),
+    transform var(--motion-fast) var(--ease-standard) var(--motion-accent-delay);
+}
+
+.annuli-site .ap-title.in i {
+  opacity: 1;
+  transform: none;
+}
+
+.annuli-site .ap-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.annuli-site .ap-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--border-emphasis);
+  content: "";
+  background: var(--signal);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--motion-standard) var(--ease-standard);
+}
+
+.annuli-site .ap-card:hover::before {
+  transform: scaleX(1);
+}
+
+.annuli-site .ap-card-n {
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    letter-spacing var(--motion-fast) var(--ease-standard);
+}
+
+.annuli-site .ap-card:hover .ap-card-n {
+  color: var(--color-accent-hover);
+  letter-spacing: 0.2em;
+}
+
+.annuli-site .ap-card-rule {
+  transition: border-color var(--motion-standard) var(--ease-standard);
+}
+
+.annuli-site .ap-card:hover .ap-card-rule {
+  border-top-color: var(--dim);
+}
+
+.annuli-site .ap-cards > .r:nth-child(2),
+.annuli-site .process-list > .r:nth-child(2),
+.annuli-site .plans-grid > .r:nth-child(2),
+.annuli-site .addons-grid > .r:nth-child(2) {
+  transition-delay: var(--motion-stagger-2);
+}
+
+.annuli-site .ap-cards > .r:nth-child(3),
+.annuli-site .process-list > .r:nth-child(3),
+.annuli-site .plans-grid > .r:nth-child(3),
+.annuli-site .addons-grid > .r:nth-child(3) {
+  transition-delay: var(--motion-stagger-3);
+}
+
+.annuli-site .ap-cards > .r:nth-child(4),
+.annuli-site .process-list > .r:nth-child(4),
+.annuli-site .plans-grid > .r:nth-child(4),
+.annuli-site .addons-grid > .r:nth-child(4) {
+  transition-delay: var(--motion-stagger-4);
+}
+
+.annuli-site .plan-card--f .plan-btn--f {
+  color: var(--color-on-featured);
+}
+
+.annuli-site .form-inp,
+.annuli-site .form-sel,
+.annuli-site .form-ta,
+.annuli-site .form-btn {
+  border-radius: var(--radius-control);
+}
+
+.annuli-site .form-btn:disabled {
+  opacity: 0.6;
+}
+
+/* Sonner is shared by the project; this data attribute limits the visual
+ * override to notices emitted while the public site is mounted. */
+body:has(.annuli-site) [data-sonner-toaster] {
+  --width: min(420px, calc(100vw - var(--s8)));
+  z-index: var(--z-toast);
+}
+
+body:has(.annuli-site) [data-sonner-toast] {
+  border-radius: var(--radius-control);
+  border: var(--border-hairline) solid var(--rule);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--f-ui);
+  font-size: var(--t-caption);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 599px) {
+  .annuli-site .nav-cta {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .annuli-site .r,
+  .annuli-site .ap-number.r,
+  .annuli-site .ap-title i {
+    opacity: 1;
+    transform: none;
+  }
+
+  .annuli-site .ap-card::before {
+    transform: none;
+  }
+}
