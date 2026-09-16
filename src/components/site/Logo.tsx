@@ -1,20 +1,19 @@
-/** Знак Annuli — концентрические кольца (срез дерева). */
+/** Stroke-марка Annuli — концентрические кольца со смещёнными центрами. */
 export function Logo({ size = 36 }: { size?: number }) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 36 36"
+      viewBox="0 0 64 64"
       fill="none"
       className="logo-svg"
       aria-hidden="true"
     >
-      <circle className="ring-ink" cx="18" cy="18" r="17.5" />
-      <circle className="ring-bg" cx="18" cy="18" r="13.5" />
-      <circle className="ring-ink" cx="18" cy="18" r="9.5" />
-      <circle className="ring-bg" cx="18" cy="18" r="5.5" />
-      <circle cx="18" cy="18" r="3" fill="#B8251A" />
-      <circle className="ring-bg" cx="18" cy="18" r="1" />
+      <circle className="logo-ring" cx="32" cy="32" r="31.5" />
+      <circle className="logo-ring" cx="34" cy="30.72" r="25.1" />
+      <circle className="logo-ring" cx="32" cy="32" r="18.7" />
+      <circle className="logo-ring" cx="34" cy="30.72" r="12.3" />
+      <circle className="logo-ring" cx="32" cy="32" r="5.9" />
     </svg>
   );
 }

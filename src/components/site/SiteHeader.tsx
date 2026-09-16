@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Logo } from "./Logo";
 import { useI18n } from "@/lib/i18n";
@@ -77,6 +77,8 @@ export function SiteHeader() {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const topbarRef = useRef<HTMLElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!isCloudConfigured()) return;
@@ -86,6 +88,31 @@ export function SiteHeader() {
     );
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    document.body.classList.add("no-scroll");
+
+    const closeMenu = (event: KeyboardEvent | PointerEvent) => {
+      if (event instanceof KeyboardEvent) {
+        if (event.key === "Escape") setOpen(false);
+        return;
+      }
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (!topbarRef.current?.contains(target) && !drawerRef.current?.contains(target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", closeMenu);
+    document.addEventListener("pointerdown", closeMenu);
+    return () => {
+      document.body.classList.remove("no-scroll");
+      document.removeEventListener("keydown", closeMenu);
+      document.removeEventListener("pointerdown", closeMenu);
+    };
+  }, [open]);
 
   const { data: isAdmin } = useQuery<boolean>({
     queryKey: ["menu-is-admin", userId],
@@ -103,7 +130,7 @@ export function SiteHeader() {
     <>
       <UtilBar />
 
-      <header className="topbar">
+      <header className="topbar" ref={topbarRef}>
         <Link to="/" className="brand">
           <span className="brand-mark">
             <Logo />
@@ -151,7 +178,11 @@ export function SiteHeader() {
         </div>
       </header>
 
-      <nav className={`nav-drawer${open ? " open" : ""}`}>
+      <nav
+        className={`nav-drawer${open ? " open" : ""}`}
+        ref={drawerRef}
+        aria-hidden={!open}
+      >
         {NAV.map((n) => (
           <Link key={n.to} to={n.to} onClick={() => setOpen(false)}>
             {t(n.ru, n.en)}

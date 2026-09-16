@@ -8,10 +8,10 @@ import { useScrollReveal } from "./Reveal";
 export function SiteLayout({ children }: { children: ReactNode }) {
   useScrollReveal();
   return (
-    <>
+    <div className="annuli-site">
       <SiteHeader />
       <main>{children}</main>
       <SiteFooter />
-    </>
+    </div>
   );
 }
