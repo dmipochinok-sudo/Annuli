@@ -10,6 +10,7 @@
   --color-surface-muted: var(--wash);
   --color-border: var(--rule);
   --color-accent: var(--signal);
+  --color-on-accent: var(--destructive-foreground);
   --font-display: var(--f-display);
   --font-body: var(--f-body);
   --font-ui: var(--f-ui);
@@ -148,7 +149,7 @@ body.no-scroll {
 }
 
 .annuli-site .plan-card--f .plan-btn--f {
-  color: var(--color-on-featured);
+  color: var(--color-on-accent);
 }
 
 .annuli-site .form-inp,
@@ -166,6 +167,8 @@ body.no-scroll {
  * override to notices emitted while the public site is mounted. */
 body:has(.annuli-site) [data-sonner-toaster] {
   --width: min(420px, calc(100vw - var(--s8)));
+  top: auto !important;
+  bottom: var(--s6) !important;
   z-index: var(--z-toast);
 }
 
