@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import heroAsset from "@/assets/annuli-hero.jpg.asset.json";
 import { useI18n } from "@/lib/i18n";
@@ -9,7 +10,7 @@ import { submitLead } from "@/lib/leads.functions";
 /** Заголовок редакционной секции. */
 export function SecHead({ title, sub }: { title: string; sub: string }) {
   return (
-    <div className="sec-head">
+    <div className="sec-head r">
       <span className="sec-head-title">{title}</span>
       <span className="sec-head-sub">{sub}</span>
     </div>
@@ -83,23 +84,23 @@ export function Approach() {
     <section className="approach" id="approach">
       <SecHead title={c("head.approach.title")} sub={c("head.approach.sub")} />
       <div className="approach-inner">
-        <div className="ap-standfirst r">
-          <div className="ap-number">02</div>
-          <h2 className="ap-title">
+        <div className="ap-standfirst">
+          <div className="ap-number r">02</div>
+          <h2 className="ap-title r">
             {c("ap.title1")}
             <br />
             <i>{c("ap.title2")}</i>
           </h2>
-          <p className="ap-body">{c("ap.body")}</p>
+          <p className="ap-body r">{c("ap.body")}</p>
         </div>
-        <div className="ap-cards r" style={{ transitionDelay: ".1s" }}>
+        <div className="ap-cards">
           {cards.map((card) => (
-            <div className="ap-card" key={card.n}>
+            <article className="ap-card r" key={card.n}>
               <div className="ap-card-n">{card.n}</div>
               <hr className="ap-card-rule" />
               <div className="ap-card-title">{card.title}</div>
               <p className="ap-card-desc">{card.desc}</p>
-            </div>
+            </article>
           ))}
         </div>
       </div>
@@ -329,6 +330,7 @@ export function Contact({ initialPlan = "" }: { initialPlan?: string }) {
     try {
       await submitLead({ data: { name, email, plan, message } });
       setSent(true);
+      toast.success(c("ct.sent_kicker"));
     } catch {
       setError(c("ct.err"));
     } finally {

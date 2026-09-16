@@ -16,6 +16,11 @@
   --layout-gutter: var(--g);
   --layout-section-y: var(--sec-v);
   --layout-block-y: var(--blk-v);
+  --motion-stagger-1: 0ms;
+  --motion-stagger-2: 80ms;
+  --motion-stagger-3: 160ms;
+  --motion-stagger-4: 240ms;
+  --motion-accent-delay: 300ms;
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-surface);
