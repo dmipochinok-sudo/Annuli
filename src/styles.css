@@ -532,6 +532,10 @@ a:focus-visible,
   gap: var(--s3);
 }
 .nav-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
   font-family: var(--f-ui);
   font-size: var(--t-caption);
   font-weight: 700;
@@ -544,6 +548,16 @@ a:focus-visible,
 }
 .nav-link:hover {
   color: var(--ink);
+}
+.nav-link--desktop {
+  display: none;
+}
+.nav-link--mobile {
+  display: inline-flex;
+  align-items: center;
+  max-width: 132px;
+  text-align: right;
+  white-space: normal;
 }
 .nav-cta {
   display: flex;
@@ -646,6 +660,12 @@ a:focus-visible,
     display: flex;
   }
   .nav-burger {
+    display: none;
+  }
+  .nav-link--desktop {
+    display: inline-flex;
+  }
+  .nav-link--mobile {
     display: none;
   }
   .nav-drawer {
