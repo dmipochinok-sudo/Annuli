@@ -184,12 +184,6 @@ body:has(.annuli-site) [data-sonner-toast] {
   text-transform: uppercase;
 }
 
-@media (max-width: 599px) {
-  .annuli-site .nav-cta {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .annuli-site .r,
   .annuli-site .ap-number.r,

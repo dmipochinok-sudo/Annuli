@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 import { Logo } from "./Logo";
@@ -75,6 +75,7 @@ function UtilBar() {
 /** Компактная шапка v2: утилити-полоса, топбар с маркой и навигацией, полоса-мастхед. */
 export function SiteHeader() {
   const { t } = useI18n();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const topbarRef = useRef<HTMLElement>(null);
@@ -124,7 +125,13 @@ export function SiteHeader() {
   });
 
   const signedIn = !!userId;
-  const accountLabel = signedIn ? t("Личный кабинет", "Account") : t("Войти", "Sign in");
+  const signOut = async () => {
+    setOpen(false);
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    await supabase.auth.signOut();
+    setUserId(null);
+  };
 
   return (
     <>
@@ -155,16 +162,22 @@ export function SiteHeader() {
 
         <div className="topbar-actions">
           {isAdmin && (
-            <Link to="/admin/cms" className="nav-link">
+            <Link to="/admin/cms" className="nav-link nav-link--desktop">
               {t("CMS", "CMS")}
             </Link>
           )}
-          <Link to={signedIn ? "/account" : "/auth"} className="nav-link">
-            {accountLabel}
+          <Link to={signedIn ? "/account" : "/auth"} className="nav-link nav-link--desktop">
+            {signedIn ? t("Личный кабинет", "Account") : t("Войти", "Sign in")}
           </Link>
-          <Link to="/contact" className="nav-cta">
-            {t("Начать проект", "Start a Project")}
-          </Link>
+          {signedIn ? (
+            <button className="nav-link nav-link--mobile" onClick={() => void signOut()}>
+              {t("Выйти", "Sign out")}
+            </button>
+          ) : (
+            <Link to="/auth" className="nav-link nav-link--mobile">
+              {t("Войти / Создать аккаунт", "Sign in / Create account")}
+            </Link>
+          )}
           <button
             className={`nav-burger${open ? " open" : ""}`}
             aria-label={t("Меню", "Menu")}
@@ -188,9 +201,11 @@ export function SiteHeader() {
             {t(n.ru, n.en)}
           </Link>
         ))}
-        <Link to={signedIn ? "/account" : "/auth"} onClick={() => setOpen(false)}>
-          {accountLabel}
-        </Link>
+        {signedIn && (
+          <Link to="/account" onClick={() => setOpen(false)}>
+            {t("Личный кабинет", "Account")}
+          </Link>
+        )}
         {isAdmin && (
           <Link to="/admin/cms" onClick={() => setOpen(false)}>
             {t("Управление сайтом", "Site CMS")}
