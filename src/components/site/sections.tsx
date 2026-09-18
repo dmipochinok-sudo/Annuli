@@ -305,7 +305,7 @@ export function Addons() {
       <SecHead title={c("head.addons.title")} sub={c("head.addons.sub")} />
       <div className="addons-grid">
         {items.map((a, i) => (
-          <div className="addon-card r" key={a.idx} style={{ transitionDelay: `${(i % 3) * 0.08}s` }}>
+          <div className="addon-card r" key={`${a.idx}-${i}`} style={{ transitionDelay: `${(i % 3) * 0.08}s` }}>
             <div className="addon-idx">{a.idx}</div>
             <div className="addon-name">{a.name}</div>
             <p className="addon-desc">{a.desc}</p>
