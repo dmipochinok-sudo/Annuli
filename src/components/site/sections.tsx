@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import heroAsset from "@/assets/annuli-hero.jpg.asset.json";
 import { useI18n } from "@/lib/i18n";
 import { useSiteContent } from "@/lib/cms/content";
+import { useSiteAddons, useSiteAssets } from "@/lib/cms/site-config";
 import { submitLead } from "@/lib/leads.functions";
 
 /** Заголовок редакционной секции. */
@@ -19,10 +20,15 @@ export function SecHead({ title, sub }: { title: string; sub: string }) {
 
 export function Hero() {
   const { c } = useSiteContent();
+  const { lang } = useI18n();
+  const { asset } = useSiteAssets();
+  const hero = asset("hero_image");
+  const heroUrl = hero?.url?.trim() ? hero.url : heroAsset.url;
+  const heroAlt = (lang === "en" ? hero?.alt_en : hero?.alt_ru)?.trim() || c("hero.alt");
   return (
     <section className="hero">
       <div className="hero-photo">
-        <img src={heroAsset.url} alt={c("hero.alt")} />
+        <img src={heroUrl} alt={heroAlt} />
         <div className="hero-caption">{c("hero.caption")}</div>
       </div>
 
@@ -271,7 +277,10 @@ export function Plans() {
 
 export function Addons() {
   const { c } = useSiteContent();
-  const items = [1, 2, 3, 4, 5, 6].map((i) => ({
+  const { lang } = useI18n();
+  const { data: cloudAddons } = useSiteAddons();
+
+  const fallback = [1, 2, 3, 4, 5, 6].map((i) => ({
     idx: c(`ad.${i}.idx`),
     name: c(`ad.${i}.name`),
     desc: c(`ad.${i}.desc`),
@@ -279,12 +288,24 @@ export function Addons() {
     note: c(`ad.${i}.note`),
   }));
 
+  const visible = (cloudAddons ?? []).filter((a) => a.is_visible);
+  const items =
+    visible.length > 0
+      ? visible.map((a, i) => ({
+          idx: a.code || String(i + 1).padStart(2, "0"),
+          name: lang === "en" ? a.name_en : a.name_ru,
+          desc: lang === "en" ? a.desc_en : a.desc_ru,
+          price: lang === "en" ? a.price_en : a.price_ru,
+          note: lang === "en" ? a.note_en : a.note_ru,
+        }))
+      : fallback;
+
   return (
     <section className="addons" id="addons">
       <SecHead title={c("head.addons.title")} sub={c("head.addons.sub")} />
       <div className="addons-grid">
         {items.map((a, i) => (
-          <div className="addon-card r" key={a.idx} style={{ transitionDelay: `${(i % 3) * 0.08}s` }}>
+          <div className="addon-card r" key={`${a.idx}-${i}`} style={{ transitionDelay: `${(i % 3) * 0.08}s` }}>
             <div className="addon-idx">{a.idx}</div>
             <div className="addon-name">{a.name}</div>
             <p className="addon-desc">{a.desc}</p>

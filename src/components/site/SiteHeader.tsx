@@ -6,13 +6,14 @@ import { Logo } from "./Logo";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { isCloudConfigured } from "@/lib/cloud-availability";
+import { useSectionVisibility } from "@/lib/cms/site-config";
 
 const NAV = [
-  { to: "/approach" as const, ru: "Подход", en: "Approach" },
-  { to: "/process" as const, ru: "Процесс", en: "Process" },
-  { to: "/plans" as const, ru: "Планы", en: "Plans" },
-  { to: "/services" as const, ru: "Услуги", en: "Services" },
-  { to: "/contact" as const, ru: "Контакт", en: "Contact" },
+  { to: "/approach" as const, ru: "Подход", en: "Approach", section: "approach" },
+  { to: "/process" as const, ru: "Процесс", en: "Process", section: "process" },
+  { to: "/plans" as const, ru: "Планы", en: "Plans", section: "plans" },
+  { to: "/services" as const, ru: "Услуги", en: "Services", section: "addons" },
+  { to: "/contact" as const, ru: "Контакт", en: "Contact", section: "contact" },
 ];
 
 /** Верхняя служебная полоса: дата, язык, тема. */
