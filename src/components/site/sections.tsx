@@ -20,10 +20,15 @@ export function SecHead({ title, sub }: { title: string; sub: string }) {
 
 export function Hero() {
   const { c } = useSiteContent();
+  const { lang } = useI18n();
+  const { asset } = useSiteAssets();
+  const hero = asset("hero_image");
+  const heroUrl = hero?.url?.trim() ? hero.url : heroAsset.url;
+  const heroAlt = (lang === "en" ? hero?.alt_en : hero?.alt_ru)?.trim() || c("hero.alt");
   return (
     <section className="hero">
       <div className="hero-photo">
-        <img src={heroAsset.url} alt={c("hero.alt")} />
+        <img src={heroUrl} alt={heroAlt} />
         <div className="hero-caption">{c("hero.caption")}</div>
       </div>
 
