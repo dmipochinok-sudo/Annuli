@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import heroAsset from "@/assets/annuli-hero.jpg.asset.json";
 import { useI18n } from "@/lib/i18n";
 import { useSiteContent } from "@/lib/cms/content";
+import { useSiteAddons, useSiteAssets } from "@/lib/cms/site-config";
 import { submitLead } from "@/lib/leads.functions";
 
 /** Заголовок редакционной секции. */
