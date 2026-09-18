@@ -225,6 +225,81 @@ export type Database = {
           },
         ]
       }
+      site_addons: {
+        Row: {
+          code: string
+          created_at: string
+          desc_en: string
+          desc_ru: string
+          id: string
+          is_visible: boolean
+          name_en: string
+          name_ru: string
+          note_en: string
+          note_ru: string
+          price_en: string
+          price_ru: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          code?: string
+          created_at?: string
+          desc_en?: string
+          desc_ru?: string
+          id?: string
+          is_visible?: boolean
+          name_en?: string
+          name_ru?: string
+          note_en?: string
+          note_ru?: string
+          price_en?: string
+          price_ru?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          desc_en?: string
+          desc_ru?: string
+          id?: string
+          is_visible?: boolean
+          name_en?: string
+          name_ru?: string
+          note_en?: string
+          note_ru?: string
+          price_en?: string
+          price_ru?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_assets: {
+        Row: {
+          alt_en: string
+          alt_ru: string
+          key: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          alt_en?: string
+          alt_ru?: string
+          key: string
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          alt_en?: string
+          alt_ru?: string
+          key?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       site_content: {
         Row: {
           en: string
@@ -243,6 +318,27 @@ export type Database = {
           key?: string
           ru?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      site_sections: {
+        Row: {
+          key: string
+          sort_order: number
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          key: string
+          sort_order?: number
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          key?: string
+          sort_order?: number
+          updated_at?: string
+          visible?: boolean
         }
         Relationships: []
       }
