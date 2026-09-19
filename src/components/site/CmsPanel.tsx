@@ -110,27 +110,28 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
           </p>
         </div>
         <div className="cms-head-actions">
-          <button
-            className="cms-btn cms-btn--ghost"
-            onClick={() => resetMutation.mutate()}
-            disabled={resetMutation.isPending}
-          >
-            {t("Сбросить", "Reset")}
-          </button>
-          <button
-            className="cms-btn cms-btn--ghost"
-            onClick={onSiteHome}
-          >
+          {tab === "texts" && (
+            <>
+              <button
+                className="cms-btn cms-btn--ghost"
+                onClick={() => resetMutation.mutate()}
+                disabled={resetMutation.isPending}
+              >
+                {t("Сбросить", "Reset")}
+              </button>
+              <button
+                className="cms-btn cms-btn--primary"
+                onClick={() => saveMutation.mutate()}
+                disabled={saveMutation.isPending || dirtyCount === 0}
+              >
+                {saveMutation.isPending
+                  ? t("Сохранение…", "Saving…")
+                  : `${t("Сохранить", "Save")}${dirtyCount ? ` (${dirtyCount})` : ""}`}
+              </button>
+            </>
+          )}
+          <button className="cms-btn cms-btn--ghost" onClick={onSiteHome}>
             {t("На сайт", "View site")}
-          </button>
-          <button
-            className="cms-btn cms-btn--primary"
-            onClick={() => saveMutation.mutate()}
-            disabled={saveMutation.isPending || dirtyCount === 0}
-          >
-            {saveMutation.isPending
-              ? t("Сохранение…", "Saving…")
-              : `${t("Сохранить", "Save")}${dirtyCount ? ` (${dirtyCount})` : ""}`}
           </button>
           <button className="cms-close" aria-label={t("Закрыть", "Close")} onClick={onClose}>
             ✕
@@ -138,7 +139,23 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
         </div>
       </header>
 
-      <div className="cms-groups">
+      <div className="cms-nav">
+        {TABS.map((tb) => (
+          <button
+            key={tb.id}
+            className={tab === tb.id ? "on" : ""}
+            onClick={() => setTab(tb.id)}
+          >
+            {t(tb.ru, tb.en)}
+          </button>
+        ))}
+      </div>
+
+      {tab === "sections" && <SectionsTab />}
+      {tab === "assets" && <AssetsTab />}
+      {tab === "addons" && <AddonsTab />}
+
+      <div className="cms-groups" hidden={tab !== "texts"}>
         {FIELD_GROUPS.map((g) => {
           const fields = CONTENT_FIELDS.filter((f) => f.group === g.id);
           if (fields.length === 0) return null;
