@@ -36,6 +36,13 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
     Object.fromEntries(CONTENT_FIELDS.map((f) => [f.key, fieldValue(content.overrides, f.key)])),
   );
   const [openGroup, setOpenGroup] = useState<string>("hero");
+  const [tab, setTab] = useState<Tab>("texts");
+  const TABS: { id: Tab; ru: string; en: string }[] = [
+    { id: "texts", ru: "Тексты", en: "Texts" },
+    { id: "sections", ru: "Блоки", en: "Sections" },
+    { id: "assets", ru: "Изображения", en: "Images" },
+    { id: "addons", ru: "Дополнения", en: "Add-ons" },
+  ];
 
   const dirtyKeys = useMemo(
     () =>
