@@ -11,6 +11,11 @@ import {
   type Pair,
   type SiteContent,
 } from "@/lib/cms/content";
+import { SectionsTab } from "./cms/SectionsTab";
+import { AssetsTab } from "./cms/AssetsTab";
+import { AddonsTab } from "./cms/AddonsTab";
+
+type Tab = "texts" | "sections" | "assets" | "addons";
 
 interface Props {
   content: SiteContent;
