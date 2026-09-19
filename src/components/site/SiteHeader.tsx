@@ -76,6 +76,8 @@ function UtilBar() {
 /** Компактная шапка v2: утилити-полоса, топбар с маркой и навигацией, полоса-мастхед. */
 export function SiteHeader() {
   const { t } = useI18n();
+  const { isVisible } = useSectionVisibility();
+  const navItems = NAV.filter((n) => isVisible(n.section));
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
