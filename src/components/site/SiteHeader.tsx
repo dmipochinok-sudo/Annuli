@@ -155,7 +155,7 @@ export function SiteHeader() {
 
         <nav>
           <ul className="topbar-nav">
-            {NAV.map((n) => (
+            {navItems.map((n) => (
               <li key={n.to}>
                 <Link to={n.to}>{t(n.ru, n.en)}</Link>
               </li>
@@ -199,7 +199,7 @@ export function SiteHeader() {
         ref={drawerRef}
         aria-hidden={!open}
       >
-        {NAV.map((n) => (
+        {navItems.map((n) => (
           <Link key={n.to} to={n.to} onClick={() => setOpen(false)}>
             {t(n.ru, n.en)}
           </Link>
