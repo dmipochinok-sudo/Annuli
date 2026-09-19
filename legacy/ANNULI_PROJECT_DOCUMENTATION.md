@@ -1188,3 +1188,13 @@ Vision, Architecture Decisions, инварианты модели данных, 
 - На планшетных и десктопных экранах ссылки входа/кабинета и CMS остаются в основной строке шапки.
 
 <!-- build: 2026-09-12 republish -->
+
+## v4.6 — CMS Фаза 2 (видимость блоков, изображения, дополнения)
+
+- Новые таблицы: `site_sections` (key, visible, sort_order), `site_assets` (key, url, alt_ru, alt_en), `site_addons` (RU/EN поля, is_visible, sort_order). Публичное чтение (anon/authenticated), изменение только через `public.is_admin()`. Триггеры `update_updated_at_column`.
+- `src/lib/cms/site-config.ts`: хуки `useSectionVisibility`, `useSiteAssets`, `useSiteAddons` (react-query, ключи `site-sections`, `site-assets`, `site-addons`, безопасный fallback при ошибке).
+- `src/routes/index.tsx`: секции лендинга рендерятся по видимости; `SiteHeader`/`SiteFooter` скрывают ссылки на отключённые блоки.
+- `sections.tsx`: Hero берёт фото и alt из `site_assets.hero_image`; Addons читает `site_addons` (только is_visible), при пустой таблице — статический fallback из текстов CMS.
+- CMS-панель: вкладки «Тексты», «Блоки», «Изображения», «Дополнения» (`src/components/site/cms/*`). Тексты работают как раньше.
+- Storage: публичный бакет `site-assets` создать не удалось (политика workspace `cloud_block_public_buckets`), поэтому изображения задаются прямой ссылкой в `site_assets.url`.
+- Не изменялись: авторизация, роли, защищённые маршруты, кабинеты, `/app`, существующие таблицы и политики, окружение.

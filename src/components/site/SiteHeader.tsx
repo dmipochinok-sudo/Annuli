@@ -76,6 +76,8 @@ function UtilBar() {
 /** Компактная шапка v2: утилити-полоса, топбар с маркой и навигацией, полоса-мастхед. */
 export function SiteHeader() {
   const { t } = useI18n();
+  const { isVisible } = useSectionVisibility();
+  const navItems = NAV.filter((n) => isVisible(n.section));
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -153,7 +155,7 @@ export function SiteHeader() {
 
         <nav>
           <ul className="topbar-nav">
-            {NAV.map((n) => (
+            {navItems.map((n) => (
               <li key={n.to}>
                 <Link to={n.to}>{t(n.ru, n.en)}</Link>
               </li>
@@ -197,7 +199,7 @@ export function SiteHeader() {
         ref={drawerRef}
         aria-hidden={!open}
       >
-        {NAV.map((n) => (
+        {navItems.map((n) => (
           <Link key={n.to} to={n.to} onClick={() => setOpen(false)}>
             {t(n.ru, n.en)}
           </Link>
