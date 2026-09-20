@@ -1914,6 +1914,15 @@ a:focus-visible,
   color: var(--signal);
   border-color: var(--signal);
 }
+.cms-act:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.cms-act--primary:disabled:hover {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
 .cms-body {
   flex: 1;
   display: grid;
