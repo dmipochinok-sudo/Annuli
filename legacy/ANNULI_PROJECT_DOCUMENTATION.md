@@ -1196,5 +1196,12 @@ Vision, Architecture Decisions, инварианты модели данных, 
 - `src/routes/index.tsx`: секции лендинга рендерятся по видимости; `SiteHeader`/`SiteFooter` скрывают ссылки на отключённые блоки.
 - `sections.tsx`: Hero берёт фото и alt из `site_assets.hero_image`; Addons читает `site_addons` (только is_visible), при пустой таблице — статический fallback из текстов CMS.
 - CMS-панель: вкладки «Тексты», «Блоки», «Изображения», «Дополнения» (`src/components/site/cms/*`). Тексты работают как раньше.
-- Storage: публичный бакет `site-assets` создать не удалось (политика workspace `cloud_block_public_buckets`), поэтому изображения задаются прямой ссылкой в `site_assets.url`.
+- Не изменялись: авторизация, роли, защищённые маршруты, кабинеты, `/app`, существующие таблицы и политики, окружение.
+
+## v4.7 — CMS «Изображения»: загрузка файлов вместо ссылки
+
+- Workspace разрешил публичные хранилища (Settings → Privacy & Security), создан публичный бакет `site-assets` (file_size_limit 5 МБ). Существующий приватный бакет `annuli-media` не затронут.
+- RLS на `storage.objects` для бакета `site-assets`: публичное чтение (`anon, authenticated`), запись/обновление/удаление только через `public.is_admin()`. Анонимная запись запрещена.
+- `src/components/site/cms/AssetsTab.tsx`: поле прямой ссылки заменено на загрузку файла с компьютера. Принимаются PNG, JPEG, WebP до 5 МБ; SVG запрещён. Файл грузится в `site-assets/{hero-image|logo-image}.<ext>` (upsert), публичный URL сохраняется в `site_assets`. Кнопки «Загрузить», «Сохранить подписи» (alt RU/EN), «Сбросить» (удаляет запись в `site_assets`, файл в Storage не удаляется). Превью и индикатор загрузки.
+- `sections.tsx` без изменений: Hero уже использует `site_assets.hero_image` с fallback на дефолт; слот `logo_image` хранится, но логотип остаётся SVG-маркой.
 - Не изменялись: авторизация, роли, защищённые маршруты, кабинеты, `/app`, существующие таблицы и политики, окружение.
