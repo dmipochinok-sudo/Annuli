@@ -306,6 +306,22 @@ const GROUP_TITLES: { id: string; ru: string; en: string }[] = [
 ];
 
 function prettyLabel(key: string): string {
+  const spec = /^pl\.(\d+)\.s(\d+)\.(lbl|val)$/.exec(key);
+  if (spec) {
+    const kind = spec[3] === "lbl" ? "подпись" : "значение";
+    return `Тариф ${spec[1]} · строка ${spec[2]} · ${kind}`;
+  }
+  const plain = /^pl\.(\d+)\.(tier|name|tag|price|note)$/.exec(key);
+  if (plain) {
+    const map: Record<string, string> = {
+      tier: "уровень",
+      name: "название",
+      tag: "описание",
+      price: "цена",
+      note: "примечание",
+    };
+    return `Тариф ${plain[1]} · ${map[plain[2] ?? ""] ?? plain[2]}`;
+  }
   const last = key.split(".").pop() ?? key;
   return last.replace(/[_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
