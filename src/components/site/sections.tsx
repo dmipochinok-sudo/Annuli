@@ -253,10 +253,10 @@ export function Plans() {
               </div>
               <div className="plan-price-note">{c(`pl.${idx}.note`)}</div>
               <ul className="plan-specs">
-                {p.specs.map((s) => (
+                {p.specs.map((s, si) => (
                   <li key={s.en}>
-                    <span>{t(s.ru, s.en)}</span>
-                    <span>{t(s.vru, s.ven)}</span>
+                    <span>{c(`pl.${idx}.s${si + 1}.lbl`)}</span>
+                    <span>{c(`pl.${idx}.s${si + 1}.val`)}</span>
                   </li>
                 ))}
               </ul>
