@@ -141,6 +141,63 @@ export const DEFAULTS: Record<string, Pair> = {
   "pl.4.price": { ru: "4 000", en: "4,000" },
   "pl.4.note": { ru: "Индивидуальный проект", en: "Custom project" },
   "pl.cta": { ru: "Выбрать план", en: "Choose Plan" },
+  // Характеристики карточек: подпись (lbl) и значение (val)
+  "pl.1.s1.lbl": { ru: "Страниц", en: "Pages" },
+  "pl.1.s1.val": { ru: "40–50", en: "40–50" },
+  "pl.1.s2.lbl": { ru: "Фотографий", en: "Photos" },
+  "pl.1.s2.val": { ru: "до 30", en: "up to 30" },
+  "pl.1.s3.lbl": { ru: "Интервью", en: "Interview" },
+  "pl.1.s3.val": { ru: "1 × 45 мин", en: "1 × 45 min" },
+  "pl.1.s4.lbl": { ru: "Древо", en: "Tree" },
+  "pl.1.s4.val": { ru: "2 поколения", en: "2 generations" },
+  "pl.1.s5.lbl": { ru: "Экземпляров", en: "Copies" },
+  "pl.1.s5.val": { ru: "1 + PDF", en: "1 + PDF" },
+  "pl.1.s6.lbl": { ru: "Правок", en: "Revisions" },
+  "pl.1.s6.val": { ru: "1 круг", en: "1 round" },
+  "pl.1.s7.lbl": { ru: "Срок", en: "Timeline" },
+  "pl.1.s7.val": { ru: "~1 нед.", en: "~1 week" },
+  "pl.2.s1.lbl": { ru: "Страниц", en: "Pages" },
+  "pl.2.s1.val": { ru: "60–70", en: "60–70" },
+  "pl.2.s2.lbl": { ru: "Фотографий", en: "Photos" },
+  "pl.2.s2.val": { ru: "до 60", en: "up to 60" },
+  "pl.2.s3.lbl": { ru: "Интервью", en: "Interview" },
+  "pl.2.s3.val": { ru: "1 × 1 ч", en: "1 × 1 hr" },
+  "pl.2.s4.lbl": { ru: "Древо", en: "Tree" },
+  "pl.2.s4.val": { ru: "3 поколения", en: "3 generations" },
+  "pl.2.s5.lbl": { ru: "Экземпляров", en: "Copies" },
+  "pl.2.s5.val": { ru: "2 + PDF", en: "2 + PDF" },
+  "pl.2.s6.lbl": { ru: "Правок", en: "Revisions" },
+  "pl.2.s6.val": { ru: "1 круг", en: "1 round" },
+  "pl.2.s7.lbl": { ru: "Срок", en: "Timeline" },
+  "pl.2.s7.val": { ru: "~2 нед.", en: "~2 weeks" },
+  "pl.3.s1.lbl": { ru: "Страниц", en: "Pages" },
+  "pl.3.s1.val": { ru: "110–130", en: "110–130" },
+  "pl.3.s2.lbl": { ru: "Фотографий", en: "Photos" },
+  "pl.3.s2.val": { ru: "до 120", en: "up to 120" },
+  "pl.3.s3.lbl": { ru: "Интервью", en: "Interviews" },
+  "pl.3.s3.val": { ru: "2 сессии", en: "2 sessions" },
+  "pl.3.s4.lbl": { ru: "Древо", en: "Tree" },
+  "pl.3.s4.val": { ru: "4–5 поколений", en: "4–5 generations" },
+  "pl.3.s5.lbl": { ru: "Экземпляров", en: "Copies" },
+  "pl.3.s5.val": { ru: "4 + футляр", en: "4 + slipcase" },
+  "pl.3.s6.lbl": { ru: "Правок", en: "Revisions" },
+  "pl.3.s6.val": { ru: "2 круга", en: "2 rounds" },
+  "pl.3.s7.lbl": { ru: "Срок", en: "Timeline" },
+  "pl.3.s7.val": { ru: "3–4 нед.", en: "3–4 weeks" },
+  "pl.4.s1.lbl": { ru: "Страниц", en: "Pages" },
+  "pl.4.s1.val": { ru: "180–220", en: "180–220" },
+  "pl.4.s2.lbl": { ru: "Фотографий", en: "Photos" },
+  "pl.4.s2.val": { ru: "до 80 + ретушь", en: "up to 80 + retouching" },
+  "pl.4.s3.lbl": { ru: "Интервью", en: "Interviews" },
+  "pl.4.s3.val": { ru: "до 5 сессий", en: "up to 5 sessions" },
+  "pl.4.s4.lbl": { ru: "Древо", en: "Tree" },
+  "pl.4.s4.val": { ru: "5–7+ поколений", en: "5–7+ generations" },
+  "pl.4.s5.lbl": { ru: "Экземпляров", en: "Copies" },
+  "pl.4.s5.val": { ru: "6–10 + тиснение", en: "6–10 + embossing" },
+  "pl.4.s6.lbl": { ru: "Правок", en: "Revisions" },
+  "pl.4.s6.val": { ru: "3 круга", en: "3 rounds" },
+  "pl.4.s7.lbl": { ru: "Срок", en: "Timeline" },
+  "pl.4.s7.val": { ru: "~1 мес.", en: "~1 month" },
 
   // ── Доп. услуги ─────────────────────────────────────────────────────────
   "ad.1.idx": { ru: "A — 01", en: "A — 01" },
@@ -249,6 +306,22 @@ const GROUP_TITLES: { id: string; ru: string; en: string }[] = [
 ];
 
 function prettyLabel(key: string): string {
+  const spec = /^pl\.(\d+)\.s(\d+)\.(lbl|val)$/.exec(key);
+  if (spec) {
+    const kind = spec[3] === "lbl" ? "подпись" : "значение";
+    return `Тариф ${spec[1]} · строка ${spec[2]} · ${kind}`;
+  }
+  const plain = /^pl\.(\d+)\.(tier|name|tag|price|note)$/.exec(key);
+  if (plain) {
+    const map: Record<string, string> = {
+      tier: "уровень",
+      name: "название",
+      tag: "описание",
+      price: "цена",
+      note: "примечание",
+    };
+    return `Тариф ${plain[1]} · ${map[plain[2] ?? ""] ?? plain[2]}`;
+  }
   const last = key.split(".").pop() ?? key;
   return last.replace(/[_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
