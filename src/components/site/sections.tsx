@@ -229,7 +229,6 @@ export const PLANS: Plan[] = [
 ];
 
 export function Plans() {
-  const { t } = useI18n();
   const { c } = useSiteContent();
   return (
     <section className="plans" id="plans">
