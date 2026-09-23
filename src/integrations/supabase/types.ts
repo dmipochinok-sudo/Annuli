@@ -225,6 +225,33 @@ export type Database = {
           },
         ]
       }
+      role_audit_logs: {
+        Row: {
+          action: string
+          actor: string | null
+          created_at: string
+          details: Json
+          id: string
+          target: string | null
+        }
+        Insert: {
+          action: string
+          actor?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          target?: string | null
+        }
+        Update: {
+          action?: string
+          actor?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          target?: string | null
+        }
+        Relationships: []
+      }
       site_addons: {
         Row: {
           code: string
@@ -342,6 +369,48 @@ export type Database = {
         }
         Relationships: []
       }
+      user_owner_flags: {
+        Row: {
+          created_at: string
+          is_owner: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          is_owner?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          is_owner?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_product_roles: {
+        Row: {
+          created_at: string
+          product_role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          product_role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          product_role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -365,7 +434,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_app_role: { Args: never; Returns: string }
       is_admin: { Args: never; Returns: boolean }
+      is_owner: { Args: never; Returns: boolean }
+      owner_list_users: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          is_admin: boolean
+          is_blocked: boolean
+          is_owner: boolean
+          product_role: string
+        }[]
+      }
+      register_product_role: {
+        Args: { requested_role: string }
+        Returns: undefined
+      }
+      set_user_admin: {
+        Args: { make_admin: boolean; target_user: string }
+        Returns: undefined
+      }
+      set_user_owner: {
+        Args: { make_owner: boolean; target_user: string }
+        Returns: undefined
+      }
+      set_user_product_role: {
+        Args: { new_role: string; target_user: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
