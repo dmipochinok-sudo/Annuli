@@ -176,7 +176,7 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
                   {fields.map((f) => (
                     <div className="cms-field" key={f.key}>
                       <label className="cms-field-lbl" title={f.key}>
-                        {f.label}
+                         {t(f.label.ru, f.label.en)}
                       </label>
                       <div className="cms-field-inputs">
                         <input
