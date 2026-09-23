@@ -289,7 +289,7 @@ const MULTILINE = new Set<string>([
 export interface FieldDef {
   key: string;
   group: string;
-  label: string;
+  label: Pair;
   multiline: boolean;
 }
 
@@ -299,38 +299,46 @@ const GROUP_TITLES: { id: string; ru: string; en: string }[] = [
   { id: "head", ru: "Заголовки секций", en: "Section headings" },
   { id: "ap", ru: "Подход", en: "Approach" },
   { id: "pr", ru: "Процесс", en: "Process" },
-  { id: "pl", ru: "Тарифы", en: "Plans" },
+  { id: "pl-common", ru: "Тарифы · общие тексты", en: "Plans · shared text" },
+  { id: "pl.1", ru: "Тариф 1 · Семейный Портрет", en: "Plan 1 · Family Portrait" },
+  { id: "pl.2", ru: "Тариф 2 · Семейная Летопись", en: "Plan 2 · Family Chronicle" },
+  { id: "pl.3", ru: "Тариф 3 · Фамильный Архив", en: "Plan 3 · Family Archive" },
+  { id: "pl.4", ru: "Тариф 4 · Libro di Famiglia", en: "Plan 4 · Libro di Famiglia" },
   { id: "ad", ru: "Доп. услуги", en: "Add-ons" },
   { id: "pq", ru: "Цитата", en: "Pull quote" },
   { id: "ct", ru: "Контакты", en: "Contact" },
 ];
 
-function prettyLabel(key: string): string {
-  const spec = /^pl\.(\d+)\.s(\d+)\.(lbl|val)$/.exec(key);
+function prettyLabel(key: string): Pair {
+  const spec = /^pl\.(\d+)\.s(\d+)\.val$/.exec(key);
   if (spec) {
-    const kind = spec[3] === "lbl" ? "подпись" : "значение";
-    return `Тариф ${spec[1]} · строка ${spec[2]} · ${kind}`;
+    const label = DEFAULTS[`pl.${spec[1]}.s${spec[2]}.lbl`];
+    return label ?? { ru: `Характеристика ${spec[2]}`, en: `Specification ${spec[2]}` };
   }
   const plain = /^pl\.(\d+)\.(tier|name|tag|price|note)$/.exec(key);
   if (plain) {
-    const map: Record<string, string> = {
-      tier: "уровень",
-      name: "название",
-      tag: "описание",
-      price: "цена",
-      note: "примечание",
+    const map: Record<string, Pair> = {
+      tier: { ru: "Тариф", en: "Tier" },
+      name: { ru: "Название", en: "Name" },
+      tag: { ru: "Описание", en: "Description" },
+      price: { ru: "Цена", en: "Price" },
+      note: { ru: "Примечание", en: "Note" },
     };
-    return `Тариф ${plain[1]} · ${map[plain[2] ?? ""] ?? plain[2]}`;
+    return map[plain[2] ?? ""] ?? { ru: plain[2] ?? key, en: plain[2] ?? key };
   }
   const last = key.split(".").pop() ?? key;
-  return last.replace(/[_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const label = last.replace(/[_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return { ru: label, en: label };
 }
 
-/** Плоский список полей, сгруппированных по префиксу. */
-export const CONTENT_FIELDS: FieldDef[] = Object.keys(DEFAULTS).map((key) => {
-  const group: string = key.split(".")[0] ?? key;
-  return { key, group, label: prettyLabel(key), multiline: MULTILINE.has(key) };
-});
+/** Редактируемые поля. Подписи характеристик тарифов фиксированы в карточках. */
+export const CONTENT_FIELDS: FieldDef[] = Object.keys(DEFAULTS)
+  .filter((key) => !/^pl\.\d+\.s\d+\.lbl$/.test(key))
+  .map((key) => {
+    const plan = /^pl\.(\d+)\./.exec(key);
+    const group = key === "pl.cta" ? "pl-common" : plan ? `pl.${plan[1]}` : (key.split(".")[0] ?? key);
+    return { key, group, label: prettyLabel(key), multiline: MULTILINE.has(key) };
+  });
 
 export const FIELD_GROUPS = GROUP_TITLES;
 

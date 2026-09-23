@@ -229,6 +229,7 @@ export const PLANS: Plan[] = [
 ];
 
 export function Plans() {
+  const { t } = useI18n();
   const { c } = useSiteContent();
   return (
     <section className="plans" id="plans">
@@ -254,7 +255,7 @@ export function Plans() {
               <ul className="plan-specs">
                 {p.specs.map((s, si) => (
                   <li key={s.en}>
-                    <span>{c(`pl.${idx}.s${si + 1}.lbl`)}</span>
+                     <span>{t(s.ru, s.en)}</span>
                     <span>{c(`pl.${idx}.s${si + 1}.val`)}</span>
                   </li>
                 ))}
