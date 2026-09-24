@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Logo } from "@/components/site/Logo";
 import { isCloudConfigured } from "@/lib/cloud-availability";
 import { useI18n } from "@/lib/i18n";
+import { registerProductRole, type ProductRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -36,6 +37,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [productRole, setProductRole] = useState<ProductRole>("client");
   const cloudAvailable = isCloudConfigured();
 
   useEffect(() => {
@@ -87,7 +89,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            data: { full_name: name },
+            data: { full_name: name, product_role: productRole },
             emailRedirectTo: window.location.origin,
           },
         });
@@ -98,6 +100,11 @@ function AuthPage() {
           );
           setMode("signin");
           return;
+        }
+        try {
+          await registerProductRole(productRole);
+        } catch {
+          /* роль будет предложена при первом входе в кабинет */
         }
         navigate({ to: "/account", replace: true });
         return;
@@ -149,14 +156,27 @@ function AuthPage() {
 
         <form className="form" onSubmit={(ev) => void submit(ev)}>
           {mode === "signup" && (
-            <div className="form-field">
-              <label className="form-lbl">{t("Отображаемое имя", "Display name")}</label>
-              <input
-                className="form-inp"
-                value={name}
-                onChange={(ev) => setName(ev.target.value)}
-              />
-            </div>
+            <>
+              <div className="form-field">
+                <label className="form-lbl">{t("Отображаемое имя", "Display name")}</label>
+                <input
+                  className="form-inp"
+                  value={name}
+                  onChange={(ev) => setName(ev.target.value)}
+                />
+              </div>
+              <div className="form-field">
+                <label className="form-lbl">{t("Кто вы?", "Who are you?")}</label>
+                <select
+                  className="form-inp"
+                  value={productRole}
+                  onChange={(ev) => setProductRole(ev.target.value as ProductRole)}
+                >
+                  <option value="client">{t("Клиент", "Client")}</option>
+                  <option value="specialist">{t("Специалист", "Specialist")}</option>
+                </select>
+              </div>
+            </>
           )}
           <div className="form-field">
             <label className="form-lbl">Email</label>
