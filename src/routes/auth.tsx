@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Logo } from "@/components/site/Logo";
 import { isCloudConfigured } from "@/lib/cloud-availability";
 import { useI18n } from "@/lib/i18n";
+import { registerProductRole, type ProductRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -36,6 +37,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [productRole, setProductRole] = useState<ProductRole>("client");
   const cloudAvailable = isCloudConfigured();
 
   useEffect(() => {
