@@ -87,7 +87,7 @@ function AuthPage() {
           email,
           password,
           options: {
-            data: { full_name: name },
+            data: { full_name: name, product_role: productRole },
             emailRedirectTo: window.location.origin,
           },
         });
@@ -98,6 +98,11 @@ function AuthPage() {
           );
           setMode("signin");
           return;
+        }
+        try {
+          await registerProductRole(productRole);
+        } catch {
+          /* роль будет предложена при первом входе в кабинет */
         }
         navigate({ to: "/account", replace: true });
         return;
