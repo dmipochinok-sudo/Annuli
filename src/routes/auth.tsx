@@ -156,14 +156,27 @@ function AuthPage() {
 
         <form className="form" onSubmit={(ev) => void submit(ev)}>
           {mode === "signup" && (
-            <div className="form-field">
-              <label className="form-lbl">{t("Отображаемое имя", "Display name")}</label>
-              <input
-                className="form-inp"
-                value={name}
-                onChange={(ev) => setName(ev.target.value)}
-              />
-            </div>
+            <>
+              <div className="form-field">
+                <label className="form-lbl">{t("Отображаемое имя", "Display name")}</label>
+                <input
+                  className="form-inp"
+                  value={name}
+                  onChange={(ev) => setName(ev.target.value)}
+                />
+              </div>
+              <div className="form-field">
+                <label className="form-lbl">{t("Кто вы?", "Who are you?")}</label>
+                <select
+                  className="form-inp"
+                  value={productRole}
+                  onChange={(ev) => setProductRole(ev.target.value as ProductRole)}
+                >
+                  <option value="client">{t("Клиент", "Client")}</option>
+                  <option value="specialist">{t("Специалист", "Specialist")}</option>
+                </select>
+              </div>
+            </>
           )}
           <div className="form-field">
             <label className="form-lbl">Email</label>
