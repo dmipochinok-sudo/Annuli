@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Hero, Approach, Process, Plans, Addons, PullQuote, Contact } from "@/components/site/sections";
+import { SpecialistsSection } from "@/components/site/SpecialistsSection";
 import { useSectionVisibility } from "@/lib/cms/site-config";
 
 export const Route = createFileRoute("/")({
@@ -34,6 +35,7 @@ function LandingPage() {
       {isVisible("process") && <Process />}
       {isVisible("plans") && <Plans />}
       {isVisible("addons") && <Addons />}
+      {isVisible("specialists") && <SpecialistsSection />}
       {isVisible("quote") && <PullQuote />}
       {isVisible("contact") && <Contact />}
     </SiteLayout>

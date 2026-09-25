@@ -11,6 +11,7 @@ import {
   OrdersPanel,
   ProfilePanel,
 } from "@/components/site/cabinet/CabinetPanels";
+import { SpecialistCabinet } from "@/components/site/cabinet/SpecialistCabinet";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/lib/cabinet";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,6 +87,14 @@ function AccountPage() {
     { key: "notifications", label: t("Уведомления", "Notifications") },
   ];
   const current = tabs.find((x) => x.key === tab)!;
+
+  if (userId && productRole === "specialist") {
+    return (
+      <SiteLayout>
+        <SpecialistCabinet uid={userId} roleText={roleLabel(appRole, lang)} onSignOut={() => void signOut()} />
+      </SiteLayout>
+    );
+  }
 
   return (
     <SiteLayout>
