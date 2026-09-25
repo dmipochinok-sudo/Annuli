@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { roleLabel, useAppRole } from "@/lib/roles";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -37,13 +38,8 @@ function ProfilePage() {
     },
   });
 
-  const { data: role } = useQuery({
-    queryKey: ["own-role", user.id],
-    queryFn: async () => {
-      const { data } = await supabase.rpc("is_admin");
-      return data ? "Администратор" : "Пользователь";
-    },
-  });
+  const { data: appRole } = useAppRole(user.id);
+  const role = roleLabel(appRole);
 
   useEffect(() => {
     if (profile) {
