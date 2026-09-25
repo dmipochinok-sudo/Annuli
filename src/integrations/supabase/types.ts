@@ -119,6 +119,44 @@ export type Database = {
         }
         Relationships: []
       }
+      inquiry_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          inquiry_id: string
+          is_read: boolean
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          inquiry_id: string
+          is_read?: boolean
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          inquiry_id?: string
+          is_read?: boolean
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiry_messages_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "specialist_inquiries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -491,6 +529,42 @@ export type Database = {
           sort_order?: number
           updated_at?: string
           visible?: boolean
+        }
+        Relationships: []
+      }
+      specialist_inquiries: {
+        Row: {
+          body: string
+          client_id: string
+          created_at: string
+          id: string
+          rate_name: string
+          specialist_id: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          client_id: string
+          created_at?: string
+          id?: string
+          rate_name?: string
+          specialist_id: string
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          client_id?: string
+          created_at?: string
+          id?: string
+          rate_name?: string
+          specialist_id?: string
+          status?: string
+          subject?: string
+          updated_at?: string
         }
         Relationships: []
       }
