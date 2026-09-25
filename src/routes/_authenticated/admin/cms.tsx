@@ -10,6 +10,10 @@ export const Route = createFileRoute("/_authenticated/admin/cms")({
     meta: [
       { title: "Управление сайтом — Annuli" },
       { name: "description", content: "Редактирование содержимого главной страницы Annuli." },
+      { property: "og:title", content: "Управление сайтом — Annuli" },
+      { property: "og:description", content: "Редактирование содержимого главной страницы Annuli." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: AdminCmsPage,

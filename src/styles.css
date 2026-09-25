@@ -1521,7 +1521,7 @@ a:focus-visible,
 .cab-shell > .section-nav { align-self: stretch; }
 .cab-dot, .cab-badge--done { background: var(--signal); color: var(--paper); border-color: var(--signal); }
 .specialist-card:hover, .inq-item.is-active, .inq-message.is-mine { border-color: var(--signal); }
-.specialist-modal { width: min(600px, calc(100vw - var(--s8))); max-width: 600px; }
+.spec-modal { width: min(600px, calc(100vw - var(--s8))); max-width: 600px; }
 
 @media (max-width: 767px) {
   .cms-workspace, .cab-shell { display: block; }

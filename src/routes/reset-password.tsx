@@ -10,6 +10,10 @@ export const Route = createFileRoute("/reset-password")({
     meta: [
       { title: "Сброс пароля — Annuli" },
       { name: "description", content: "Установка нового пароля Annuli." },
+      { property: "og:title", content: "Сброс пароля — Annuli" },
+      { property: "og:description", content: "Установка нового пароля Annuli." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ResetPasswordPage,

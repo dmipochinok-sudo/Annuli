@@ -12,6 +12,10 @@ export const Route = createFileRoute("/_authenticated/profile")({
     meta: [
       { title: "Профиль — Annuli" },
       { name: "description", content: "Настройки учётной записи Annuli." },
+      { property: "og:title", content: "Профиль — Annuli" },
+      { property: "og:description", content: "Настройки учётной записи Annuli." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ProfilePage,

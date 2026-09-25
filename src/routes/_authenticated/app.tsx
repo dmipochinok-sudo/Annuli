@@ -64,6 +64,8 @@ export const Route = createFileRoute("/_authenticated/app")({
         property: "og:description",
         content: "Персоны, даты, документы и архивные ссылки в одной локальной базе.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Index,
