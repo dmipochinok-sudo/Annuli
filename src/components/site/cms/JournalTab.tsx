@@ -75,7 +75,7 @@ export function JournalTab() {
       const { data, error } = await supabase.rpc("list_audit_logs", {
         _limit: PAGE_SIZE,
         _offset: page * PAGE_SIZE,
-        _category: category || null,
+        _category: category || undefined,
       });
       if (error) throw error;
       return (data ?? []) as AuditRow[];
@@ -92,7 +92,7 @@ export function JournalTab() {
     const { data, error } = await supabase.rpc("list_audit_logs", {
       _limit: 500,
       _offset: 0,
-      _category: category || null,
+      _category: category || undefined,
     });
     if (error) {
       toast.error(error.message);
