@@ -9,6 +9,7 @@ export const SECTION_KEYS = [
   "process",
   "plans",
   "addons",
+  "specialists",
   "quote",
   "contact",
 ] as const;
@@ -20,6 +21,7 @@ export const SECTION_TITLES: Record<SectionKey, { ru: string; en: string }> = {
   process: { ru: "Процесс", en: "Process" },
   plans: { ru: "Тарифы", en: "Plans" },
   addons: { ru: "Дополнения", en: "Add-ons" },
+  specialists: { ru: "Специалисты", en: "Specialists" },
   quote: { ru: "Цитата", en: "Pull quote" },
   contact: { ru: "Контакты / форма", en: "Contact / form" },
 };

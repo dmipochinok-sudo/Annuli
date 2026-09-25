@@ -11,6 +11,7 @@ const BUCKET = "annuli-media";
 const PAGE = 1000;
 
 let activeOwner: string | null = null;
+let activeBase: string | null = null;
 const urlCache = new Map<string, { url: string; exp: number }>();
 
 /** Устанавливает владельца базы, с которой сейчас работает интерфейс. */
@@ -18,6 +19,39 @@ export function setActiveOwner(id: string | null): void {
   if (id === activeOwner) return;
   activeOwner = id;
   urlCache.clear();
+}
+
+/** Устанавливает базу (genealogy_bases.id), с которой работает интерфейс. */
+export function setActiveBase(id: string | null): void {
+  activeBase = id;
+}
+
+export function getActiveBase(): string | null {
+  return activeBase;
+}
+
+/**
+ * Определяет базу для открытия: явно заданную или первую базу владельца.
+ * Собственную базу создаёт автоматически, если у пользователя ещё нет ни одной.
+ */
+export async function resolveBase(owner: string, requested?: string | null): Promise<string | null> {
+  if (requested) return requested;
+  const { data } = await supabase
+    .from("genealogy_bases")
+    .select("id")
+    .eq("owner_id", owner)
+    .order("created_at", { ascending: true })
+    .limit(1);
+  if (data && data[0]) return data[0].id;
+  const { data: u } = await supabase.auth.getUser();
+  if (u.user?.id !== owner) return null;
+  const { data: created, error } = await supabase
+    .from("genealogy_bases")
+    .insert({ owner_id: owner, title: "Моя база" })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+  return created.id;
 }
 
 export function getActiveOwner(): string | null {
@@ -44,6 +78,7 @@ export async function dbAllPersons(): Promise<Person[]> {
       .from("persons")
       .select("data")
       .eq("owner_id", owner)
+      .eq("base_id", activeBase ?? "00000000-0000-0000-0000-000000000000")
       .order("person_index", { ascending: true })
       .range(from, from + PAGE - 1);
     if (error) throw new Error(error.message);
@@ -59,6 +94,7 @@ export async function dbPutPerson(p: Person): Promise<void> {
     {
       id: p.id,
       owner_id: owner,
+      base_id: activeBase,
       person_index: p.personIndex || "",
       full_name: fullName(p) || "",
       data: JSON.parse(JSON.stringify(p)) as never,

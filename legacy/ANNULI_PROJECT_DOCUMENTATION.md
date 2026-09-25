@@ -1251,3 +1251,10 @@ specialist → client), `register_product_role(text)`, `set_user_product_role(uu
 - /account: 6 закладок (Профиль, Мои заказы, Материалы и базы, Доступы, Приложение, Уведомления); общий модуль src/lib/cabinet.ts и src/components/site/cabinet/CabinetPanels.tsx (mode self|staff).
 - БД: profiles.phone/city/note; book_projects.order_no (ORD-xxxx, sequence), amount, paid_amount — клиент только читает, ведут админы; base_access_grants (выдача доступа к базе специалисту, срок, согласие 152-ФЗ, отзыв); notifications (триггеры на заказы и доступы); has_base_access() + политика чтения persons для специалиста; list_specialists().
 - CMS «Пользователи»: роль «Администратор» при создании; один список ролей Клиент/Специалист/Администратор с подтверждением; кнопка «Кабинет» — боковая панель с профилем, заказами (создание/статус/оплата с этапами), базой, доступами, уведомлениями; действия пишутся в журнал (users/orders).
+
+## v5.2 — Кабинет специалиста, специалисты на главной, несколько баз (25.09.2026)
+- Таблицы: specialist_profiles (карточка RU/EN, видимость, приём клиентов, featured/featured_order, plan, bases_limit, storage_limit_mb — последние меняет только админ, триггер guard_specialist_profile), specialist_rates, specialist_reviews (специалист меняет только reply), genealogy_bases; persons.base_id (существующие персоны перенесены в «Мою базу»).
+- Лимит баз — триггер enforce_bases_limit (bases_limit_for: специалист 10, клиент 1).
+- Публично: RPC list_featured_specialists() — до 6 карточек (featured AND is_visible), без контактов. CMS: staff_list_specialists().
+- UI: SpecialistCabinet (Карточка, Тарифы, Отзывы, Базы, Лимиты) в /account для роли specialist; SpecialistsSection + SpecialistDialog на главной (ключ блока specialists); вкладка CMS «Специалисты».
+- /app?base=<id>; без параметра открывается первая база владельца (создаётся автоматически).
