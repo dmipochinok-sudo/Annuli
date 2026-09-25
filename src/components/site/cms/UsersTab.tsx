@@ -12,6 +12,25 @@ import {
   setUserBlocked,
   setUserOwner,
 } from "@/lib/users.functions";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  AccessPanel,
+  BasesPanel,
+  NotificationsPanel,
+  OrdersPanel,
+  ProfilePanel,
+} from "@/components/site/cabinet/CabinetPanels";
+
+type RoleChoice = "client" | "specialist" | "admin";
+type UserRow = Awaited<ReturnType<typeof listUsers>>["users"][number];
+
+const CARD_TABS: [string, typeof ProfilePanel][] = [
+  ["Профиль", ProfilePanel],
+  ["Заказы", OrdersPanel],
+  ["Материалы и базы", BasesPanel],
+  ["Доступы", AccessPanel],
+  ["Уведомления", NotificationsPanel],
+];
 
 const btn =
   "h-8 rounded-lg border border-border bg-surface-dark px-3 text-[12px] font-medium text-foreground transition hover:border-stroke-bright disabled:opacity-50";
@@ -23,11 +42,12 @@ const inputCls =
 /** Вкладка «Пользователи» в CMS: таблица учётных записей и владельческие действия. */
 export function UsersTab() {
   const queryClient = useQueryClient();
+  const [cardUser, setCardUser] = useState<UserRow | null>(null);
   const [newUser, setNewUser] = useState({
     email: "",
     password: "",
     displayName: "",
-    role: "client" as "client" | "specialist",
+    role: "client" as RoleChoice,
   });
 
   const { data, isLoading } = useQuery({
@@ -107,7 +127,7 @@ export function UsersTab() {
     createMutation.isPending ||
     deleteMutation.isPending;
 
-  const roleName = (u: NonNullable<typeof users>[number]) =>
+  const roleName = (u: UserRow) =>
     u.isOwner
       ? "Владелец"
       : u.role === "admin"
@@ -116,8 +136,46 @@ export function UsersTab() {
           ? "Специалист"
           : "Клиент";
 
+  const changeRole = async (u: UserRow, next: RoleChoice) => {
+    const wasAdmin = u.role === "admin";
+    if (next === "admin" && !wasAdmin) {
+      if (!window.confirm(`Выдать ${u.email} права администратора?`)) return;
+      adminMutation.mutate({ userId: u.id, makeAdmin: true });
+      return;
+    }
+    if (wasAdmin && next !== "admin") {
+      if (!window.confirm(`Снять с ${u.email} права администратора?`)) return;
+      await adminMutation.mutateAsync({ userId: u.id, makeAdmin: false });
+    }
+    if (next !== "admin" && next !== u.productRole) {
+      productMutation.mutate({ userId: u.id, role: next });
+    }
+  };
+
   return (
     <div className="cms-users">
+      <Sheet open={!!cardUser} onOpenChange={(o) => !o && setCardUser(null)}>
+        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-2xl">
+          {cardUser && (
+            <>
+              <SheetHeader>
+                <SheetTitle>{cardUser.display_name || cardUser.email}</SheetTitle>
+                <p className="text-[12px] text-muted-foreground">
+                  {cardUser.email} · {roleName(cardUser)}
+                </p>
+              </SheetHeader>
+              <div className="cab-sheet">
+                {CARD_TABS.map(([title, Panel]) => (
+                  <section key={title} className="cab-sheet-sec">
+                    <h3 className="cab-sheet-h">{title}</h3>
+                    <Panel uid={cardUser.id} mode="staff" />
+                  </section>
+                ))}
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
       {isOwner && (
         <div className="mb-4 rounded-2xl border border-border bg-surface-light p-4">
           <h2 className="mb-3 text-[15px] font-semibold text-foreground">
@@ -148,12 +206,11 @@ export function UsersTab() {
               className={inputCls}
               aria-label="Роль"
               value={newUser.role}
-              onChange={(e) =>
-                setNewUser({ ...newUser, role: e.target.value as "client" | "specialist" })
-              }
+              onChange={(e) => setNewUser({ ...newUser, role: e.target.value as RoleChoice })}
             >
               <option value="client">Клиент</option>
               <option value="specialist">Специалист</option>
+              <option value="admin">Администратор</option>
             </select>
           </div>
           <button
@@ -213,9 +270,25 @@ export function UsersTab() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap justify-end gap-2">
+                      <button className={btn} onClick={() => setCardUser(u)}>
+                        Кабинет
+                      </button>
                       <Link to="/" search={{ owner: u.id }} className={btn + " inline-flex items-center"}>
                         Открыть базу
                       </Link>
+                      {isOwner && (
+                        <select
+                          className={btn + " pr-7"}
+                          aria-label="Роль"
+                          disabled={busy || u.isOwner}
+                          value={u.role === "admin" ? "admin" : u.productRole}
+                          onChange={(e) => void changeRole(u, e.target.value as RoleChoice)}
+                        >
+                          <option value="client">Клиент</option>
+                          <option value="specialist">Специалист</option>
+                          <option value="admin">Администратор</option>
+                        </select>
+                      )}
                       {!u.isSelf && (
                         <button
                           onClick={() =>
@@ -229,43 +302,15 @@ export function UsersTab() {
                       )}
                       {isOwner && (
                         <>
-                          <button
-                            className={btn}
-                            disabled={busy || u.productRole === "client"}
-                            onClick={() =>
-                              productMutation.mutate({ userId: u.id, role: "client" })
-                            }
-                          >
-                            Сделать клиентом
-                          </button>
-                          <button
-                            className={btn}
-                            disabled={busy || u.productRole === "specialist"}
-                            onClick={() =>
-                              productMutation.mutate({ userId: u.id, role: "specialist" })
-                            }
-                          >
-                            Сделать специалистом
-                          </button>
-                          <button
-                            className={btn}
-                            disabled={busy || u.isOwner}
-                            onClick={() =>
-                              adminMutation.mutate({
-                                userId: u.id,
-                                makeAdmin: u.role !== "admin",
-                              })
-                            }
-                          >
-                            {u.role === "admin" ? "Снять администратора" : "Назначить администратором"}
-                          </button>
                           {!u.isOwner && (
                             <button
                               className={btn}
                               disabled={busy}
-                              onClick={() =>
-                                ownerMutation.mutate({ userId: u.id, makeOwner: true })
-                              }
+                              onClick={() => {
+                                if (window.confirm(`Назначить ${u.email} владельцем?`)) {
+                                  ownerMutation.mutate({ userId: u.id, makeOwner: true });
+                                }
+                              }}
                             >
                               Назначить владельцем
                             </button>
