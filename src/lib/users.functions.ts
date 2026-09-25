@@ -109,7 +109,7 @@ export const createUserAccount = createServerFn({ method: "POST" })
       email: string;
       password: string;
       displayName: string;
-      role: "client" | "specialist";
+      role: "client" | "specialist" | "admin";
     }) => input,
   )
   .handler(async ({ data, context }) => {
@@ -129,10 +129,18 @@ export const createUserAccount = createServerFn({ method: "POST" })
     const newId = created.user?.id;
     if (!newId) throw new Error("Не удалось создать учётную запись");
 
+    if (!["client", "specialist", "admin"].includes(data.role)) throw new Error("Некорректная роль");
     await context.supabase.rpc("set_user_product_role", {
       target_user: newId,
-      new_role: data.role,
+      new_role: data.role === "specialist" ? "specialist" : "client",
     });
+    if (data.role === "admin") {
+      const { error: adminErr } = await context.supabase.rpc("set_user_admin", {
+        target_user: newId,
+        make_admin: true,
+      });
+      if (adminErr) throw new Error(adminErr.message);
+    }
     await context.supabase.rpc("log_action", {
       _category: "users",
       _action: "create_user",

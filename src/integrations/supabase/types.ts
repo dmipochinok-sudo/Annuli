@@ -14,35 +14,80 @@ export type Database = {
   }
   public: {
     Tables: {
+      base_access_grants: {
+        Row: {
+          consent_at: string
+          created_at: string
+          expires_at: string | null
+          grantee_id: string
+          id: string
+          level: string
+          owner_id: string
+          revoked_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          consent_at?: string
+          created_at?: string
+          expires_at?: string | null
+          grantee_id: string
+          id?: string
+          level?: string
+          owner_id: string
+          revoked_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          consent_at?: string
+          created_at?: string
+          expires_at?: string | null
+          grantee_id?: string
+          id?: string
+          level?: string
+          owner_id?: string
+          revoked_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       book_projects: {
         Row: {
+          amount: number
           created_at: string
           due_date: string | null
           id: string
           notes: string
+          order_no: string
           owner_id: string
+          paid_amount: number
           plan: string
           status: string
           title: string
           updated_at: string
         }
         Insert: {
+          amount?: number
           created_at?: string
           due_date?: string | null
           id?: string
           notes?: string
+          order_no?: string
           owner_id: string
+          paid_amount?: number
           plan?: string
           status?: string
           title?: string
           updated_at?: string
         }
         Update: {
+          amount?: number
           created_at?: string
           due_date?: string | null
           id?: string
           notes?: string
+          order_no?: string
           owner_id?: string
+          paid_amount?: number
           plan?: string
           status?: string
           title?: string
@@ -124,6 +169,33 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       persons: {
         Row: {
           created_at: string
@@ -157,29 +229,38 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string
+          city: string
           created_at: string
           display_name: string
           email: string
           id: string
           is_blocked: boolean
+          note: string
+          phone: string
           updated_at: string
         }
         Insert: {
           avatar_url?: string
+          city?: string
           created_at?: string
           display_name?: string
           email?: string
           id: string
           is_blocked?: boolean
+          note?: string
+          phone?: string
           updated_at?: string
         }
         Update: {
           avatar_url?: string
+          city?: string
           created_at?: string
           display_name?: string
           email?: string
           id?: string
           is_blocked?: boolean
+          note?: string
+          phone?: string
           updated_at?: string
         }
         Relationships: []
@@ -444,6 +525,7 @@ export type Database = {
     }
     Functions: {
       current_app_role: { Args: never; Returns: string }
+      has_base_access: { Args: { _owner: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
       is_owner: { Args: never; Returns: boolean }
       list_audit_logs: {
@@ -456,6 +538,13 @@ export type Database = {
           details: Json
           id: string
           target_email: string
+        }[]
+      }
+      list_specialists: {
+        Args: never
+        Returns: {
+          display_name: string
+          id: string
         }[]
       }
       log_action: {

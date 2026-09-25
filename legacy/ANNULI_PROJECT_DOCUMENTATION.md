@@ -1246,3 +1246,8 @@ specialist → client), `register_product_role(text)`, `set_user_product_role(uu
 - CMS (`/admin/cms`) получила вкладки «Пользователи» (`src/components/site/cms/UsersTab.tsx` — перенос страницы /admin/users: таблица, создание/удаление, роли, блокировка) и «Журнал» (`src/components/site/cms/JournalTab.tsx` — фильтр по категории, поиск по email, постраничная навигация, экспорт CSV через Blob на клиенте).
 - Маршрут `/admin/users` заменён на редирект в `/admin/cms`; ссылка в UserMenu теперь ведёт в «Управление сайтом».
 - Старые записи журнала дозаполнены email из profiles.
+
+## v5.1 — Личный кабинет клиента и карточка пользователя в CMS (25.09.2026)
+- /account: 6 закладок (Профиль, Мои заказы, Материалы и базы, Доступы, Приложение, Уведомления); общий модуль src/lib/cabinet.ts и src/components/site/cabinet/CabinetPanels.tsx (mode self|staff).
+- БД: profiles.phone/city/note; book_projects.order_no (ORD-xxxx, sequence), amount, paid_amount — клиент только читает, ведут админы; base_access_grants (выдача доступа к базе специалисту, срок, согласие 152-ФЗ, отзыв); notifications (триггеры на заказы и доступы); has_base_access() + политика чтения persons для специалиста; list_specialists().
+- CMS «Пользователи»: роль «Администратор» при создании; один список ролей Клиент/Специалист/Администратор с подтверждением; кнопка «Кабинет» — боковая панель с профилем, заказами (создание/статус/оплата с этапами), базой, доступами, уведомлениями; действия пишутся в журнал (users/orders).
