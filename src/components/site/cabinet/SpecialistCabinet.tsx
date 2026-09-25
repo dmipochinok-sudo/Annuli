@@ -10,8 +10,9 @@ import { imgDel, setActiveOwner } from "@/lib/annuli/db";
 import { collectImageIds } from "@/lib/annuli/media";
 import { normalizePerson, type Person } from "@/lib/annuli/types";
 import { SpecialistDialog, type PublicSpecialist } from "@/components/site/SpecialistsSection";
+import { InquiriesPanel, useInquiries } from "@/components/site/cabinet/InquiriesPanel";
 
-type Tab = "card" | "rates" | "reviews" | "bases" | "limits";
+type Tab = "card" | "rates" | "inquiries" | "reviews" | "bases" | "limits";
 
 interface Props {
   uid: string;
@@ -22,9 +23,12 @@ interface Props {
 export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
   const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("card");
+  const { data: inquiries } = useInquiries(uid);
+  const unread = inquiries?.filter((item) => item.specialist_id === uid && item.unread_count > 0).length ?? 0;
   const tabs: { key: Tab; label: string }[] = [
     { key: "card", label: t("Карточка", "Card") },
     { key: "rates", label: t("Тарифы", "Rates") },
+    { key: "inquiries", label: t("Заявки", "Inquiries") },
     { key: "reviews", label: t("Отзывы", "Reviews") },
     { key: "bases", label: t("Базы", "Databases") },
     { key: "limits", label: t("Лимиты", "Limits") },
@@ -44,6 +48,7 @@ export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
           >
             <span className="cab-num">{String(i + 1).padStart(2, "0")}</span>
             {x.label}
+            {x.key === "inquiries" && unread > 0 && <span className="cab-dot">{unread}</span>}
           </button>
         ))}
         <button className="cab-tab cab-tab--out" onClick={onSignOut}>
@@ -54,6 +59,7 @@ export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
         <h1 className="cab-title">{current.label}</h1>
         {tab === "card" && <CardPanel uid={uid} />}
         {tab === "rates" && <RatesPanel uid={uid} />}
+        {tab === "inquiries" && <InquiriesPanel uid={uid} perspective="specialist" />}
         {tab === "reviews" && <ReviewsPanel uid={uid} />}
         {tab === "bases" && <SpecBasesPanel uid={uid} />}
         {tab === "limits" && <LimitsPanel uid={uid} />}

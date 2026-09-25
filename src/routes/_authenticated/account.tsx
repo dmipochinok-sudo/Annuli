@@ -11,6 +11,7 @@ import {
   OrdersPanel,
   ProfilePanel,
 } from "@/components/site/cabinet/CabinetPanels";
+import { InquiriesPanel, useInquiries } from "@/components/site/cabinet/InquiriesPanel";
 import { SpecialistCabinet } from "@/components/site/cabinet/SpecialistCabinet";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/lib/cabinet";
@@ -41,7 +42,7 @@ export const Route = createFileRoute("/_authenticated/account")({
   component: AccountPage,
 });
 
-type TabKey = "profile" | "orders" | "bases" | "access" | "app" | "notifications";
+type TabKey = "profile" | "orders" | "inquiries" | "bases" | "access" | "app" | "notifications";
 
 function AccountPage() {
   const { t, lang } = useI18n();
@@ -58,7 +59,9 @@ function AccountPage() {
   const { data: appRole } = useAppRole(userId);
   const { data: productRole } = useProductRole(userId);
   const { data: notes } = useNotifications(userId);
+  const { data: inquiries } = useInquiries(userId ?? "");
   const unread = notes?.filter((n) => !n.read_at).length ?? 0;
+  const unreadInquiries = inquiries?.filter((item) => item.client_id === userId && item.unread_count > 0).length ?? 0;
 
   const chooseRole = async (role: ProductRole) => {
     setSavingRole(true);
@@ -81,6 +84,7 @@ function AccountPage() {
   const tabs: { key: TabKey; label: string }[] = [
     { key: "profile", label: t("Профиль", "Profile") },
     { key: "orders", label: t("Мои заказы", "My orders") },
+    { key: "inquiries", label: t("Заявки и чат", "Inquiries & chat") },
     { key: "bases", label: t("Материалы и базы", "Materials & databases") },
     { key: "access", label: t("Доступы", "Access") },
     { key: "app", label: t("Приложение", "App") },
@@ -112,6 +116,7 @@ function AccountPage() {
               <span className="cab-num">{String(i + 1).padStart(2, "0")}</span>
               {x.label}
               {x.key === "notifications" && unread > 0 && <span className="cab-dot">{unread}</span>}
+              {x.key === "inquiries" && unreadInquiries > 0 && <span className="cab-dot">{unreadInquiries}</span>}
             </button>
           ))}
           <button className="cab-tab cab-tab--out" onClick={() => void signOut()}>
@@ -140,6 +145,7 @@ function AccountPage() {
             <>
               {tab === "profile" && <ProfilePanel uid={userId} mode="self" />}
               {tab === "orders" && <OrdersPanel uid={userId} mode="self" />}
+              {tab === "inquiries" && <InquiriesPanel uid={userId} perspective="client" />}
               {tab === "bases" && <BasesPanel uid={userId} mode="self" />}
               {tab === "access" && <AccessPanel uid={userId} mode="self" />}
               {tab === "app" && <AppPanel />}
