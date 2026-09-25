@@ -15,7 +15,7 @@ export interface PublicRate {
 }
 export interface PublicReview { client_name: string; body: string; reply: string; created_at: string }
 export interface PublicSpecialist {
-  user_id: string; full_name: string; avatar_url: string;
+  user_id: string; full_name: string; first_name: string; last_name: string; avatar_url: string;
   specialization_ru: string; specialization_en: string; about_ru: string; about_en: string;
   regions_ru: string; regions_en: string; archives_ru: string; archives_en: string;
   activities_ru: string; activities_en: string; accepts_clients: boolean; featured_order: number;

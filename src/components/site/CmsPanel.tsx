@@ -17,6 +17,7 @@ import { AddonsTab } from "./cms/AddonsTab";
 import { SpecialistsTab } from "./cms/SpecialistsTab";
 import { UsersTab } from "./cms/UsersTab";
 import { JournalTab } from "./cms/JournalTab";
+import { SectionNav } from "./SectionNav";
 
 type Tab = "texts" | "sections" | "assets" | "addons" | "specialists" | "users" | "journal";
 
@@ -145,26 +146,22 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
         </div>
       </header>
 
-      <div className="cms-nav">
-        {TABS.map((tb) => (
-          <button
-            key={tb.id}
-            className={tab === tb.id ? "on" : ""}
-            onClick={() => setTab(tb.id)}
-          >
-            {t(tb.ru, tb.en)}
-          </button>
-        ))}
-      </div>
+      <div className="cms-workspace">
+        <SectionNav
+          label={t("Разделы CMS", "CMS sections")}
+          items={TABS.map((tb) => ({ key: tb.id, label: t(tb.ru, tb.en) }))}
+          active={tab}
+          onChange={setTab}
+        />
+        <main className="cms-content" role="tabpanel">
+          {tab === "sections" && <SectionsTab />}
+          {tab === "assets" && <AssetsTab />}
+          {tab === "addons" && <AddonsTab />}
+          {tab === "specialists" && <SpecialistsTab />}
+          {tab === "users" && <UsersTab />}
+          {tab === "journal" && <JournalTab />}
 
-      {tab === "sections" && <SectionsTab />}
-      {tab === "assets" && <AssetsTab />}
-      {tab === "addons" && <AddonsTab />}
-      {tab === "specialists" && <SpecialistsTab />}
-      {tab === "users" && <UsersTab />}
-      {tab === "journal" && <JournalTab />}
-
-      <div className="cms-groups" hidden={tab !== "texts"}>
+          <div className="cms-groups" hidden={tab !== "texts"}>
         {FIELD_GROUPS.map((g) => {
           const fields = CONTENT_FIELDS.filter((f) => f.group === g.id);
           if (fields.length === 0) return null;
@@ -218,6 +215,8 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
             </section>
           );
         })}
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -11,16 +11,16 @@ import { collectImageIds } from "@/lib/annuli/media";
 import { normalizePerson, type Person } from "@/lib/annuli/types";
 import { SpecialistDialog, type PublicSpecialist } from "@/components/site/SpecialistsSection";
 import { InquiriesPanel, useInquiries } from "@/components/site/cabinet/InquiriesPanel";
+import { SectionNav } from "@/components/site/SectionNav";
 
 type Tab = "card" | "rates" | "inquiries" | "reviews" | "bases" | "limits";
 
 interface Props {
   uid: string;
   roleText: string;
-  onSignOut: () => void;
 }
 
-export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
+export function SpecialistCabinet({ uid, roleText }: Props) {
   const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("card");
   const { data: inquiries } = useInquiries(uid);
@@ -33,30 +33,18 @@ export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
     { key: "bases", label: t("Базы", "Databases") },
     { key: "limits", label: t("Лимиты", "Limits") },
   ];
-  const current = tabs.find((x) => x.key === tab)!;
+  const current = tabs.find((x) => x.key === tab) ?? tabs[0];
   return (
     <section className="cab">
-      <aside className="cab-nav" aria-label={t("Разделы кабинета", "Account sections")}>
-        <div className="cab-role">
-          {t("Кабинет специалиста", "Specialist account")} · {roleText}
-        </div>
-        {tabs.map((x, i) => (
-          <button
-            key={x.key}
-            className={`cab-tab${tab === x.key ? " is-active" : ""}`}
-            onClick={() => setTab(x.key)}
-          >
-            <span className="cab-num">{String(i + 1).padStart(2, "0")}</span>
-            {x.label}
-            {x.key === "inquiries" && unread > 0 && <span className="cab-dot">{unread}</span>}
-          </button>
-        ))}
-        <button className="cab-tab cab-tab--out" onClick={onSignOut}>
-          {t("Выйти", "Sign out")}
-        </button>
-      </aside>
+      <SectionNav
+        label={t("Разделы кабинета", "Account sections")}
+        title={`${t("Кабинет специалиста", "Specialist account")} · ${roleText}`}
+        items={tabs.map((x) => ({ ...x, badge: x.key === "inquiries" ? unread : 0 }))}
+        active={tab}
+        onChange={setTab}
+      />
       <div className="cab-body">
-        <h1 className="cab-title">{current.label}</h1>
+        <h1 className="cab-title">{current?.label ?? ""}</h1>
         {tab === "card" && <CardPanel uid={uid} />}
         {tab === "rates" && <RatesPanel uid={uid} />}
         {tab === "inquiries" && <InquiriesPanel uid={uid} perspective="specialist" />}
@@ -70,6 +58,8 @@ export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
 
 /* ───────── данные ───────── */
 const EMPTY = {
+  first_name: "",
+  last_name: "",
   avatar_url: "",
   specialization_ru: "", specialization_en: "",
   about_ru: "", about_en: "",
@@ -122,7 +112,7 @@ function CardPanel({ uid }: { uid: string }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(false);
-  const [name, setName] = useState("");
+  const [legacyName, setLegacyName] = useState("");
 
   useEffect(() => {
     if (prof) {
@@ -134,7 +124,7 @@ function CardPanel({ uid }: { uid: string }) {
     }
   }, [prof]);
   useEffect(() => {
-    supabase.from("profiles").select("display_name").eq("id", uid).maybeSingle().then(({ data }) => setName(data?.display_name ?? ""));
+    supabase.from("profiles").select("display_name").eq("id", uid).maybeSingle().then(({ data }) => setLegacyName(data?.display_name ?? ""));
   }, [uid]);
 
   const set = <K extends keyof CardForm>(k: K, v: CardForm[K]) => setForm((f) => ({ ...f, [k]: v }));
@@ -179,7 +169,9 @@ function CardPanel({ uid }: { uid: string }) {
   );
 
   const previewData: PublicSpecialist = {
-    user_id: uid, full_name: name || t("Специалист", "Specialist"), ...form, featured_order: 0, rates: [], reviews: [],
+    user_id: uid,
+    full_name: [form.first_name, form.last_name].filter(Boolean).join(" ") || legacyName || t("Специалист", "Specialist"),
+    ...form, featured_order: 0, rates: [], reviews: [],
   };
 
   return (
@@ -207,6 +199,10 @@ function CardPanel({ uid }: { uid: string }) {
           )}
         </div>
         <div className="cab-meta">{t("Квадратное фото, масштабируется до 256 px", "Square photo, scaled to 256 px")}</div>
+      </div>
+      <div className="cab-grid2">
+        <label className="form-field"><span className="form-lbl">{t("Имя", "First name")}</span><input className="form-inp" value={form.first_name} onChange={(e) => set("first_name", e.target.value)} /></label>
+        <label className="form-field"><span className="form-lbl">{t("Фамилия", "Last name")}</span><input className="form-inp" value={form.last_name} onChange={(e) => set("last_name", e.target.value)} /></label>
       </div>
       <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
         <label className="cab-check"><input type="checkbox" checked={form.is_visible} onChange={(e) => set("is_visible", e.target.checked)} />{t("Видимость карточки", "Card visible")}</label>
