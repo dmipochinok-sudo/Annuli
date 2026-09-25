@@ -229,26 +229,35 @@ export type Database = {
         Row: {
           action: string
           actor: string | null
+          actor_email: string
+          category: string
           created_at: string
           details: Json
           id: string
           target: string | null
+          target_email: string
         }
         Insert: {
           action: string
           actor?: string | null
+          actor_email?: string
+          category?: string
           created_at?: string
           details?: Json
           id?: string
           target?: string | null
+          target_email?: string
         }
         Update: {
           action?: string
           actor?: string | null
+          actor_email?: string
+          category?: string
           created_at?: string
           details?: Json
           id?: string
           target?: string | null
+          target_email?: string
         }
         Relationships: []
       }
@@ -437,6 +446,27 @@ export type Database = {
       current_app_role: { Args: never; Returns: string }
       is_admin: { Args: never; Returns: boolean }
       is_owner: { Args: never; Returns: boolean }
+      list_audit_logs: {
+        Args: { _category?: string; _limit?: number; _offset?: number }
+        Returns: {
+          action: string
+          actor_email: string
+          category: string
+          created_at: string
+          details: Json
+          id: string
+          target_email: string
+        }[]
+      }
+      log_action: {
+        Args: {
+          _action: string
+          _category: string
+          _details?: Json
+          _target?: string
+        }
+        Returns: undefined
+      }
       owner_list_users: {
         Args: never
         Returns: {
