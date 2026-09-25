@@ -14,8 +14,10 @@ import {
 import { SectionsTab } from "./cms/SectionsTab";
 import { AssetsTab } from "./cms/AssetsTab";
 import { AddonsTab } from "./cms/AddonsTab";
+import { UsersTab } from "./cms/UsersTab";
+import { JournalTab } from "./cms/JournalTab";
 
-type Tab = "texts" | "sections" | "assets" | "addons";
+type Tab = "texts" | "sections" | "assets" | "addons" | "users" | "journal";
 
 interface Props {
   content: SiteContent;
@@ -42,6 +44,8 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
     { id: "sections", ru: "Блоки", en: "Sections" },
     { id: "assets", ru: "Изображения", en: "Images" },
     { id: "addons", ru: "Дополнения", en: "Add-ons" },
+    { id: "users", ru: "Пользователи", en: "Users" },
+    { id: "journal", ru: "Журнал", en: "Journal" },
   ];
 
   const dirtyKeys = useMemo(
@@ -154,6 +158,8 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
       {tab === "sections" && <SectionsTab />}
       {tab === "assets" && <AssetsTab />}
       {tab === "addons" && <AddonsTab />}
+      {tab === "users" && <UsersTab />}
+      {tab === "journal" && <JournalTab />}
 
       <div className="cms-groups" hidden={tab !== "texts"}>
         {FIELD_GROUPS.map((g) => {

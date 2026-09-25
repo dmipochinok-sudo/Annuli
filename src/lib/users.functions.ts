@@ -54,6 +54,11 @@ export const setUserBlocked = createServerFn({ method: "POST" })
       .update({ is_blocked: data.blocked, updated_at: new Date().toISOString() })
       .eq("id", data.userId);
     if (error) throw error;
+    await supabase.rpc("log_action", {
+      _category: "users",
+      _action: data.blocked ? "block_user" : "unblock_user",
+      _target: data.userId,
+    });
     return { ok: true };
   });
 
@@ -128,6 +133,12 @@ export const createUserAccount = createServerFn({ method: "POST" })
       target_user: newId,
       new_role: data.role,
     });
+    await context.supabase.rpc("log_action", {
+      _category: "users",
+      _action: "create_user",
+      _target: newId,
+      _details: { role: data.role },
+    });
     return { ok: true, id: newId };
   });
 
@@ -147,6 +158,12 @@ export const deleteUserAccount = createServerFn({ method: "POST" })
     if (target.is_owner) throw new Error("Нельзя удалить учётную запись владельца");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabase.rpc("log_action", {
+      _category: "users",
+      _action: "delete_user",
+      _target: data.userId,
+      _details: { email: target.email },
+    });
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
