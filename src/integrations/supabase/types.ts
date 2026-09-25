@@ -903,6 +903,10 @@ export type Database = {
         Args: { new_role: string; target_user: string }
         Returns: undefined
       }
+      specialist_accepts_clients: {
+        Args: { _specialist: string }
+        Returns: boolean
+      }
       staff_list_specialists: {
         Args: never
         Returns: {
