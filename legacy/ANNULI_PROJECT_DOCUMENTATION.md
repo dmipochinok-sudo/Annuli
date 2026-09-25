@@ -1212,3 +1212,26 @@ Vision, Architecture Decisions, инварианты модели данных, 
 - В каждой группе поля расположены в порядке карточки: тариф, название, описание, цена, примечание, страницы, фотографии, интервью, древо, экземпляры, правки и срок.
 - Подписи характеристик («Страниц», «Фотографий», «Интервью» и т. д.) больше не редактируются. Они фиксированы в интерфейсе карточек; CMS изменяет только соответствующие значения RU/EN.
 - Общий текст кнопки «Выбрать план» вынесен в отдельную группу «Тарифы · общие тексты». Схема базы и ранее сохранённые данные не изменялись.
+
+## v4.9 — Фаза 3: ролевая модель (client / specialist / admin / owner)
+
+Новые таблицы: `public.user_product_roles` (client|specialist, PK user_id), `public.user_owner_flags`
+(признак владельца), `public.role_audit_logs` (журнал изменений ролей). RLS включён везде;
+у `user_product_roles` — чтение своей записи или владельцем, одноразовая вставка своей роли,
+изменение/удаление только владельцем. `user_owner_flags` и `role_audit_logs` закрыты для
+клиентских запросов (доступ только через SECURITY DEFINER-функции).
+
+Функции: `is_owner()`, `current_app_role()` (owner → admin через существующий `is_admin()` →
+specialist → client), `register_product_role(text)`, `set_user_product_role(uuid,text)`,
+`set_user_admin(uuid,boolean)`, `set_user_owner(uuid,boolean)` (нельзя снять себя и последнего
+владельца), `owner_list_users()`. Все владельческие действия пишут в `role_audit_logs`.
+Первым владельцем при миграции назначен самый ранний администратор.
+
+Клиент: `src/lib/roles.ts` (useAppRole/useProductRole/registerProductRole/roleLabel),
+выбор роли при регистрации в `src/routes/auth.tsx`, роль и мягкий выбор роли в
+`src/routes/_authenticated/account.tsx`, роль в `profile.tsx`, владельческие серверные функции в
+`src/lib/users.functions.ts` (включая `createUserAccount` и `deleteUserAccount` через admin-клиент
+после проверки владельца), расширенная таблица в `src/routes/_authenticated/admin/users.tsx`.
+
+Не менялись: настройки авторизации, подключение к базе, переменные окружения, существующие
+таблицы и политики, маршрут `/app`, CMS-логика.

@@ -4,3 +4,10 @@
 - [x] Refine public logo, mobile menu, sections, reveal, and toast
 - [x] Verify public landing in light/dark and desktop/mobile
 - [x] Update project documentation
+
+## Фаза 3 — роли
+- [x] Таблицы продуктовых ролей, владельцев и журнала изменений + RLS
+- [x] Функции роли, первичный выбор и владельческие действия
+- [x] Выбор роли при регистрации и в кабинете
+- [x] Роль в профиле и кабинете
+- [x] Владельческое управление ролями, создание и удаление учётных записей
