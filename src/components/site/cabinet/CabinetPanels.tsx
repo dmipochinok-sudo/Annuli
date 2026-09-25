@@ -44,7 +44,7 @@ export function ProfilePanel({ uid, mode }: PanelProps) {
     setSaving(true);
     const { error } = await supabase.from("profiles").update(form).eq("id", uid);
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (mode === "staff") void logAction("update_profile", uid);
     toast.success(t("Профиль сохранён", "Profile saved"));
     void qc.invalidateQueries({ queryKey: ["cab-profile", uid] });
@@ -152,13 +152,13 @@ function NewOrderForm({ uid }: { uid: string }) {
   const qc = useQueryClient();
   const [f, setF] = useState({ title: "", plan: "", amount: "" });
   const create = async () => {
-    if (!f.title.trim()) return toast.error(t("Укажите название", "Enter a title"));
+    if (!f.title.trim()) { toast.error(t("Укажите название", "Enter a title")); return; }
     const { data, error } = await supabase
       .from("book_projects")
       .insert({ owner_id: uid, title: f.title, plan: f.plan, amount: Number(f.amount) || 0, status: "new" })
       .select("order_no")
       .single();
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     void supabase.rpc("log_action", {
       _category: "orders",
       _action: "create_order",
@@ -219,7 +219,7 @@ function OrderEditor({ uid, order }: { uid: string; order: Order }) {
       });
     }
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     void supabase.rpc("log_action", {
       _category: "orders",
       _action: statusChanged ? "order_status" : "update_order",
@@ -322,8 +322,8 @@ export function AccessPanel({ uid, mode }: PanelProps) {
   };
 
   const grant = async () => {
-    if (!f.grantee) return toast.error(t("Выберите специалиста", "Choose a specialist"));
-    if (!f.consent) return toast.error(t("Подтвердите согласие", "Confirm consent"));
+    if (!f.grantee) { toast.error(t("Выберите специалиста", "Choose a specialist")); return; }
+    if (!f.consent) { toast.error(t("Подтвердите согласие", "Confirm consent")); return; }
     setBusy(true);
     const months = Number(f.term);
     const expires = months ? new Date(Date.now() + months * 30 * 864e5).toISOString() : null;
@@ -334,7 +334,7 @@ export function AccessPanel({ uid, mode }: PanelProps) {
       expires_at: expires,
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     setF({ grantee: "", level: "view", term: "3", consent: false });
     toast.success(t("Доступ выдан", "Access granted"));
     refresh();
@@ -345,7 +345,7 @@ export function AccessPanel({ uid, mode }: PanelProps) {
       .from("base_access_grants")
       .update({ revoked_at: new Date().toISOString() })
       .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     if (mode === "staff") void logAction("revoke_access", uid, { grant: id });
     toast.success(t("Доступ отозван", "Access revoked"));
     refresh();
