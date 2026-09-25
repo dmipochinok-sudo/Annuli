@@ -6,6 +6,13 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { SecHead } from "@/components/site/sections";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  registerProductRole,
+  roleLabel,
+  useAppRole,
+  useProductRole,
+  type ProductRole,
+} from "@/lib/roles";
 
 export const Route = createFileRoute("/_authenticated/account")({
   head: () => ({
@@ -26,7 +33,7 @@ export const Route = createFileRoute("/_authenticated/account")({
 });
 
 function AccountPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [userId, setUserId] = useState<string | null>(null);
@@ -34,6 +41,21 @@ function AccountPage() {
   const [displayName, setDisplayName] = useState("");
   const [savedName, setSavedName] = useState("");
   const [saving, setSaving] = useState(false);
+  const [savingRole, setSavingRole] = useState(false);
+
+  const { data: appRole } = useAppRole(userId);
+  const { data: productRole } = useProductRole(userId);
+
+  const chooseRole = async (role: ProductRole) => {
+    setSavingRole(true);
+    try {
+      await registerProductRole(role);
+      await queryClient.invalidateQueries({ queryKey: ["product-role", userId] });
+      await queryClient.invalidateQueries({ queryKey: ["current-app-role", userId] });
+    } finally {
+      setSavingRole(false);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
