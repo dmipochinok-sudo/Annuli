@@ -155,7 +155,7 @@ export function UsersTab() {
   return (
     <div className="cms-users">
       <Sheet open={!!cardUser} onOpenChange={(o) => !o && setCardUser(null)}>
-        <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-2xl">
+        <SheetContent side="right" className="z-[2000] w-full overflow-y-auto sm:max-w-2xl">
           {cardUser && (
             <>
               <SheetHeader>

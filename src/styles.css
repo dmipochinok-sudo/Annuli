@@ -2342,7 +2342,7 @@ a:focus-visible,
 }
 
 /* ── Client cabinet (/account and CMS user card) ── */
-.cab { display: grid; grid-template-columns: 260px 1fr; gap: 48px; align-items: start; }
+.cab { display: grid; grid-template-columns: 260px 1fr; gap: 48px; align-items: start; max-width: 1180px; margin: 0 auto; padding: 32px 24px 64px; }
 .cab-nav { position: sticky; top: 96px; display: flex; flex-direction: column; border-top: 1px solid var(--border); }
 .cab-role { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-foreground); padding: 14px 0; }
 .cab-tab { display: flex; align-items: center; gap: 14px; text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--border); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--foreground); background: none; border-left: 2px solid transparent; cursor: pointer; transition: background .2s; }
