@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { candidateLabel, slotTitle, type DupeResolution, type DupeSlot } from "@/lib/annuli/dedupe";
 import { lifeDates } from "@/lib/annuli/format";
 
@@ -12,6 +13,11 @@ interface Props {
 /** Диалог подтверждения автопривязки родственников к персонам базы. */
 export function DupeModal({ slots, resolutions, onResolve, onConfirm, onCancel }: Props) {
   const allResolved = slots.every((s) => resolutions.has(s.key));
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") onCancel(); };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onCancel]);
 
   return (
     <div
@@ -20,9 +26,9 @@ export function DupeModal({ slots, resolutions, onResolve, onConfirm, onCancel }
         if (ev.target === ev.currentTarget) onCancel();
       }}
     >
-      <div className="flex h-[100svh] w-full max-w-2xl flex-col overflow-hidden bg-card pb-[env(safe-area-inset-bottom)] shadow-2xl sm:h-auto sm:max-h-[85vh] sm:rounded-xl sm:pb-0">
+      <div role="dialog" aria-modal="true" aria-labelledby="dupe-modal-title" className="flex h-[100svh] w-full max-w-2xl flex-col overflow-hidden bg-card pb-[env(safe-area-inset-bottom)] shadow-2xl sm:h-auto sm:max-h-[85vh] sm:rounded-xl sm:pb-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h3 className="text-[14px] font-bold">🔍 Найдены совпадения с персонами в базе</h3>
+          <h3 id="dupe-modal-title" className="text-[14px] font-bold">🔍 Найдены совпадения с персонами в базе</h3>
           <button onClick={onCancel} className="px-2 text-muted-foreground hover:text-foreground">
             ✕
           </button>

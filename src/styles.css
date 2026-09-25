@@ -1502,6 +1502,36 @@ a:focus-visible,
   -webkit-appearance: none;
   width: 100%;
   border-radius: 2px;
+  min-height: 44px;
+}
+
+/* Shared account and CMS section navigation */
+.section-nav { width: 236px; flex: 0 0 236px; border-right: 1px solid var(--rule); padding: var(--s5) var(--s4); background: var(--wash); }
+.section-nav-title { margin: 0 var(--s2) var(--s4); font-family: var(--f-ui); font-size: var(--t-caption); font-weight: 700; color: var(--mid); text-transform: uppercase; }
+.section-nav-list { display: grid; gap: var(--s1); }
+.section-nav-item { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; min-height: 44px; width: 100%; padding: var(--s2) var(--s3); border: 0; border-left: 2px solid transparent; background: transparent; color: var(--mid); font-family: var(--f-ui); font-size: var(--t-sm); text-align: left; cursor: pointer; }
+.section-nav-item:hover { color: var(--ink); background: var(--paper); }
+.section-nav-item.is-active { color: var(--ink); border-left-color: var(--signal); background: var(--paper); font-weight: 700; }
+.section-nav-number { color: var(--dim); font-size: var(--t-caption); }
+.section-nav-item.is-active .section-nav-number { color: var(--signal); }
+.section-nav-badge, .nav-unread { display: inline-grid; min-width: 20px; height: 20px; padding: 0 5px; place-items: center; border-radius: 999px; background: var(--signal); color: var(--paper); font: 700 11px/1 var(--f-ui); }
+.nav-account-link { display: inline-flex !important; align-items: center; gap: var(--s2); }
+.cms-workspace { display: flex; min-height: calc(100vh - 92px); }
+.cms-content { min-width: 0; flex: 1; padding: var(--s6); }
+.cab-shell > .section-nav { align-self: stretch; }
+.cab-dot, .cab-badge--done { background: var(--signal); color: var(--paper); border-color: var(--signal); }
+.specialist-card:hover, .inq-item.is-active, .inq-message.is-mine { border-color: var(--signal); }
+.specialist-modal { width: min(600px, calc(100vw - var(--s8))); max-width: 600px; }
+
+@media (max-width: 767px) {
+  .cms-workspace, .cab-shell { display: block; }
+  .section-nav { width: 100%; border-right: 0; border-bottom: 1px solid var(--rule); padding: var(--s3) var(--g); overflow: hidden; }
+  .section-nav-title { margin: 0 0 var(--s2); }
+  .section-nav-list { display: flex; gap: var(--s2); overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .section-nav-list::-webkit-scrollbar { display: none; }
+  .section-nav-item { grid-template-columns: auto auto auto; width: auto; flex: none; scroll-snap-align: start; border-left: 0; border-bottom: 2px solid transparent; }
+  .section-nav-item.is-active { border-bottom-color: var(--signal); }
+  .cms-content { padding: var(--s4) var(--g); }
 }
 .form-ta {
   resize: vertical;

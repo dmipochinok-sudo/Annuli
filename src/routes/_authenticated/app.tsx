@@ -703,12 +703,18 @@ function Index() {
               <div className="relative mb-4">
                 <div
                   ref={tabsRef}
+                  role="tablist"
+                  aria-label="Разделы персоны"
                   className="no-scrollbar flex snap-x snap-mandatory gap-1 overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-xl border border-border bg-surface-light px-2"
                 >
                   {TABS.map((t) => (
                     <button
                       key={t.id}
                       data-tab={t.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={tab === t.id}
+                      aria-controls={`person-panel-${t.id}`}
                       disabled={!t.ready}
                       onClick={() => setTab(t.id)}
                       className={
@@ -729,6 +735,7 @@ function Index() {
               </div>
 
 
+              <div id={`person-panel-${tab}`} role="tabpanel" aria-label={TABS.find((item) => item.id === tab)?.label}>
               {tab === "t1" && (
                 <PersonMain
                   person={current}
@@ -799,6 +806,7 @@ function Index() {
                   onOpenPhotos={openPhotos}
                 />
               )}
+              </div>
 
             </>
           )}

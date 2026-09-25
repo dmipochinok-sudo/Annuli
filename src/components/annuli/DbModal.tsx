@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -26,6 +26,12 @@ export function DbModal({ persons, onClose, onImported }: Props) {
   const [percent, setPercent] = useState<number | null>(null);
   const [payload, setPayload] = useState<ImportPayload | null>(null);
   const [selected, setSelected] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => { if (event.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
 
   /** Приёмник прогресса: текст этапа + доля выполнения для полосы. */
   const progress = (msg: string, done?: number, total?: number) => {
@@ -114,9 +120,9 @@ export function DbModal({ persons, onClose, onImported }: Props) {
         if (ev.target === ev.currentTarget) onClose();
       }}
     >
-      <div className="flex h-[100svh] w-full max-w-xl flex-col overflow-hidden bg-card pb-[env(safe-area-inset-bottom)] shadow-2xl sm:h-auto sm:max-h-[85vh] sm:rounded-xl sm:pb-0">
+      <div role="dialog" aria-modal="true" aria-labelledby="db-modal-title" className="flex h-[100svh] w-full max-w-xl flex-col overflow-hidden bg-card pb-[env(safe-area-inset-bottom)] shadow-2xl sm:h-auto sm:max-h-[85vh] sm:rounded-xl sm:pb-0">
         <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h3 className="text-[14px] font-bold">💾 База данных</h3>
+          <h3 id="db-modal-title" className="text-[14px] font-bold">💾 База данных</h3>
           <button onClick={onClose} className="px-2 text-muted-foreground hover:text-foreground">
             ✕
           </button>
