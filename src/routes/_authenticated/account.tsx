@@ -13,6 +13,7 @@ import {
 } from "@/components/site/cabinet/CabinetPanels";
 import { InquiriesPanel, useInquiries } from "@/components/site/cabinet/InquiriesPanel";
 import { SpecialistCabinet } from "@/components/site/cabinet/SpecialistCabinet";
+import { SectionNav } from "@/components/site/SectionNav";
 import { useI18n } from "@/lib/i18n";
 import { useNotifications } from "@/lib/cabinet";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,12 +91,12 @@ function AccountPage() {
     { key: "app", label: t("Приложение", "App") },
     { key: "notifications", label: t("Уведомления", "Notifications") },
   ];
-  const current = tabs.find((x) => x.key === tab)!;
+  const current = tabs.find((x) => x.key === tab) ?? tabs[0];
 
   if (userId && productRole === "specialist") {
     return (
       <SiteLayout>
-        <SpecialistCabinet uid={userId} roleText={roleLabel(appRole, lang)} onSignOut={() => void signOut()} />
+        <SpecialistCabinet uid={userId} roleText={roleLabel(appRole, lang)} />
       </SiteLayout>
     );
   }
@@ -103,30 +104,20 @@ function AccountPage() {
   return (
     <SiteLayout>
       <section className="cab">
-        <aside className="cab-nav" aria-label={t("Разделы кабинета", "Account sections")}>
-          <div className="cab-role">
-            {t("Кабинет", "Account")} · {roleLabel(appRole, lang)}
-          </div>
-          {tabs.map((x, i) => (
-            <button
-              key={x.key}
-              className={`cab-tab${tab === x.key ? " is-active" : ""}`}
-              onClick={() => setTab(x.key)}
-            >
-              <span className="cab-num">{String(i + 1).padStart(2, "0")}</span>
-              {x.label}
-              {x.key === "notifications" && unread > 0 && <span className="cab-dot">{unread}</span>}
-              {x.key === "inquiries" && unreadInquiries > 0 && <span className="cab-dot">{unreadInquiries}</span>}
-            </button>
-          ))}
-          <button className="cab-tab cab-tab--out" onClick={() => void signOut()}>
-            {t("Выйти", "Sign out")}
-          </button>
-        </aside>
+        <SectionNav
+          label={t("Разделы кабинета", "Account sections")}
+          title={`${t("Кабинет", "Account")} · ${roleLabel(appRole, lang)}`}
+          items={tabs.map((x) => ({
+            ...x,
+            badge: x.key === "notifications" ? unread : x.key === "inquiries" ? unreadInquiries : 0,
+          }))}
+          active={tab}
+          onChange={setTab}
+        />
 
         <div className="cab-body">
           <h1 className="cab-title">{current.label}</h1>
-          {productRole === null && (
+          {productRole === null && appRole !== "owner" && appRole !== "admin" && (
             <div className="cab-card cab-card--muted">
               <div className="form-lbl">
                 {t("Укажите, кто вы — это сохранится один раз", "Tell us who you are — saved once")}
