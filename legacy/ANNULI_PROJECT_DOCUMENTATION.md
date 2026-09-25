@@ -1235,3 +1235,14 @@ specialist → client), `register_product_role(text)`, `set_user_product_role(uu
 
 Не менялись: настройки авторизации, подключение к базе, переменные окружения, существующие
 таблицы и политики, маршрут `/app`, CMS-логика.
+
+---
+
+## v5.0 — CMS: вкладки «Пользователи» и «Журнал» (2026-09-25)
+
+- `role_audit_logs` расширен до общего системного журнала: колонки `category` (roles/users/leads/cms/orders), `actor_email`, `target_email` (денормализованные снимки — записи переживают удаление пользователя). Таблица по-прежнему fail-closed: без политик, доступ только через SECURITY DEFINER-функции.
+- Новые функции: `log_action(category, action, target, details)` — запись события со снимками email; `list_audit_logs(limit, offset, category)` — чтение журнала владельцем и администратором (лимит до 500, сортировка по убыванию даты).
+- Логирование подключено к созданию (`create_user`), удалению (`delete_user`, с email в details) и блокировке/разблокировке (`block_user`/`unblock_user`) учётных записей в `src/lib/users.functions.ts`. Смены ролей логировались ранее.
+- CMS (`/admin/cms`) получила вкладки «Пользователи» (`src/components/site/cms/UsersTab.tsx` — перенос страницы /admin/users: таблица, создание/удаление, роли, блокировка) и «Журнал» (`src/components/site/cms/JournalTab.tsx` — фильтр по категории, поиск по email, постраничная навигация, экспорт CSV через Blob на клиенте).
+- Маршрут `/admin/users` заменён на редирект в `/admin/cms`; ссылка в UserMenu теперь ведёт в «Управление сайтом».
+- Старые записи журнала дозаполнены email из profiles.
