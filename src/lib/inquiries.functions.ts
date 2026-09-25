@@ -18,7 +18,10 @@ export const createSpecialistInquiry = createServerFn({ method: "POST" })
     if (roleError) throw new Error(roleError.message);
     if (role !== "client") throw new Error("Заявку специалисту может отправить только клиент");
 
-    const { data: specialist, error: specialistError } = await context.supabase
+    // Клиенту закрыто чтение чужих профилей специалистов (RLS), поэтому
+    // проверку и создание выполняем серверным клиентом после проверки роли.
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: specialist, error: specialistError } = await supabaseAdmin
       .from("specialist_profiles")
       .select("user_id")
       .eq("user_id", data.specialistId)
@@ -28,7 +31,7 @@ export const createSpecialistInquiry = createServerFn({ method: "POST" })
     if (specialistError) throw new Error(specialistError.message);
     if (!specialist) throw new Error("Специалист сейчас не принимает заявки");
 
-    const { data: inquiry, error } = await context.supabase
+    const { data: inquiry, error } = await supabaseAdmin
       .from("specialist_inquiries")
       .insert({
         client_id: context.userId,
