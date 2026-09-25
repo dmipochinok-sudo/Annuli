@@ -13,6 +13,13 @@ process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ??=
   "sb_publishable_ssT8Iv5xGyOrieBajPO36w_76_QpGHt";
 
 export default defineConfig({
+  vite: {
+    // Ensure the server-function base path is inlined in browser dev modules
+    // (otherwise TanStack's client RPC reads `process.env` in the browser).
+    define: {
+      "process.env.TSS_SERVER_FN_BASE": JSON.stringify("/_serverFn/"),
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
