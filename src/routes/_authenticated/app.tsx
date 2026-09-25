@@ -43,11 +43,13 @@ import { mkPerson, uid, type Page, type Person, type Photo } from "@/lib/annuli/
 
 interface IndexSearch {
   owner?: string | undefined;
+  base?: string | undefined;
 }
 
 export const Route = createFileRoute("/_authenticated/app")({
   validateSearch: (search: Record<string, unknown>): IndexSearch => ({
     owner: typeof search['owner'] === "string" && search['owner'] ? String(search['owner']) : undefined,
+    base: typeof search['base'] === "string" && search['base'] ? String(search['base']) : undefined,
   }),
   head: () => ({
     meta: [
@@ -82,7 +84,7 @@ const TABS = [
 
 function Index() {
   const { user } = Route.useRouteContext();
-  const { owner } = Route.useSearch();
+  const { owner, base } = Route.useSearch();
   const foreign = !!owner && owner !== user.id;
   const { data: ownerName } = useQuery({
     queryKey: ["owner-name", owner],
@@ -96,7 +98,7 @@ function Index() {
       return data?.display_name || data?.email || "пользователь";
     },
   });
-  const { persons, loading, error, savePerson, deletePerson, reload } = useAnnuli(owner ?? user.id);
+  const { persons, loading, error, savePerson, deletePerson, reload } = useAnnuli(owner ?? user.id, base);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Person | null>(null);
   const [editMode, setEditMode] = useState(false);
