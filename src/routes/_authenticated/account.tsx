@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -47,7 +47,6 @@ type TabKey = "profile" | "orders" | "inquiries" | "bases" | "access" | "app" | 
 
 function AccountPage() {
   const { t, lang } = useI18n();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [userId, setUserId] = useState<string | null>(null);
   const [tab, setTab] = useState<TabKey>("profile");
@@ -73,13 +72,6 @@ function AccountPage() {
     } finally {
       setSavingRole(false);
     }
-  };
-
-  const signOut = async () => {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
   };
 
   const tabs: { key: TabKey; label: string }[] = [

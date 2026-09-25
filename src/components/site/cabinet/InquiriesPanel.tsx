@@ -33,6 +33,7 @@ const STATUS: Record<string, [string, string]> = {
 export function useInquiries(uid: string) {
   return useQuery({
     queryKey: ["specialist-inquiries", uid],
+    enabled: !!uid,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("list_my_specialist_inquiries");
       if (error) throw error;

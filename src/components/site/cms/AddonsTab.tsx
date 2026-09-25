@@ -97,8 +97,8 @@ export function AddonsTab() {
           <h2 className="cms-sec-title">{t("Дополнительные услуги", "Add-on services")}</h2>
           <p className="cms-sec-sub">
             {t(
-              "Если список пуст, на сайте показываются исходные дополнения из раздела «Тексты».",
-              "When the list is empty, the site shows the default add-ons from the Texts tab.",
+              "Все карточки здесь обычные: их можно редактировать, скрывать и удалять.",
+              "Every card here can be edited, hidden, or deleted.",
             )}
           </p>
         </div>
