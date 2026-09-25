@@ -108,7 +108,7 @@ function AccountPage() {
         />
 
         <div className="cab-body">
-          <h1 className="cab-title">{current.label}</h1>
+          <h1 className="cab-title">{current?.label ?? ""}</h1>
           {productRole === null && appRole !== "owner" && appRole !== "admin" && (
             <div className="cab-card cab-card--muted">
               <div className="form-lbl">

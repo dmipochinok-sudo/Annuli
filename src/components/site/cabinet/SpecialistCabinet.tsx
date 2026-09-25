@@ -44,7 +44,7 @@ export function SpecialistCabinet({ uid, roleText }: Props) {
         onChange={setTab}
       />
       <div className="cab-body">
-        <h1 className="cab-title">{current.label}</h1>
+        <h1 className="cab-title">{current?.label ?? ""}</h1>
         {tab === "card" && <CardPanel uid={uid} />}
         {tab === "rates" && <RatesPanel uid={uid} />}
         {tab === "inquiries" && <InquiriesPanel uid={uid} perspective="specialist" />}
