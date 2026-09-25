@@ -119,6 +119,44 @@ export type Database = {
         }
         Relationships: []
       }
+      inquiry_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          inquiry_id: string
+          is_read: boolean
+          sender_id: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          inquiry_id: string
+          is_read?: boolean
+          sender_id: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          inquiry_id?: string
+          is_read?: boolean
+          sender_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiry_messages_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "specialist_inquiries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -494,6 +532,48 @@ export type Database = {
         }
         Relationships: []
       }
+      specialist_inquiries: {
+        Row: {
+          body: string
+          client_id: string
+          client_name: string
+          created_at: string
+          id: string
+          rate_name: string
+          specialist_id: string
+          specialist_name: string
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          client_id: string
+          client_name?: string
+          created_at?: string
+          id?: string
+          rate_name?: string
+          specialist_id: string
+          specialist_name?: string
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          client_id?: string
+          client_name?: string
+          created_at?: string
+          id?: string
+          rate_name?: string
+          specialist_id?: string
+          specialist_name?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       specialist_profiles: {
         Row: {
           about_en: string
@@ -758,6 +838,23 @@ export type Database = {
           specialization_en: string
           specialization_ru: string
           user_id: string
+        }[]
+      }
+      list_my_specialist_inquiries: {
+        Args: never
+        Returns: {
+          body: string
+          client_id: string
+          client_name: string
+          created_at: string
+          id: string
+          rate_name: string
+          specialist_id: string
+          specialist_name: string
+          status: string
+          subject: string
+          unread_count: number
+          updated_at: string
         }[]
       }
       list_specialists: {
