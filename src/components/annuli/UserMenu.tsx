@@ -100,11 +100,11 @@ export function UserMenu() {
           </Link>
           {isAdmin && (
             <Link
-              to="/admin/users"
+              to="/admin/cms"
               onClick={() => setOpen(false)}
               className="block rounded-lg px-3 py-2 text-[13px] text-foreground transition hover:bg-surface-dark"
             >
-              Управление пользователями
+              Управление сайтом
             </Link>
           )}
           <button
