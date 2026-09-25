@@ -19,6 +19,19 @@ export default defineConfig({
     define: {
       "process.env.TSS_SERVER_FN_BASE": JSON.stringify("/_serverFn/"),
     },
+    plugins: [
+      {
+        // `define` is not applied to un-bundled node_modules in dev, so patch
+        // TanStack's client RPC module directly for the browser.
+        name: "annuli-inline-server-fn-base",
+        enforce: "pre",
+        transform(code, id, opts) {
+          if (opts?.ssr) return null;
+          if (!id.includes("start-client-core") || !code.includes("process.env.TSS_SERVER_FN_BASE")) return null;
+          return code.replaceAll("process.env.TSS_SERVER_FN_BASE", JSON.stringify("/_serverFn/"));
+        },
+      },
+    ],
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
