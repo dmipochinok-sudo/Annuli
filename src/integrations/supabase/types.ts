@@ -834,6 +834,23 @@ export type Database = {
           user_id: string
         }[]
       }
+      list_my_specialist_inquiries: {
+        Args: never
+        Returns: {
+          body: string
+          client_id: string
+          client_name: string
+          created_at: string
+          id: string
+          rate_name: string
+          specialist_id: string
+          specialist_name: string
+          status: string
+          subject: string
+          unread_count: number
+          updated_at: string
+        }[]
+      }
       list_specialists: {
         Args: never
         Returns: {
