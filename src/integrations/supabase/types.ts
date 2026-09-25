@@ -95,6 +95,30 @@ export type Database = {
         }
         Relationships: []
       }
+      genealogy_bases: {
+        Row: {
+          created_at: string
+          id: string
+          owner_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_id: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -198,6 +222,7 @@ export type Database = {
       }
       persons: {
         Row: {
+          base_id: string | null
           created_at: string
           data: Json
           full_name: string
@@ -207,6 +232,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          base_id?: string | null
           created_at?: string
           data?: Json
           full_name?: string
@@ -216,6 +242,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          base_id?: string | null
           created_at?: string
           data?: Json
           full_name?: string
@@ -224,7 +251,15 @@ export type Database = {
           person_index?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "persons_base_id_fkey"
+            columns: ["base_id"]
+            isOneToOne: false
+            referencedRelation: "genealogy_bases"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -459,6 +494,168 @@ export type Database = {
         }
         Relationships: []
       }
+      specialist_profiles: {
+        Row: {
+          about_en: string
+          about_ru: string
+          accepts_clients: boolean
+          activities_en: string
+          activities_ru: string
+          archives_en: string
+          archives_ru: string
+          avatar_url: string
+          bases_limit: number
+          created_at: string
+          featured: boolean
+          featured_order: number
+          is_visible: boolean
+          plan: string
+          regions_en: string
+          regions_ru: string
+          specialization_en: string
+          specialization_ru: string
+          storage_limit_mb: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          about_en?: string
+          about_ru?: string
+          accepts_clients?: boolean
+          activities_en?: string
+          activities_ru?: string
+          archives_en?: string
+          archives_ru?: string
+          avatar_url?: string
+          bases_limit?: number
+          created_at?: string
+          featured?: boolean
+          featured_order?: number
+          is_visible?: boolean
+          plan?: string
+          regions_en?: string
+          regions_ru?: string
+          specialization_en?: string
+          specialization_ru?: string
+          storage_limit_mb?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          about_en?: string
+          about_ru?: string
+          accepts_clients?: boolean
+          activities_en?: string
+          activities_ru?: string
+          archives_en?: string
+          archives_ru?: string
+          avatar_url?: string
+          bases_limit?: number
+          created_at?: string
+          featured?: boolean
+          featured_order?: number
+          is_visible?: boolean
+          plan?: string
+          regions_en?: string
+          regions_ru?: string
+          specialization_en?: string
+          specialization_ru?: string
+          storage_limit_mb?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      specialist_rates: {
+        Row: {
+          created_at: string
+          id: string
+          includes_en: string
+          includes_ru: string
+          kind: string
+          name_en: string
+          name_ru: string
+          price_en: string
+          price_ru: string
+          sort_order: number
+          term_en: string
+          term_ru: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          includes_en?: string
+          includes_ru?: string
+          kind?: string
+          name_en?: string
+          name_ru?: string
+          price_en?: string
+          price_ru?: string
+          sort_order?: number
+          term_en?: string
+          term_ru?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          includes_en?: string
+          includes_ru?: string
+          kind?: string
+          name_en?: string
+          name_ru?: string
+          price_en?: string
+          price_ru?: string
+          sort_order?: number
+          term_en?: string
+          term_ru?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      specialist_reviews: {
+        Row: {
+          body: string
+          client_id: string | null
+          client_name: string
+          created_at: string
+          id: string
+          is_published: boolean
+          order_confirmed: boolean
+          reply: string
+          specialist_id: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          client_id?: string | null
+          client_name?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          order_confirmed?: boolean
+          reply?: string
+          specialist_id: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          client_id?: string | null
+          client_name?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          order_confirmed?: boolean
+          reply?: string
+          specialist_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_owner_flags: {
         Row: {
           created_at: string
@@ -524,6 +721,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bases_limit_for: { Args: { _user: string }; Returns: number }
       current_app_role: { Args: never; Returns: string }
       has_base_access: { Args: { _owner: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
@@ -538,6 +736,28 @@ export type Database = {
           details: Json
           id: string
           target_email: string
+        }[]
+      }
+      list_featured_specialists: {
+        Args: never
+        Returns: {
+          about_en: string
+          about_ru: string
+          accepts_clients: boolean
+          activities_en: string
+          activities_ru: string
+          archives_en: string
+          archives_ru: string
+          avatar_url: string
+          featured_order: number
+          full_name: string
+          rates: Json
+          regions_en: string
+          regions_ru: string
+          reviews: Json
+          specialization_en: string
+          specialization_ru: string
+          user_id: string
         }[]
       }
       list_specialists: {
@@ -585,6 +805,22 @@ export type Database = {
       set_user_product_role: {
         Args: { new_role: string; target_user: string }
         Returns: undefined
+      }
+      staff_list_specialists: {
+        Args: never
+        Returns: {
+          accepts_clients: boolean
+          bases_count: number
+          bases_limit: number
+          email: string
+          featured: boolean
+          featured_order: number
+          full_name: string
+          has_card: boolean
+          is_visible: boolean
+          plan: string
+          user_id: string
+        }[]
       }
     }
     Enums: {
