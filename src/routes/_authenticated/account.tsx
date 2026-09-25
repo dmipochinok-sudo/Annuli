@@ -263,6 +263,32 @@ function AccountPage() {
 
           <div className="account-card">
             <div className="contact-kicker">{t("Профиль", "Profile")}</div>
+            <p className="ap-card-desc">
+              {t("Ваша роль", "Your role")}: <strong>{roleLabel(appRole, lang)}</strong>
+            </p>
+            {productRole === null && (
+              <div className="form-field">
+                <label className="form-lbl">
+                  {t("Укажите, кто вы — это сохранится один раз", "Tell us who you are — saved once")}
+                </label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    className="btn btn--ghost"
+                    onClick={() => void chooseRole("client")}
+                    disabled={savingRole}
+                  >
+                    {t("Клиент", "Client")}
+                  </button>
+                  <button
+                    className="btn btn--ghost"
+                    onClick={() => void chooseRole("specialist")}
+                    disabled={savingRole}
+                  >
+                    {t("Специалист", "Specialist")}
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="form-field">
               <label className="form-lbl">{t("Имя", "Name")}</label>
               <input
