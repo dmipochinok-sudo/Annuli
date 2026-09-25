@@ -536,10 +536,12 @@ export type Database = {
         Row: {
           body: string
           client_id: string
+          client_name: string
           created_at: string
           id: string
           rate_name: string
           specialist_id: string
+          specialist_name: string
           status: string
           subject: string
           updated_at: string
@@ -547,10 +549,12 @@ export type Database = {
         Insert: {
           body: string
           client_id: string
+          client_name?: string
           created_at?: string
           id?: string
           rate_name?: string
           specialist_id: string
+          specialist_name?: string
           status?: string
           subject: string
           updated_at?: string
@@ -558,10 +562,12 @@ export type Database = {
         Update: {
           body?: string
           client_id?: string
+          client_name?: string
           created_at?: string
           id?: string
           rate_name?: string
           specialist_id?: string
+          specialist_name?: string
           status?: string
           subject?: string
           updated_at?: string
