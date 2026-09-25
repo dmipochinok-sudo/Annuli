@@ -1,0 +1,1 @@
+revoke execute on function public.enforce_bases_limit() from public, anon, authenticated;
