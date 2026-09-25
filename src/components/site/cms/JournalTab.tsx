@@ -48,7 +48,12 @@ function formatDetails(details: Record<string, unknown>): string {
 }
 
 function toCsv(rows: AuditRow[]): string {
-  const esc = (s: string) => `"${s.replace(/"/g, '""')}"`;
+  // Нейтрализуем формулы: значения, начинающиеся с = + - @ Tab CR, получают префикс '.
+  const esc = (raw: string) => {
+    const s = String(raw ?? "");
+    const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+    return `"${safe.replace(/"/g, '""')}"`;
+  };
   const header = ["date", "category", "action", "actor_email", "target_email", "details"];
   const lines = rows.map((r) =>
     [
