@@ -17,6 +17,7 @@ import { AddonsTab } from "./cms/AddonsTab";
 import { SpecialistsTab } from "./cms/SpecialistsTab";
 import { UsersTab } from "./cms/UsersTab";
 import { JournalTab } from "./cms/JournalTab";
+import { SideNav } from "./SideNav";
 
 type Tab = "texts" | "sections" | "assets" | "addons" | "specialists" | "users" | "journal";
 
@@ -145,18 +146,15 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
         </div>
       </header>
 
-      <div className="cms-nav">
-        {TABS.map((tb) => (
-          <button
-            key={tb.id}
-            className={tab === tb.id ? "on" : ""}
-            onClick={() => setTab(tb.id)}
-          >
-            {t(tb.ru, tb.en)}
-          </button>
-        ))}
-      </div>
-
+      <div className="cms-body cms-body--panel">
+        <SideNav
+          label={t("Разделы CMS", "CMS sections")}
+          heading={t("Управление", "Manage")}
+          items={TABS.map((tb) => ({ key: tb.id, label: t(tb.ru, tb.en) }))}
+          active={tab}
+          onSelect={setTab}
+        />
+        <div className="cms-content cms-content--panel">
       {tab === "sections" && <SectionsTab />}
       {tab === "assets" && <AssetsTab />}
       {tab === "addons" && <AddonsTab />}
@@ -218,6 +216,8 @@ export function CmsPanel({ content, onClose, onSiteHome }: Props) {
             </section>
           );
         })}
+      </div>
+        </div>
       </div>
     </div>
   );
