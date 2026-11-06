@@ -11,20 +11,20 @@ import { collectImageIds } from "@/lib/annuli/media";
 import { normalizePerson, type Person } from "@/lib/annuli/types";
 import { SpecialistDialog, type PublicSpecialist } from "@/components/site/SpecialistsSection";
 import { InquiriesPanel, useInquiries } from "@/components/site/cabinet/InquiriesPanel";
+import { SideNav } from "@/components/site/SideNav";
 
 type Tab = "card" | "rates" | "inquiries" | "reviews" | "bases" | "limits";
 
 interface Props {
   uid: string;
   roleText: string;
-  onSignOut: () => void;
 }
 
-export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
+export function SpecialistCabinet({ uid, roleText }: Props) {
   const { t } = useI18n();
   const [tab, setTab] = useState<Tab>("card");
   const { data: inquiries } = useInquiries(uid);
-  const unread = inquiries?.filter((item) => item.specialist_id === uid && item.unread_count > 0).length ?? 0;
+  const unread = inquiries?.filter((item) => item.specialist_id === uid).reduce((sum, item) => sum + (Number(item.unread_count) || 0), 0) ?? 0;
   const tabs: { key: Tab; label: string }[] = [
     { key: "card", label: t("Карточка", "Card") },
     { key: "rates", label: t("Тарифы", "Rates") },
@@ -36,25 +36,13 @@ export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
   const current = tabs.find((x) => x.key === tab)!;
   return (
     <section className="cab">
-      <aside className="cab-nav" aria-label={t("Разделы кабинета", "Account sections")}>
-        <div className="cab-role">
-          {t("Кабинет специалиста", "Specialist account")} · {roleText}
-        </div>
-        {tabs.map((x, i) => (
-          <button
-            key={x.key}
-            className={`cab-tab${tab === x.key ? " is-active" : ""}`}
-            onClick={() => setTab(x.key)}
-          >
-            <span className="cab-num">{String(i + 1).padStart(2, "0")}</span>
-            {x.label}
-            {x.key === "inquiries" && unread > 0 && <span className="cab-dot">{unread}</span>}
-          </button>
-        ))}
-        <button className="cab-tab cab-tab--out" onClick={onSignOut}>
-          {t("Выйти", "Sign out")}
-        </button>
-      </aside>
+      <SideNav
+        label={t("Разделы кабинета", "Account sections")}
+        heading={`${t("Кабинет специалиста", "Specialist account")} · ${roleText}`}
+        items={tabs.map((x) => ({ key: x.key, label: x.label, count: x.key === "inquiries" ? unread : 0 }))}
+        active={tab}
+        onSelect={setTab}
+      />
       <div className="cab-body">
         <h1 className="cab-title">{current.label}</h1>
         {tab === "card" && <CardPanel uid={uid} />}
@@ -70,6 +58,7 @@ export function SpecialistCabinet({ uid, roleText, onSignOut }: Props) {
 
 /* ───────── данные ───────── */
 const EMPTY = {
+  first_name: "", last_name: "",
   avatar_url: "",
   specialization_ru: "", specialization_en: "",
   about_ru: "", about_en: "",
@@ -128,7 +117,7 @@ function CardPanel({ uid }: { uid: string }) {
     if (prof) {
       const next = { ...EMPTY };
       (Object.keys(EMPTY) as (keyof CardForm)[]).forEach((k) => {
-        (next as Record<string, unknown>)[k] = (prof as Record<string, unknown>)[k];
+        (next as Record<string, unknown>)[k] = (prof as Record<string, unknown>)[k] ?? EMPTY[k];
       });
       setForm(next);
     }
@@ -141,7 +130,8 @@ function CardPanel({ uid }: { uid: string }) {
 
   const save = async (patch?: Partial<CardForm>) => {
     setSaving(true);
-    const row = { ...form, ...patch, user_id: uid };
+    const merged = { ...form, ...patch };
+    const row = { ...merged, first_name: merged.first_name.trim(), last_name: merged.last_name.trim(), user_id: uid };
     const { error } = await supabase.from("specialist_profiles").upsert(row, { onConflict: "user_id" });
     setSaving(false);
     if (error) { toast.error(error.message); return; }
@@ -179,7 +169,7 @@ function CardPanel({ uid }: { uid: string }) {
   );
 
   const previewData: PublicSpecialist = {
-    user_id: uid, full_name: name || t("Специалист", "Specialist"), ...form, featured_order: 0, rates: [], reviews: [],
+    user_id: uid, ...form, full_name: [form.first_name, form.last_name].map((x) => x.trim()).filter(Boolean).join(" ") || name || t("Специалист", "Specialist"), featured_order: 0, rates: [], reviews: [],
   };
 
   return (
@@ -207,6 +197,16 @@ function CardPanel({ uid }: { uid: string }) {
           )}
         </div>
         <div className="cab-meta">{t("Квадратное фото, масштабируется до 256 px", "Square photo, scaled to 256 px")}</div>
+      </div>
+      <div className="cab-grid2">
+        <div className="form-field">
+          <label className="form-lbl" htmlFor="spec-first">{t("Имя", "First name")}</label>
+          <input id="spec-first" className="form-inp" maxLength={80} value={form.first_name} onChange={(e) => set("first_name", e.target.value)} />
+        </div>
+        <div className="form-field">
+          <label className="form-lbl" htmlFor="spec-last">{t("Фамилия", "Last name")}</label>
+          <input id="spec-last" className="form-inp" maxLength={80} value={form.last_name} onChange={(e) => set("last_name", e.target.value)} />
+        </div>
       </div>
       <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
         <label className="cab-check"><input type="checkbox" checked={form.is_visible} onChange={(e) => set("is_visible", e.target.checked)} />{t("Видимость карточки", "Card visible")}</label>

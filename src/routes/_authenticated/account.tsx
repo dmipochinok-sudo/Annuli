@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { SideNav } from "@/components/site/SideNav";
 import {
   AccessPanel,
   AppPanel,
@@ -61,7 +62,7 @@ function AccountPage() {
   const { data: notes } = useNotifications(userId);
   const { data: inquiries } = useInquiries(userId ?? "");
   const unread = notes?.filter((n) => !n.read_at).length ?? 0;
-  const unreadInquiries = inquiries?.filter((item) => item.client_id === userId && item.unread_count > 0).length ?? 0;
+  const unreadInquiries = inquiries?.filter((item) => item.client_id === userId).reduce((sum, item) => sum + (Number(item.unread_count) || 0), 0) ?? 0;
 
   const chooseRole = async (role: ProductRole) => {
     setSavingRole(true);
@@ -74,12 +75,6 @@ function AccountPage() {
     }
   };
 
-  const signOut = async () => {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  };
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: "profile", label: t("Профиль", "Profile") },
@@ -95,7 +90,7 @@ function AccountPage() {
   if (userId && productRole === "specialist") {
     return (
       <SiteLayout>
-        <SpecialistCabinet uid={userId} roleText={roleLabel(appRole, lang)} onSignOut={() => void signOut()} />
+        <SpecialistCabinet uid={userId} roleText={roleLabel(appRole, lang)} />
       </SiteLayout>
     );
   }
@@ -103,30 +98,21 @@ function AccountPage() {
   return (
     <SiteLayout>
       <section className="cab">
-        <aside className="cab-nav" aria-label={t("Разделы кабинета", "Account sections")}>
-          <div className="cab-role">
-            {t("Кабинет", "Account")} · {roleLabel(appRole, lang)}
-          </div>
-          {tabs.map((x, i) => (
-            <button
-              key={x.key}
-              className={`cab-tab${tab === x.key ? " is-active" : ""}`}
-              onClick={() => setTab(x.key)}
-            >
-              <span className="cab-num">{String(i + 1).padStart(2, "0")}</span>
-              {x.label}
-              {x.key === "notifications" && unread > 0 && <span className="cab-dot">{unread}</span>}
-              {x.key === "inquiries" && unreadInquiries > 0 && <span className="cab-dot">{unreadInquiries}</span>}
-            </button>
-          ))}
-          <button className="cab-tab cab-tab--out" onClick={() => void signOut()}>
-            {t("Выйти", "Sign out")}
-          </button>
-        </aside>
+        <SideNav
+          label={t("Разделы кабинета", "Account sections")}
+          heading={`${t("Кабинет", "Account")} · ${roleLabel(appRole, lang)}`}
+          items={tabs.map((x) => ({
+            key: x.key,
+            label: x.label,
+            count: x.key === "notifications" ? unread : x.key === "inquiries" ? unreadInquiries : 0,
+          }))}
+          active={tab}
+          onSelect={setTab}
+        />
 
         <div className="cab-body">
           <h1 className="cab-title">{current.label}</h1>
-          {productRole === null && (
+          {productRole === null && appRole !== "owner" && appRole !== "admin" && (
             <div className="cab-card cab-card--muted">
               <div className="form-lbl">
                 {t("Укажите, кто вы — это сохранится один раз", "Tell us who you are — saved once")}
