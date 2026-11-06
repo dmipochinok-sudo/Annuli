@@ -141,3 +141,33 @@ export function useNotifications(uid: string | null) {
     },
   });
 }
+
+/** Суммарная метка для шапки: непрочитанные уведомления + непрочитанные сообщения в заявках. */
+export function useHeaderUnread(uid: string | null) {
+  const qc = useQueryClient();
+  const q = useQuery({
+    queryKey: ["header-unread", uid],
+    enabled: !!uid,
+    staleTime: 15_000,
+    queryFn: async () => {
+      const [n, inq] = await Promise.all([
+        supabase.from("notifications").select("id", { count: "exact", head: true }).eq("user_id", uid!).is("read_at", null),
+        supabase.rpc("list_my_specialist_inquiries"),
+      ]);
+      const msgs = ((inq.data ?? []) as { unread_count: number }[]).reduce((s, i) => s + (Number(i.unread_count) || 0), 0);
+      return (n.count ?? 0) + msgs;
+    },
+  });
+  useEffect(() => {
+    if (!uid) return;
+    const refresh = () => void qc.invalidateQueries({ queryKey: ["header-unread", uid] });
+    const ch = supabase
+      .channel(`header-unread-${uid}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${uid}` }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "inquiry_messages" }, refresh)
+      .on("postgres_changes", { event: "*", schema: "public", table: "specialist_inquiries" }, refresh)
+      .subscribe();
+    return () => { void supabase.removeChannel(ch); };
+  }, [qc, uid]);
+  return q.data ?? 0;
+}
