@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
@@ -7,6 +7,7 @@ import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { isCloudConfigured } from "@/lib/cloud-availability";
 import { useSectionVisibility } from "@/lib/cms/site-config";
+import { useHeaderUnread } from "@/lib/cabinet";
 
 const NAV = [
   { to: "/approach" as const, ru: "Подход", en: "Approach", section: "approach" },
@@ -77,6 +78,8 @@ function UtilBar() {
 export function SiteHeader() {
   const { t } = useI18n();
   const { isVisible } = useSectionVisibility();
+  const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const isHome = pathname === "/";
   const navItems = NAV.filter((n) => isVisible(n.section));
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -128,6 +131,12 @@ export function SiteHeader() {
   });
 
   const signedIn = !!userId;
+  const unread = useHeaderUnread(userId);
+  const badge = unread > 0 && (
+    <span className="nav-badge" aria-label={t(`Новых: ${unread}`, `New: ${unread}`)}>
+      {unread > 99 ? "99+" : unread}
+    </span>
+  );
   const signOut = async () => {
     setOpen(false);
     await queryClient.cancelQueries();
@@ -147,14 +156,16 @@ export function SiteHeader() {
           </span>
           <span className="brand-text">
             <span className="brand-name">Annuli</span>
-            <span className="brand-sub">
-              {t("Издательство семейных историй", "Family History Publishers")}
-            </span>
           </span>
         </Link>
 
         <nav>
           <ul className="topbar-nav">
+            {!isHome && (
+              <li>
+                <Link to="/">{t("Главная", "Home")}</Link>
+              </li>
+            )}
             {navItems.map((n) => (
               <li key={n.to}>
                 <Link to={n.to}>{t(n.ru, n.en)}</Link>
@@ -171,7 +182,13 @@ export function SiteHeader() {
           )}
           <Link to={signedIn ? "/account" : "/auth"} className="nav-link nav-link--desktop">
             {signedIn ? t("Личный кабинет", "Account") : t("Войти", "Sign in")}
+            {signedIn && badge}
           </Link>
+          {signedIn && (
+            <button className="nav-link nav-link--desktop" onClick={() => void signOut()}>
+              {t("Выйти", "Sign out")}
+            </button>
+          )}
           {signedIn ? (
             <button className="nav-link nav-link--mobile" onClick={() => void signOut()}>
               {t("Выйти", "Sign out")}
@@ -181,6 +198,7 @@ export function SiteHeader() {
               {t("Войти / Создать аккаунт", "Sign in / Create account")}
             </Link>
           )}
+          {signedIn && unread > 0 && <span className="nav-badge nav-badge--burger" aria-hidden="true" />}
           <button
             className={`nav-burger${open ? " open" : ""}`}
             aria-label={t("Меню", "Menu")}
@@ -199,6 +217,11 @@ export function SiteHeader() {
         ref={drawerRef}
         aria-hidden={!open}
       >
+        {!isHome && (
+          <Link to="/" onClick={() => setOpen(false)}>
+            {t("Главная", "Home")}
+          </Link>
+        )}
         {navItems.map((n) => (
           <Link key={n.to} to={n.to} onClick={() => setOpen(false)}>
             {t(n.ru, n.en)}
@@ -207,6 +230,7 @@ export function SiteHeader() {
         {signedIn && (
           <Link to="/account" onClick={() => setOpen(false)}>
             {t("Личный кабинет", "Account")}
+            {badge}
           </Link>
         )}
         {isAdmin && (
