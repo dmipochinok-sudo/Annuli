@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
@@ -7,8 +7,6 @@ import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { isCloudConfigured } from "@/lib/cloud-availability";
 import { useSectionVisibility } from "@/lib/cms/site-config";
-import { useNotifications } from "@/lib/cabinet";
-import { useInquiries } from "./cabinet/InquiriesPanel";
 
 const NAV = [
   { to: "/approach" as const, ru: "Подход", en: "Approach", section: "approach" },
@@ -81,7 +79,6 @@ export function SiteHeader() {
   const { isVisible } = useSectionVisibility();
   const navItems = NAV.filter((n) => isVisible(n.section));
   const queryClient = useQueryClient();
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const topbarRef = useRef<HTMLElement>(null);
@@ -129,25 +126,6 @@ export function SiteHeader() {
       return !!data;
     },
   });
-  const { data: notifications } = useNotifications(userId);
-  const { data: inquiries } = useInquiries(userId ?? "");
-  const unread =
-    (notifications?.filter((item) => !item.read_at).length ?? 0) +
-    (inquiries?.reduce((sum, item) => sum + Number(item.unread_count || 0), 0) ?? 0);
-
-  useEffect(() => {
-    if (!userId) return;
-    const channel = supabase
-      .channel(`header-unread-${userId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` }, () => {
-        void queryClient.invalidateQueries({ queryKey: ["cab-notifications", userId] });
-      })
-      .on("postgres_changes", { event: "*", schema: "public", table: "inquiry_messages" }, () => {
-        void queryClient.invalidateQueries({ queryKey: ["specialist-inquiries", userId] });
-      })
-      .subscribe();
-    return () => { void supabase.removeChannel(channel); };
-  }, [queryClient, userId]);
 
   const signedIn = !!userId;
   const signOut = async () => {
@@ -167,12 +145,16 @@ export function SiteHeader() {
           <span className="brand-mark">
             <Logo />
           </span>
-          <span className="brand-name">Annuli</span>
+          <span className="brand-text">
+            <span className="brand-name">Annuli</span>
+            <span className="brand-sub">
+              {t("Издательство семейных историй", "Family History Publishers")}
+            </span>
+          </span>
         </Link>
 
         <nav>
           <ul className="topbar-nav">
-            {pathname !== "/" && <li><Link to="/">{t("Главная", "Home")}</Link></li>}
             {navItems.map((n) => (
               <li key={n.to}>
                 <Link to={n.to}>{t(n.ru, n.en)}</Link>
@@ -187,11 +169,9 @@ export function SiteHeader() {
               {t("CMS", "CMS")}
             </Link>
           )}
-          <Link to={signedIn ? "/account" : "/auth"} className="nav-link nav-link--desktop nav-account-link">
+          <Link to={signedIn ? "/account" : "/auth"} className="nav-link nav-link--desktop">
             {signedIn ? t("Личный кабинет", "Account") : t("Войти", "Sign in")}
-            {signedIn && unread > 0 && <span className="nav-unread" aria-label={t(`${unread} новых`, `${unread} new`)}>{unread}</span>}
           </Link>
-          {signedIn && <button className="nav-link nav-link--desktop" onClick={() => void signOut()}>{t("Выйти", "Sign out")}</button>}
           {signedIn ? (
             <button className="nav-link nav-link--mobile" onClick={() => void signOut()}>
               {t("Выйти", "Sign out")}
@@ -219,16 +199,14 @@ export function SiteHeader() {
         ref={drawerRef}
         aria-hidden={!open}
       >
-        {pathname !== "/" && <Link to="/" onClick={() => setOpen(false)}>{t("Главная", "Home")}</Link>}
         {navItems.map((n) => (
           <Link key={n.to} to={n.to} onClick={() => setOpen(false)}>
             {t(n.ru, n.en)}
           </Link>
         ))}
         {signedIn && (
-          <Link to="/account" onClick={() => setOpen(false)} className="nav-account-link">
+          <Link to="/account" onClick={() => setOpen(false)}>
             {t("Личный кабинет", "Account")}
-            {unread > 0 && <span className="nav-unread">{unread}</span>}
           </Link>
         )}
         {isAdmin && (
